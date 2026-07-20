@@ -1,0 +1,11 @@
+Commercial rule	Value	Notes
+Currency	INR	Prices exclude applicable GST/taxes
+Billing entity	Per club	A separate subscription applies to each independently managed club unless Enterprise terms say otherwise
+Annual billing	10 months charged for 12 months service	Equivalent to about 16.7% off monthly billing
+Paid-plan trial	14 days	Professional trial is the default recommended trial; no card required is recommended
+Upgrade handling	Immediate and prorated	Apply unused paid balance to the upgraded plan
+Downgrade handling	At next renewal	Keep data read-only when usage exceeds the lower-plan limit until reduced or upgraded
+Overage handling	Do not auto-charge by default	Notify at 80% and 100%; require approval before billing overages
+Cancellation	Effective at period end	Allow export before access becomes read-only
+Recommended launch offer	20% off first annual term	Use for first 25 paying clubs; do not stack with other discounts
+Price review	Every 12 months	Grandfather existing annual contracts until renewal

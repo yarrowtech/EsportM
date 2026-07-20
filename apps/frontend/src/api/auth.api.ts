@@ -20,14 +20,28 @@ export type MeResponse = {
     clubId?: string;
     primary?: string;
     subRoles?: string[];
-    club?: { name?: string; slug?: string } | string;
+    club?:
+      | {
+          name?: string;
+          slug?: string;
+          billingPlan?: string;
+          subscriptionStatus?: string;
+        }
+      | string;
   }>;
   activeClubId?: string | null;
   activeMembership?: {
     clubId?: string;
     primary?: string;
     subRoles?: string[];
-    club?: { name?: string; slug?: string } | string;
+    club?:
+      | {
+          name?: string;
+          slug?: string;
+          billingPlan?: string;
+          subscriptionStatus?: string;
+        }
+      | string;
   } | null;
 
   _id?: string;

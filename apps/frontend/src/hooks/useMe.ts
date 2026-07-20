@@ -9,12 +9,13 @@ function resolveActiveClubId() {
   }
 }
 
-export function useMe() {
+export function useMe(options?: { enabled?: boolean }) {
   const activeClubId = resolveActiveClubId();
 
   return useQuery({
     queryKey: ["me", activeClubId || "NO_CLUB"],
     queryFn: () => authApi.me(activeClubId || undefined),
+    enabled: options?.enabled ?? true,
     staleTime: 60_000,
   });
 }

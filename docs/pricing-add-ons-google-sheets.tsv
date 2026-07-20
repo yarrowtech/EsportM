@@ -1,0 +1,20 @@
+Add-on / service	Charge type	Rate INR	Unit	Eligible plans	Included quantity / trigger	Notes
+Additional active member	Recurring	20	per member/month	Starter, Professional, Elite	Charged only above plan allowance	Use 30/member/month on month-to-month contracts if no annual commitment
+Additional squad	Recurring	199	per squad/month	Starter, Professional, Elite	Charged above plan allowance	Member allowance still applies
+Additional staff/admin seat	Recurring	99	per staff user/month	Starter, Professional	Charged above plan allowance	Elite includes unlimited staff under fair-use policy
+Additional managed storage	Recurring	299	per 10 GB/month	All paid plans	After included storage	Pass through exceptional media-delivery costs by written agreement
+AI Pack 100	Recurring or one-time	399	100 AI requests	Starter, Professional, Elite	Requests expire at billing-period end when recurring	All AI endpoints draw from the same allowance
+AI Pack 500	Recurring or one-time	1499	500 AI requests	Starter, Professional, Elite	Requests expire at billing-period end when recurring	Preferred AI overage pack
+AI Pack 2000	Recurring	4999	2000 AI requests/month	Professional, Elite, Enterprise	Monthly allowance	Apply an abuse/fair-use policy for unusually large prompts
+Guided onboarding	One-time	4999	per club	Starter, Professional	Elite includes one standard guided onboarding	Up to two remote sessions plus configuration assistance
+Data import - standard	One-time	2999	per import template	All paid plans	One CSV/XLSX data set up to 500 records	Customer must use supplied template; cleanup is extra
+Data import - complex	One-time	Starting 9999	per project	Professional, Elite, Enterprise	Quoted after sample review	Multiple files, deduplication, mapping or more than 500 records
+Admin and coach training	One-time	7500	per 2-hour remote session	All paid plans	Elite includes one session	Up to 20 attendees; recording may be provided
+Custom analytics report	One-time	Starting 5000	per report	Professional, Elite, Enterprise	Scope agreed before work	Only for reports supported by available EsportM data
+Custom theme setup	One-time	2499	per club	Starter, Professional	Elite includes standard setup	Configuration service, not custom frontend development
+Priority support upgrade	Recurring	1999	per club/month	Starter, Professional	Elite already includes priority support	4 business-hour first-response target during published business hours
+Dedicated success review	One-time	4999	per quarterly review	Professional, Elite	Optional	Usage review, configuration review and adoption plan
+Custom feature development	One-time	Quoted	per statement of work	Professional, Elite, Enterprise	50% advance recommended	Keep separate from subscription; IP and maintenance terms must be written
+Enterprise migration and rollout	One-time	Starting 25000	per project	Enterprise	Quoted	Includes discovery, rollout plan and agreed migration scope
+Marketplace success fee	Not recommended at launch	0	per offer	Professional, Elite, Enterprise	No fee until payment/contract execution exists	Current marketplace records offers only, so do not claim transaction completion
+GST / applicable tax	Tax	As applicable	per invoice	All paid plans	Added to quoted prices	Not included in listed rates

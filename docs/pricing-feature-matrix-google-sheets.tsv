@@ -1,0 +1,55 @@
+ID	Category	Feature / service	Current product status	Reference standalone value INR/month	Free	Starter	Professional	Elite	Enterprise	Packaging note
+1	Identity & access	Email registration and login	Live	199	Included	Included	Included	Included	Included	Core access; never sell separately
+2	Identity & access	Personal player profile	Live	199	Included	Included	Included	Included	Included	Self-service profile and history
+3	Identity & access	Club membership and club switching	Live	299	1 club	1 club	1 club	1 club	Custom	Subscription is priced per club
+4	Identity & access	Role-based dashboards	Live	499	Admin, manager, coach and player	All current roles	All current roles	All current roles	Custom	Current roles include admin, manager, player, member, coach, physio, agent, nutritionist and pitch manager
+5	Identity & access	Member invitations and assignment acceptance	Live	299	5 invites/month	50 invites/month	250 invites/month	1000 invites/month	Custom	Resend, revoke and pending assignment flows included
+6	Identity & access	Member directory and role management	Live	599	Up to 25 members	Up to 75 members	Up to 250 members	Up to 750 members	Custom	Includes add, update and remove member workflows
+7	Identity & access	Per-club role enable/disable matrix	Live	499	Not included	Not included	Included	Included	Included	Advanced governance control
+8	Club setup	Club profile and basic settings	Live	299	Included	Included	Included	Included	Included	One independently managed club per subscription
+9	Club setup	Club theme and visual branding	Live	399	Default theme	Custom theme	Custom theme	Custom theme	Custom	Logo/media asset service is separate if manual design work is requested
+10	Squads	Squad creation and roster management	Live	699	1 squad	3 squads	10 squads	30 squads	Custom	Includes squad details, member add and member removal
+11	Squads	Squad management workspace	Live	399	Basic	Included	Included	Included	Included	Permission-aware manager workspace
+12	Scheduling	Club calendar and schedule events	Live	599	10 events/month	100 events/month	500 events/month	Unlimited fair use	Custom	Target groups and player-private visibility supported
+13	Scheduling	Automatic in-app event notifications	Live	299	Included	Included	Included	Included	Included	External SMS/email delivery is not currently included
+14	Matches	Opponent database	Live	299	Not included	Up to 25 opponents	Unlimited fair use	Unlimited fair use	Custom	Create, update and remove opponents
+15	Matches	Fixture and match management	Live	799	5 matches/month	25 matches/month	Unlimited fair use	Unlimited fair use	Custom	Create, list, detail and status/result updates
+16	Matches	Match event logging	Live	599	Not included	Included	Included	Included	Included	Goal/card/substitution style event capture through match events
+17	Matches	Home and away lineup workspace	Live	699	Not included	Included	Included	Included	Included	Save and retrieve both sides of a lineup
+18	Matches	Match squad assignment	Live	299	Not included	Included	Included	Included	Included	Connect fixtures to a managed squad
+19	Performance	Club overview dashboard	Live	499	Basic overview	Included	Included	Included	Included	Role-aware operational overview
+20	Performance	Charts and recent activity dashboard	Live	499	30-day basic view	90-day view	Full view	Full view	Custom	Current dashboard overview, charts and recent APIs
+21	Performance	Player directory and staff-managed player records	Live	599	Read-only basic	Included	Included	Included	Included	Staff updates gated by role permissions
+22	Performance	Self-reported wellness and readiness	Live	499	Latest status	30-day history	90-day history	Full history	Custom	Readiness, energy, soreness, sleep, availability and notes
+23	Performance	Training-load recording and history	Live	799	Not included	30-day history	Full history	Full history	Custom	Session type, duration, RPE and staff notes
+24	Performance	Training center workload trends	Live	699	Basic summary	30-day trend	90-day trend	Full trend	Custom	Derived from club, match and health data
+25	Medical	Injury register and case management	Live	999	Not included	Read-only active injuries	Create and manage	Create and manage	Custom	Includes severity, dates, status and notes; not a diagnostic medical device
+26	Statistics	Match statistics recompute engine	Live	799	Not included	10 recomputes/month	100 recomputes/month	500 recomputes/month	Custom	Cache/replacement flow based on events and lineups
+27	Statistics	Match and player performance summaries	Live	699	Not included	Included	Included	Included	Included	Match-level and player-level summaries
+28	Statistics	Player leaderboard	Live	499	Top 5 basic	Full	Full	Full	Custom	General leaderboard endpoint
+29	Statistics	Top scorers, assists and minutes leaderboards	Live	499	Not included	Included	Included	Included	Included	Competition performance tables
+30	Analytics	Dashboard analytics entries and reporting workspace	Live	999	Not included	Read-only	Create and view	Create and view	Custom	Current analytics records; bespoke reports are a paid service
+31	Seasons	Season setup and team management	Live	799	Not included	Not included	Included	Included	Included	Create/list seasons and manage season teams
+32	Seasons	Link matches to seasons	Live	399	Not included	Not included	Included	Included	Included	Connect existing fixtures to competition records
+33	Seasons	Standings table and recomputation	Live	799	Not included	Not included	Included	Included	Included	Computed season standings
+34	Operations	Club task management	Live	599	Up to 10 open tasks	Up to 100 open tasks	Unlimited fair use	Unlimited fair use	Custom	Create, assign and update operational tasks
+35	Operations	Operational activity feed	Live	399	7-day view	30-day view	90-day view	Full history	Custom	Aggregates relevant club operations
+36	Communication	Internal club messages	Live	599	100 messages/month	1000 messages/month	Unlimited fair use	Unlimited fair use	Custom	In-app messages only; external delivery is separate when available
+37	Communication	In-app notification inbox and read status	Live	299	Included	Included	Included	Included	Included	User-scoped notifications with optional club filtering
+38	Social	Social feed browsing	Live	399	Read-only	Read-only	Included	Included	Included	Club/user feed experience
+39	Social	Create posts, likes and comments	Live	699	Not included	Not included	Included	Included	Included	Includes comment deletion by authorized users
+40	Social	Image/video media uploads	Live	799	Not included	Not included	10 GB shared media allowance	100 GB shared media allowance	Custom	Uses signed Cloudinary uploads; counts toward storage allowance
+41	Marketplace	Browse player marketplace listings	Live	499	Read-only browse	Read-only browse	Included	Included	Included	Marketplace can be disabled per club by platform governance
+42	Marketplace	Create or update player listing	Live	699	Not included	Not included	Included	Included	Included	One active self-managed listing per player workflow
+43	Marketplace	Recruiter offer workflow	Live	999	Not included	Not included	Included	Included	Included	Create, view, accept or reject offers; payment/contract execution is not included
+44	AI	AI performance insights	Live with external API dependency	999	Not included	Add-on	Included within AI allowance	Included within AI allowance	Custom	OpenAI usage consumes plan AI requests
+45	AI	AI schedule suggestions	Live with external API dependency	699	Not included	Add-on	Included within AI allowance	Included within AI allowance	Custom	Suggestion output; staff remains responsible for final scheduling
+46	AI	AI skill analysis	Live with external API dependency	699	Not included	Add-on	Included within AI allowance	Included within AI allowance	Custom	Uses available club and performance context
+47	AI	AI recommendations	Live with external API dependency	699	Not included	Add-on	Included within AI allowance	Included within AI allowance	Custom	Operational/performance recommendations
+48	AI	Context-aware assistant	Live with rule-based fallback	1499	Not included	Add-on	250 requests/month shared AI allowance	1500 requests/month shared AI allowance	Custom	All AI features share the plan allowance
+49	Administration	Feature controls for AI, marketplace and social	Live	499	Not included	Not included	Included	Included	Included	Platform-operated governance toggle, not an end-user module
+50	Security	JWT authentication and club-scoped authorization	Live	599	Included	Included	Included	Included	Included	Baseline security capability; no separate charge
+51	Security	Permission-based access controls	Live	799	Basic roles	Included	Included	Included	Custom	Permissions protect member, squad, match, medical, operations, stats and season workflows
+52	Data	PostgreSQL-backed managed data storage	Live	499	1 GB	5 GB	50 GB	250 GB	Custom	Media storage and database usage share the commercial allowance for simplicity
+53	Service	Standard product updates	Ongoing	499	Included	Included	Included	Included	Included	Excludes custom feature development
+54	Service	Data export on cancellation	Operational policy	299	On request	On request	Included	Included	Custom	Implementation should be completed before promising automated self-service export

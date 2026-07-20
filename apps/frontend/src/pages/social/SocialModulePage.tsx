@@ -35,6 +35,7 @@ import {
 } from "../../api/social.api";
 import { useMe } from "../../hooks/useMe";
 import { useSocialFeed } from "../../hooks/useSocial";
+import { usePrototypePricing } from "../../features/prototype-pricing/PrototypePricingProvider";
 import "./social.css";
 
 type FeedFilter = "ALL" | "VIDEO" | "SCOUT_NOTES";
@@ -84,6 +85,7 @@ function canPublishFromMe(data: any) {
 
 export default function SocialModulePage() {
   const qc = useQueryClient();
+  const pricing = usePrototypePricing();
   const meQuery = useMe();
   const feedQuery = useSocialFeed(24);
 
@@ -274,7 +276,7 @@ export default function SocialModulePage() {
   function onPublishPost(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!canPublish) return;
-    publishMutation.mutate();
+    pricing.runWithPricingLayer("social_publishing", () => publishMutation.mutate());
   }
 
   function submitComment(postId: string) {

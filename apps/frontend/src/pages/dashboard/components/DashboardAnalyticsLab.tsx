@@ -10,6 +10,7 @@ import {
   YAxis,
 } from "recharts";
 import { dashboardApi } from "../../../api/dashboard.api";
+import { PricingFeatureGate } from "../../../features/prototype-pricing/PricingFeatureGate";
 import { useDashboardAnalytics } from "../../../hooks/useDashboard";
 import {
   DotTag,
@@ -212,32 +213,33 @@ export default function DashboardAnalyticsLab({
   };
 
   return (
-    <Section
-      title="Analytics Input Lab"
-      subtitle={
-        canWrite
-          ? "Capture match, player, and club inputs from the team. Stored entries are converted into KPI indices and trend lines for every dashboard role."
-          : "Trend and recent inputs from the club analytics stream. Only admins can save new analytics records."
-      }
-      right={
-        <div className="flex flex-wrap items-center gap-2">
-          {(["7d", "30d", "90d"] as Range[]).map((option) => (
-            <button
-              key={option}
-              type="button"
-              onClick={() => setRange(option)}
-              className={cx(
-                "rounded-full border px-3 py-1 text-xs font-semibold transition",
-                range === option ? "bg-[rgba(var(--primary),.24)]" : "bg-white/70 hover:bg-white/90"
-              )}
-              style={{ borderColor: adminCardBorder }}
-            >
-              {option}
-            </button>
-          ))}
-        </div>
-      }
-    >
+    <PricingFeatureGate feature="advanced_analytics">
+      <Section
+        title="Analytics Input Lab"
+        subtitle={
+          canWrite
+            ? "Capture match, player, and club inputs from the team. Stored entries are converted into KPI indices and trend lines for every dashboard role."
+            : "Trend and recent inputs from the club analytics stream. Only admins can save new analytics records."
+        }
+        right={
+          <div className="flex flex-wrap items-center gap-2">
+            {(["7d", "30d", "90d"] as Range[]).map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => setRange(option)}
+                className={cx(
+                  "rounded-full border px-3 py-1 text-xs font-semibold transition",
+                  range === option ? "bg-[rgba(var(--primary),.24)]" : "bg-white/70 hover:bg-white/90"
+                )}
+                style={{ borderColor: adminCardBorder }}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+        }
+      >
       <div className="grid gap-4 xl:grid-cols-12">
         {canWrite ? (
           <div className="space-y-4 xl:col-span-5">
@@ -476,7 +478,8 @@ export default function DashboardAnalyticsLab({
           </div>
         </div>
       </div>
-    </Section>
+      </Section>
+    </PricingFeatureGate>
   );
 }
 

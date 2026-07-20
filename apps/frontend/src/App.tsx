@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import AcceptInvitation from "./pages/AcceptInvitation";
+import PricingPage from "./pages/PricingPage";
 
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminShell from "./layouts/AdminShell";
@@ -41,6 +42,8 @@ import SocialModulePage from "./pages/social/SocialModulePage";
 import AIModulePage from "./pages/ai/AIModulePage";
 
 import AppShell from "./layouts/AppShell";
+import { PricingFeatureGate } from "./features/prototype-pricing/PricingFeatureGate";
+import { PrototypePricingProvider } from "./features/prototype-pricing/PrototypePricingProvider";
 import { getAccessToken } from "./utils/authStorage";
 import { useMe } from "./hooks/useMe";
 import {
@@ -173,10 +176,12 @@ function DashboardPermissionRoute({
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
+      <PrototypePricingProvider>
+        <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/pricing" element={<PricingPage />} />
         <Route path="/invitations/accept" element={<AcceptInvitation />} />
         <Route
           path="/marketplace"
@@ -190,7 +195,9 @@ export default function App() {
           path="/ai"
           element={
             <ProtectedRoute>
-              <AIModulePage />
+              <PricingFeatureGate feature="ai_assistant">
+                <AIModulePage />
+              </PricingFeatureGate>
             </ProtectedRoute>
           }
         />
@@ -224,7 +231,14 @@ export default function App() {
           <Route path="squads" element={<AdminSquads />} />
           <Route path="matches" element={<AdminMatches />} />
           <Route path="operations" element={<AdminOperations />} />
-          <Route path="analytics" element={<AdminAnalytics />} />
+          <Route
+            path="analytics"
+            element={
+              <PricingFeatureGate feature="advanced_analytics">
+                <AdminAnalytics />
+              </PricingFeatureGate>
+            }
+          />
           <Route path="settings" element={<AdminSettings />} />
           <Route path="*" element={<Navigate to="/admin" replace />} />
         </Route>
@@ -356,7 +370,9 @@ export default function App() {
             path="medical"
             element={
               <DashboardPermissionRoute permission="injuries.read">
-                <MedicalPage />
+                <PricingFeatureGate feature="medical_management">
+                  <MedicalPage />
+                </PricingFeatureGate>
               </DashboardPermissionRoute>
             }
           />
@@ -403,8 +419,9 @@ export default function App() {
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>
 
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </PrototypePricingProvider>
     </BrowserRouter>
   );
 }

@@ -14,6 +14,7 @@ import {
   useRecruiterMarketplaceOffers,
 } from "../../hooks/useMarketplace";
 import { useMe } from "../../hooks/useMe";
+import { usePrototypePricing } from "../../features/prototype-pricing/PrototypePricingProvider";
 import { PageWrap, formatDateTime } from "../admin/admin-ui";
 import "./marketplace.css";
 
@@ -83,6 +84,7 @@ function pillTone(status: string) {
 export default function MarketplaceModulePage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const pricing = usePrototypePricing();
   const meQuery = useMe();
   const meData = (meQuery.data || {}) as { memberships?: Membership[] };
   const memberships = Array.isArray(meData.memberships) ? meData.memberships : [];
@@ -348,10 +350,12 @@ export default function MarketplaceModulePage() {
                         <button
                           type="button"
                           className="mpx-btn mpx-btn-light"
-                          onClick={() => {
-                            setOfferTargetId(row.id);
-                            setOfferNote(`Offer from ${activeClubName} for your listing "${row.headline}".`);
-                          }}
+                          onClick={() =>
+                            pricing.runWithPricingLayer("marketplace_recruiting", () => {
+                              setOfferTargetId(row.id);
+                              setOfferNote(`Offer from ${activeClubName} for your listing "${row.headline}".`);
+                            })
+                          }
                         >
                           Prepare Offer
                         </button>
@@ -467,10 +471,12 @@ export default function MarketplaceModulePage() {
                         <button
                           type="button"
                           className="mpx-btn mpx-btn-light"
-                          onClick={() => {
-                            setOfferTargetId(row.id);
-                            setOfferNote(`Offer from ${activeClubName} for your listing "${row.headline}".`);
-                          }}
+                          onClick={() =>
+                            pricing.runWithPricingLayer("marketplace_recruiting", () => {
+                              setOfferTargetId(row.id);
+                              setOfferNote(`Offer from ${activeClubName} for your listing "${row.headline}".`);
+                            })
+                          }
                         >
                           Send Offer
                         </button>
@@ -484,12 +490,14 @@ export default function MarketplaceModulePage() {
                               type="button"
                               className="mpx-btn mpx-btn-dark"
                               onClick={() =>
-                                sendOfferMutation.mutate({
-                                  listingId: row.id,
-                                  clubId: selectedClubId,
-                                  message: offerNote.trim(),
-                                  offeredSalary: offerSalary ? Number(offerSalary) : undefined,
-                                })
+                                pricing.runWithPricingLayer("marketplace_recruiting", () =>
+                                  sendOfferMutation.mutate({
+                                    listingId: row.id,
+                                    clubId: selectedClubId,
+                                    message: offerNote.trim(),
+                                    offeredSalary: offerSalary ? Number(offerSalary) : undefined,
+                                  })
+                                )
                               }
                               disabled={sendOfferMutation.isPending || !selectedClubId || !offerNote.trim()}
                             >

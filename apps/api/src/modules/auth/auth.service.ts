@@ -82,7 +82,15 @@ export class AuthService {
           memberships: {
             orderBy: { createdAt: 'desc' },
             include: {
-              club: { select: { id: true, name: true, slug: true } },
+              club: {
+                select: {
+                  id: true,
+                  name: true,
+                  slug: true,
+                  billingPlan: true,
+                  subscriptionStatus: true,
+                },
+              },
             },
           },
           playerProfile: true,
@@ -101,7 +109,15 @@ export class AuthService {
           memberships: {
             orderBy: { createdAt: 'desc' },
             include: {
-              club: { select: { id: true, name: true, slug: true } },
+              club: {
+                select: {
+                  id: true,
+                  name: true,
+                  slug: true,
+                  billingPlan: true,
+                  subscriptionStatus: true,
+                },
+              },
             },
           },
           playerProfile: true,
@@ -120,7 +136,15 @@ export class AuthService {
         memberships: {
           orderBy: { createdAt: 'desc' },
           include: {
-            club: { select: { id: true, name: true, slug: true } },
+            club: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                billingPlan: true,
+                subscriptionStatus: true,
+              },
+            },
           },
         },
         playerProfile: true,
@@ -175,7 +199,15 @@ export class AuthService {
         memberships: {
           orderBy: { createdAt: 'desc' },
           include: {
-            club: { select: { id: true, name: true, slug: true } },
+            club: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                billingPlan: true,
+                subscriptionStatus: true,
+              },
+            },
           },
         },
         playerProfile: true,
