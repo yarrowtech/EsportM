@@ -511,8 +511,11 @@ import { useMutation } from "@tanstack/react-query";
 import {
   Activity,
   BadgeCheck,
+  Bell,
   Building2,
+  CalendarCheck,
   CalendarDays,
+  CreditCard,
   Dumbbell,
   HeartPulse,
   Home,
@@ -521,6 +524,8 @@ import {
   MessageSquare,
   Settings2,
   ShoppingBag,
+  Star,
+  UserRound,
   Users2,
 } from "lucide-react";
 
@@ -547,7 +552,7 @@ import {
   type Notification,
   type NotificationListResponse,
 } from "../api/notifications.api";
-import { DotTag, formatDateTime, adminCardBorder } from "../pages/admin/admin-ui";
+import { DotTag, formatDateTime } from "../pages/admin/admin-ui";
 
  type NavKey =
    | "dashboard"
@@ -662,6 +667,11 @@ const PROFILE_SIDEBAR_ITEM: SidebarItem = {
   to: "/dashboard/profile",
 };
 
+const BILLING_SIDEBAR_ITEM: SidebarItem = {
+  label: "Billing",
+  to: "/dashboard/billing",
+};
+
 const SQUAD_MANAGEMENT_ITEM: SidebarItem = {
   label: "Squad Management",
   to: "/dashboard/squad-management",
@@ -748,6 +758,21 @@ function ensureProfileItem(items: SidebarItem[]) {
   ];
 }
 
+function ensureBillingItem(items: SidebarItem[]) {
+  if (items.some((item) => item.to === BILLING_SIDEBAR_ITEM.to)) {
+    return items;
+  }
+  const settingsIndex = items.findIndex((item) => item.to === "/dashboard/settings");
+  if (settingsIndex === -1) {
+    return [...items, BILLING_SIDEBAR_ITEM];
+  }
+  return [
+    ...items.slice(0, settingsIndex),
+    BILLING_SIDEBAR_ITEM,
+    ...items.slice(settingsIndex),
+  ];
+}
+
 function cx(...s: Array<string | false | undefined>) {
   return s.filter(Boolean).join(" ");
 }
@@ -770,28 +795,42 @@ function resolveNavKeyFromPath(pathname: string, dashboardHome: string): NavKey 
 }
 
 function iconForSidebarPath(path: string) {
-  if (path === "/marketplace") return <ShoppingBag size={14} />;
-  if (path.includes("/squad-management")) return <Users2 size={14} />;
-  if (path.includes("/training")) return <Dumbbell size={14} />;
+  if (path === "/marketplace") return <ShoppingBag size={16} strokeWidth={1.8} />;
+  if (path.includes("/squad-management")) return <Users2 size={16} strokeWidth={1.8} />;
+  if (path.includes("/training")) return <Dumbbell size={16} strokeWidth={1.8} />;
   if (path.includes("/schedule") || path.includes("/matches"))
-    return <CalendarDays size={14} />;
-  if (path.includes("/stats")) return <Activity size={14} />;
-  if (path.includes("/medical")) return <HeartPulse size={14} />;
-  if (path.includes("/messages") || path.includes("/social")) return <MessageSquare size={14} />;
-  if (path.includes("/members")) return <Users2 size={14} />;
-  if (path.includes("/profile")) return <BadgeCheck size={14} />;
-  if (path.includes("/settings")) return <Settings2 size={14} />;
-  return <LayoutDashboard size={14} />;
+    return <CalendarDays size={16} strokeWidth={1.8} />;
+  if (path.includes("/stats")) return <Activity size={16} strokeWidth={1.8} />;
+  if (path.includes("/medical")) return <HeartPulse size={16} strokeWidth={1.8} />;
+  if (path.includes("/messages") || path.includes("/social")) return <MessageSquare size={16} strokeWidth={1.8} />;
+  if (path.includes("/members")) return <Users2 size={16} strokeWidth={1.8} />;
+  if (path.includes("/profile")) return <UserRound size={16} strokeWidth={1.8} />;
+  if (path.includes("/billing")) return <CreditCard size={16} strokeWidth={1.8} />;
+  if (path.includes("/settings")) return <Settings2 size={16} strokeWidth={1.8} />;
+  return <LayoutDashboard size={16} strokeWidth={1.8} />;
+}
+
+function topNavIcon(key: NavKey) {
+  if (key === "dashboard") return <LayoutDashboard size={17} />;
+  if (key === "training") return <Dumbbell size={17} />;
+  if (key === "calendar") return <CalendarDays size={17} />;
+  if (key === "reviews") return <Star size={17} />;
+  if (key === "profile") return <UserRound size={17} />;
+  if (key === "squad") return <Users2 size={17} />;
+  if (key === "wearables") return <HeartPulse size={17} />;
+  if (key === "settings") return <Settings2 size={17} />;
+  return <Activity size={17} />;
 }
 
 /**
  * OK Glass tokens
  * Use these instead of dark borders.
  */
-const GLASS_BORDER = "rgba(255,255,255,0.38)";
-const GLASS_BORDER_STRONG = "rgba(255,255,255,0.52)";
-const GLASS_SHADOW = "0 28px 80px rgba(20,24,32,0.10)";
-const GLASS_BG = "rgba(255,255,255,0.52)";
+const GLASS_SHADOW =
+  "26px 26px 62px rgba(120,132,158,.26), -24px -24px 58px rgba(255,255,255,.98)";
+const GLASS_BG = "rgba(239,244,250,0.92)";
+const NEU_INSET =
+  "inset 8px 8px 18px rgba(120,132,158,.16), inset -8px -8px 18px rgba(255,255,255,.92)";
 
 type ScheduleNotificationProps = {
   events?: ScheduleEvent[];
@@ -814,24 +853,35 @@ function NotificationOverview({
 
   return (
     <div
-      className="mb-4 rounded-2xl border px-4 py-3"
+      className="neu-surface h-full rounded-[24px] px-4 py-3"
       style={{
-        borderColor: adminCardBorder,
-        background: "linear-gradient(145deg, rgba(255,255,255,.90), rgba(255,255,255,.65))",
+        background: "linear-gradient(145deg, rgba(255,255,255,.90), rgba(235,241,249,.78))",
+        boxShadow: GLASS_SHADOW,
       }}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <div className="text-[10px] uppercase tracking-[0.3em] text-[rgb(var(--muted))]">
-            Notifications
+        <div className="flex min-w-0 items-center gap-4">
+          <div
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#eef2ff] text-[#3157ff]"
+            style={{ boxShadow: NEU_INSET }}
+          >
+            <Bell size={18} />
           </div>
-          <p className="text-sm font-semibold text-[rgb(var(--text))]">
-            {isLoading
-              ? "Refreshing alerts..."
-              : data?.unreadCount
-              ? `You have ${data.unreadCount} unread alert${data.unreadCount > 1 ? "s" : ""}`
-              : "All caught up"}
-          </p>
+          <div className="min-w-0">
+            <div className="text-[10px] font-extrabold uppercase tracking-[0.28em] text-[rgb(var(--muted))]">
+              Notifications
+            </div>
+            <p className="text-sm font-extrabold text-[rgb(var(--text))]">
+              {isLoading
+                ? "Refreshing alerts..."
+                : data?.unreadCount
+                ? `You have ${data.unreadCount} unread alert${data.unreadCount > 1 ? "s" : ""}`
+                : "All caught up"}
+            </p>
+            {!isLoading && notifications.length === 0 ? (
+              <p className="mt-1 text-sm text-[rgb(var(--muted))]">No notifications yet.</p>
+            ) : null}
+          </div>
         </div>
         <div className="text-[11px] text-[rgb(var(--muted))]">{notifications.length} recent</div>
       </div>
@@ -846,12 +896,14 @@ function NotificationOverview({
             <article
               key={notification.id}
               className={cx(
-                "rounded-2xl border px-3 py-3 transition",
+                  "rounded-2xl px-3 py-3 transition",
                 notification.isRead
                   ? "bg-white/60 text-[rgb(var(--text))]"
                   : "border-[rgba(var(--primary),.2)] bg-[rgba(var(--primary),.08)]"
               )}
-              style={{ borderColor: notification.isRead ? adminCardBorder : "rgba(var(--primary),.2)" }}
+              style={{
+                boxShadow: notification.isRead ? NEU_INSET : "inset 5px 5px 12px rgba(49,87,255,.08), inset -5px -5px 12px rgba(255,255,255,.84)",
+              }}
             >
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
@@ -869,11 +921,11 @@ function NotificationOverview({
                   type="button"
                   onClick={() => onMarkAsRead(notification.id)}
                   disabled={notification.isRead}
-                  className="rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] transition"
+                  className="rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] transition"
                   style={{
-                    borderColor: adminCardBorder,
                     background: notification.isRead ? "rgba(255,255,255,.75)" : "rgb(var(--primary))",
                     color: notification.isRead ? "rgb(var(--text))" : "rgb(var(--primary-2))",
+                    boxShadow: notification.isRead ? NEU_INSET : "5px 5px 12px rgba(49,87,255,.18), -5px -5px 12px rgba(255,255,255,.72)",
                   }}
                 >
                   {notification.isRead ? "Read" : "Mark read"}
@@ -884,9 +936,6 @@ function NotificationOverview({
         </div>
       ) : null}
 
-      {!isLoading && notifications.length === 0 && (
-        <p className="mt-3 text-sm text-[rgb(var(--muted))]">No notifications yet.</p>
-      )}
     </div>
   );
 }
@@ -909,41 +958,50 @@ function ScheduleNotification({
 
   return (
     <div
-      className="mb-4 rounded-2xl border px-4 py-3"
+      className="neu-surface h-full rounded-[24px] px-4 py-3"
       style={{
-        borderColor: GLASS_BORDER,
-        background: "rgba(255,255,255,.72)",
+        background: "linear-gradient(145deg, rgba(255,255,255,.90), rgba(235,241,249,.78))",
+        boxShadow: GLASS_SHADOW,
       }}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <p className="text-[10px] uppercase tracking-[0.3em] text-[rgb(var(--muted))]">
-            Scheduling
-          </p>
-          <p className="text-sm font-semibold text-[rgb(var(--text))]">
-            {isLoading
-              ? "Refreshing schedule..."
-              : nextEvent
-              ? nextEvent.title
-              : "No upcoming events"}
-          </p>
-          <p className="text-[11px] text-[rgb(var(--muted))]">
-            {isLoading
-              ? "Checking for new schedule items"
-              : nextEvent
-              ? formatDateTime(nextEvent.eventAt)
-              : "Plan a session to notify your crew"}
-          </p>
+        <div className="flex min-w-0 items-center gap-4">
+          <div
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#f3e8ff] text-[#8b5cf6]"
+            style={{ boxShadow: NEU_INSET }}
+          >
+            <CalendarCheck size={18} />
+          </div>
+          <div className="min-w-0">
+            <p className="text-[10px] font-extrabold uppercase tracking-[0.28em] text-[rgb(var(--muted))]">
+              Scheduling
+            </p>
+            <p className="text-sm font-extrabold text-[rgb(var(--text))]">
+              {isLoading
+                ? "Refreshing schedule..."
+                : nextEvent
+                ? nextEvent.title
+                : "No upcoming events"}
+            </p>
+            <p className="text-[11px] text-[rgb(var(--muted))]">
+              {isLoading
+                ? "Checking for new schedule items"
+                : nextEvent
+                ? formatDateTime(nextEvent.eventAt)
+                : "Plan a session to notify your crew"}
+            </p>
+          </div>
         </div>
         <button
           type="button"
           onClick={onViewCalendar}
-          className="rounded-full border px-3 py-1 text-xs font-semibold"
+          className="inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-xs font-bold"
           style={{
-            borderColor: GLASS_BORDER_STRONG,
             background: "rgba(255,255,255,.85)",
+            boxShadow: "6px 6px 14px rgba(120,132,158,.14), -6px -6px 14px rgba(255,255,255,.82)",
           }}
         >
+          <CalendarDays size={14} />
           View calendar
         </button>
       </div>
@@ -953,10 +1011,10 @@ function ScheduleNotification({
           {upcoming.map((event) => (
             <article
               key={event.id}
-              className="flex items-center justify-between gap-3 rounded-2xl border px-3 py-2"
+              className="flex items-center justify-between gap-3 rounded-2xl px-3 py-2"
               style={{
-                borderColor: "rgba(var(--primary-2), .24)",
                 background: "rgba(255,255,255,.65)",
+                boxShadow: NEU_INSET,
               }}
             >
               <div>
@@ -985,109 +1043,27 @@ function ScheduleNotification({
 function GlassBackdrop() {
   return (
     <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-      {/* Base gradient wash */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(900px 520px at 15% 15%, rgba(255,255,255,.70), transparent 55%), radial-gradient(900px 520px at 85% 20%, rgba(var(--primary),.22), transparent 60%), radial-gradient(900px 520px at 92% 85%, rgba(var(--primary),.14), transparent 60%), linear-gradient(180deg, rgba(255,255,255,.25), rgba(255,255,255,0))",
+            "linear-gradient(135deg, #eef3f8, #f8fbff)",
         }}
       />
-
-      {/* soft blobs */}
-      <svg
-        className="absolute -left-44 -top-48 h-[640px] w-[640px] opacity-60 blur-[2px]"
-        viewBox="0 0 600 600"
-        aria-hidden="true"
-      >
-        <defs>
-          <radialGradient id="g1" cx="30%" cy="30%" r="70%">
-            <stop offset="0%" stopColor="rgba(255,255,255,0.95)" />
-            <stop offset="45%" stopColor="rgba(255,255,255,0.25)" />
-            <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-          </radialGradient>
-        </defs>
-        <circle cx="300" cy="300" r="260" fill="url(#g1)" />
-      </svg>
-
-      <svg
-        className="absolute -right-52 top-10 h-[760px] w-[760px] opacity-70 blur-[3px]"
-        viewBox="0 0 700 700"
-        aria-hidden="true"
-      >
-        <defs>
-          <radialGradient id="g2" cx="55%" cy="45%" r="70%">
-            <stop offset="0%" stopColor="rgba(var(--primary),0.82)" />
-            <stop offset="55%" stopColor="rgba(var(--primary),0.24)" />
-            <stop offset="100%" stopColor="rgba(var(--primary),0)" />
-          </radialGradient>
-        </defs>
-        <circle cx="350" cy="350" r="320" fill="url(#g2)" />
-      </svg>
-
-      <svg
-        className="absolute left-[8%] bottom-[-320px] h-[820px] w-[820px] opacity-60 blur-[3px]"
-        viewBox="0 0 760 760"
-        aria-hidden="true"
-      >
-        <defs>
-          <radialGradient id="g3" cx="45%" cy="55%" r="70%">
-            <stop offset="0%" stopColor="rgba(var(--primary-2),0.44)" />
-            <stop offset="55%" stopColor="rgba(var(--primary-2),0.14)" />
-            <stop offset="100%" stopColor="rgba(var(--primary-2),0)" />
-          </radialGradient>
-        </defs>
-        <circle cx="380" cy="380" r="340" fill="url(#g3)" />
-      </svg>
-
-      {/* subtle lines */}
-      <svg
-        className="absolute left-0 top-0 h-full w-full opacity-[0.18]"
-        viewBox="0 0 1200 800"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-      >
-        <defs>
-          <linearGradient id="ln" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="rgba(0,0,0,0)" />
-            <stop offset="50%" stopColor="rgba(0,0,0,0.10)" />
-            <stop offset="100%" stopColor="rgba(0,0,0,0)" />
-          </linearGradient>
-        </defs>
-        <path
-          d="M-50 170 C 240 40, 420 480, 760 260 S 1150 210, 1300 420"
-          fill="none"
-          stroke="url(#ln)"
-          strokeWidth="2"
-        />
-        <path
-          d="M-60 520 C 240 320, 520 820, 820 520 S 1180 470, 1300 650"
-          fill="none"
-          stroke="url(#ln)"
-          strokeWidth="2"
-        />
-      </svg>
-
-      {/* grain */}
-      <svg className="absolute inset-0 h-full w-full opacity-[0.075]" aria-hidden="true">
-        <filter id="noise">
-          <feTurbulence
-            type="fractalNoise"
-            baseFrequency="0.9"
-            numOctaves="3"
-            stitchTiles="stitch"
-          />
-          <feColorMatrix
-            type="matrix"
-            values="
-              1 0 0 0 0
-              0 1 0 0 0
-              0 0 1 0 0
-              0 0 0 0.55 0"
-          />
-        </filter>
-        <rect width="100%" height="100%" filter="url(#noise)" />
-      </svg>
+      <div
+        className="absolute inset-0 opacity-[0.32]"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(15,23,42,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(15,23,42,.07) 1px, transparent 1px)",
+          backgroundSize: "32px 32px",
+        }}
+      />
+      <div
+        className="absolute inset-x-0 top-0 h-44"
+        style={{
+          background: "linear-gradient(180deg, rgba(255,255,255,.72), rgba(255,255,255,0))",
+        }}
+      />
     </div>
   );
 }
@@ -1214,7 +1190,9 @@ export default function AppShell() {
   );
 
   const sectionItems = useMemo(() => {
-    const source = ensureProfileItem(sectionItemsByRole[dashboardRole] || defaultSectionItems);
+    const source = ensureBillingItem(
+      ensureProfileItem(sectionItemsByRole[dashboardRole] || defaultSectionItems)
+    );
     if (source.some((item) => item.to === MARKETPLACE_SIDEBAR_ITEM.to)) {
       return source;
     }
@@ -1332,13 +1310,11 @@ export default function AppShell() {
           {/* CANVAS (no black border) */}
           <div
             className={cx(
-              "relative overflow-hidden rounded-[28px]",
-              "backdrop-blur-2xl",
-              "shadow-[0_28px_80px_rgba(20,24,32,0.10)]"
+              "relative overflow-hidden rounded-[30px]",
+              "shadow-[18px_18px_46px_rgba(120,132,158,0.18),-18px_-18px_46px_rgba(255,255,255,0.92)]"
             )}
             style={{
               background: GLASS_BG,
-              border: `1px solid ${GLASS_BORDER}`,
               boxShadow: GLASS_SHADOW,
             }}
           >
@@ -1347,15 +1323,15 @@ export default function AppShell() {
               className="pointer-events-none absolute inset-0"
               style={{
                 background:
-                  "linear-gradient(135deg, rgba(255,255,255,0.70), rgba(255,255,255,0.18) 55%, rgba(255,255,255,0.30))",
-                opacity: 0.55,
+                  "linear-gradient(145deg, rgba(255,255,255,0.56), rgba(236,242,249,0.42))",
+                opacity: 0.72,
               }}
             />
             <div
               className="pointer-events-none absolute inset-0"
               style={{
                 boxShadow:
-                  "inset 0 1px 0 rgba(255,255,255,0.55), inset 0 0 0 1px rgba(255,255,255,0.20)",
+                  "inset 1px 1px 0 rgba(255,255,255,.92), inset -1px -1px 0 rgba(120,132,158,.08)",
               }}
             />
 
@@ -1366,8 +1342,8 @@ export default function AppShell() {
                 className="sticky top-0 z-20 backdrop-blur-2xl"
                 style={{
                   height: HEADER_H,
-                  background: "rgba(255,255,255,0.40)",
-                  borderBottom: `1px solid ${GLASS_BORDER}`,
+                  background: "rgba(239,244,250,0.72)",
+                  boxShadow: "0 10px 22px rgba(120,132,158,.10)",
                 }}
               >
                 <div className="h-full px-4 sm:px-6">
@@ -1378,8 +1354,8 @@ export default function AppShell() {
                         onClick={() => setSidebarOpen(true)}
                         className="md:hidden rounded-full px-4 py-2 text-xs font-semibold shadow-sm transition hover:bg-white/70"
                         style={{
-                          background: "rgba(255,255,255,0.55)",
-                          border: `1px solid ${GLASS_BORDER}`,
+                          background: "linear-gradient(145deg, rgba(255,255,255,.92), rgba(232,238,248,.76))",
+                          boxShadow: "6px 6px 14px rgba(120,132,158,.14), -6px -6px 14px rgba(255,255,255,.86)",
                         }}
                       >
                         Menu
@@ -1387,21 +1363,24 @@ export default function AppShell() {
 
                       {/* brand pill */}
                       <div
-                        className="rounded-full px-4 py-2 text-sm font-semibold"
+                        className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-extrabold"
                         style={{
-                          background: "rgba(255,255,255,0.50)",
-                          border: `1px solid ${GLASS_BORDER}`,
+                          background: "linear-gradient(145deg, rgba(255,255,255,.92), rgba(232,238,248,.78))",
+                          boxShadow: "6px 6px 14px rgba(120,132,158,.14), -6px -6px 14px rgba(255,255,255,.86)",
                         }}
                       >
+                        <span className="grid h-6 w-6 place-items-center rounded-full bg-[#3157ff] text-white">
+                          <Activity size={14} />
+                        </span>
                         EsportM
                       </div>
 
                       {/* top pills */}
                       <nav
-                        className="hidden items-center gap-1 rounded-full p-1 sm:flex"
+                        className="hidden items-center gap-2 rounded-full p-1.5 sm:flex"
                         style={{
-                          background: "rgba(255,255,255,0.44)",
-                          border: `1px solid ${GLASS_BORDER}`,
+                          background: "linear-gradient(145deg, rgba(255,255,255,.82), rgba(232,238,248,.68))",
+                          boxShadow: "inset 6px 6px 14px rgba(120,132,158,.12), inset -6px -6px 14px rgba(255,255,255,.82)",
                         }}
                       >
                         {topNav.map((item) => {
@@ -1413,20 +1392,20 @@ export default function AppShell() {
                                 setActive(item.key);
                                 navigate(topNavTargets[item.key]);
                               }}
-                              className="rounded-full px-3 py-2 text-xs font-semibold transition"
+                              className="inline-flex items-center gap-2 rounded-xl px-3.5 py-2.5 text-sm font-bold transition-all duration-300 active:translate-y-[1px]"
                               style={{
                                 background: on
-                                  ? "rgb(var(--primary))"
+                                  ? "linear-gradient(145deg, #3157ff, #7c5cff)"
                                   : "transparent",
                                 color: on
-                                  ? "rgb(var(--primary-2))"
+                                  ? "rgb(255 255 255)"
                                   : "rgb(var(--text))",
-                                border: on
-                                  ? `1px solid ${GLASS_BORDER_STRONG}`
-                                  : "1px solid transparent",
-                                boxShadow: on ? "0 10px 24px rgba(var(--primary), .32)" : undefined,
+                                boxShadow: on
+                                  ? "0 14px 28px rgba(49,87,255,.28), inset 3px 3px 8px rgba(255,255,255,.18), inset -4px -4px 10px rgba(18,29,120,.24)"
+                                  : undefined,
                               }}
                             >
+                              {topNavIcon(item.key)}
                               {item.label}
                             </button>
                           );
@@ -1439,20 +1418,17 @@ export default function AppShell() {
                         className="hidden lg:block rounded-2xl px-3 py-2"
                         style={{
                           background:
-                            "linear-gradient(138deg, rgba(255,255,255,0.72), rgba(255,255,255,0.38))",
-                          border: `1px solid ${GLASS_BORDER}`,
-                          boxShadow: "0 12px 26px rgba(20,24,32,0.10)",
+                            "linear-gradient(145deg, rgba(255,255,255,.92), rgba(232,238,248,.76))",
+                          boxShadow: "8px 8px 18px rgba(120,132,158,.13), -8px -8px 18px rgba(255,255,255,.86)",
                         }}
                       >
                         <div className="flex items-center gap-2.5">
                           <div
                             className="grid h-8 w-8 place-items-center rounded-xl"
                             style={{
-                              background: activeClubDisplay.hasClub
-                                ? "linear-gradient(140deg, rgba(var(--primary),.95), rgba(var(--primary),.74))"
-                                : "linear-gradient(140deg, rgba(148,163,184,.9), rgba(100,116,139,.8))",
-                              border: `1px solid ${GLASS_BORDER_STRONG}`,
-                              color: "rgb(var(--primary-2))",
+                              background: "rgba(255,255,255,.86)",
+                              boxShadow: NEU_INSET,
+                              color: "rgb(var(--text))",
                             }}
                           >
                             {activeClubDisplay.hasClub ? <BadgeCheck size={16} /> : <Building2 size={16} />}
@@ -1485,9 +1461,9 @@ export default function AppShell() {
                           onChange={(event) => onSwitchRole(event.target.value)}
                           className="rounded-full px-3 py-2 text-xs font-semibold outline-none"
                           style={{
-                            background: "rgba(255,255,255,0.50)",
+                            background: "linear-gradient(145deg, rgba(255,255,255,.92), rgba(232,238,248,.76))",
                             color: "rgb(var(--text))",
-                            border: `1px solid ${GLASS_BORDER}`,
+                            boxShadow: "6px 6px 14px rgba(120,132,158,.14), -6px -6px 14px rgba(255,255,255,.86)",
                           }}
                           title="Switch authorized role context"
                         >
@@ -1504,9 +1480,9 @@ export default function AppShell() {
                           onClick={() => navigate("/platform")}
                           className="rounded-full px-4 py-2 text-xs font-semibold shadow-sm transition hover:bg-white/70"
                           style={{
-                            background: "rgba(255,255,255,0.50)",
+                            background: "linear-gradient(145deg, rgba(255,255,255,.92), rgba(232,238,248,.76))",
                             color: "rgb(var(--text))",
-                            border: `1px solid ${GLASS_BORDER}`,
+                            boxShadow: "6px 6px 14px rgba(120,132,158,.14), -6px -6px 14px rgba(255,255,255,.86)",
                           }}
                         >
                           Platform
@@ -1516,8 +1492,8 @@ export default function AppShell() {
                       <div
                         className="grid h-9 w-9 place-items-center rounded-full text-xs font-bold"
                         style={{
-                          background: "rgba(255,255,255,0.48)",
-                          border: `1px solid ${GLASS_BORDER}`,
+                          background: "linear-gradient(145deg, rgba(255,255,255,.92), rgba(232,238,248,.76))",
+                          boxShadow: "6px 6px 14px rgba(120,132,158,.14), -6px -6px 14px rgba(255,255,255,.86)",
                         }}
                         title={user.fullName}
                       >
@@ -1531,7 +1507,7 @@ export default function AppShell() {
               {/* BODY */}
               <div className="flex h-[calc(100%-84px)] gap-4 px-4 py-4 sm:gap-6 sm:px-6 sm:py-6">
                 {/* Desktop sticky sidebar (glass) */}
-                <div className="hidden md:block shrink-0" style={{ width: 220 }}>
+                <div className="hidden md:block shrink-0" style={{ width: 238 }}>
                   <div className="sticky top-[96px]">
                     <Sidebar
                       open={sidebarOpen}
@@ -1558,20 +1534,17 @@ export default function AppShell() {
                     className="mb-4 rounded-2xl px-4 py-3 lg:hidden"
                     style={{
                       background:
-                        "linear-gradient(138deg, rgba(255,255,255,0.72), rgba(255,255,255,0.42))",
-                      border: `1px solid ${GLASS_BORDER}`,
-                      boxShadow: "0 12px 26px rgba(20,24,32,0.10)",
+                        "linear-gradient(145deg, rgba(255,255,255,.90), rgba(232,238,248,.76))",
+                      boxShadow: GLASS_SHADOW,
                     }}
                   >
                     <div className="flex items-center gap-2.5">
                       <div
                         className="grid h-8 w-8 shrink-0 place-items-center rounded-xl"
                         style={{
-                          background: activeClubDisplay.hasClub
-                            ? "linear-gradient(140deg, rgba(var(--primary),.95), rgba(var(--primary),.74))"
-                            : "linear-gradient(140deg, rgba(148,163,184,.9), rgba(100,116,139,.8))",
-                          border: `1px solid ${GLASS_BORDER_STRONG}`,
-                          color: "rgb(var(--primary-2))",
+                          background: "rgba(255,255,255,.74)",
+                          color: "rgb(var(--text))",
+                          boxShadow: NEU_INSET,
                         }}
                       >
                         {activeClubDisplay.hasClub ? <BadgeCheck size={16} /> : <Building2 size={16} />}
@@ -1593,8 +1566,8 @@ export default function AppShell() {
                       onClick={() => navigate("/")}
                       className="flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold shadow-sm transition hover:bg-white/70"
                       style={{
-                        background: "rgba(255,255,255,0.50)",
-                        border: `1px solid ${GLASS_BORDER}`,
+                        background: "linear-gradient(145deg, rgba(255,255,255,.92), rgba(232,238,248,.76))",
+                        boxShadow: "6px 6px 14px rgba(120,132,158,.14), -6px -6px 14px rgba(255,255,255,.86)",
                       }}
                     >
                       <Home size={13} />
@@ -1618,15 +1591,15 @@ export default function AppShell() {
                   {/* Optional: small loading ribbon */}
                   {userLoading && (
                     <div
-                      className="mb-3 rounded-2xl border bg-white/50 px-4 py-3 text-sm backdrop-blur-md"
-                      style={{ borderColor: "rgba(var(--primary-2), .10)" }}
+                      className="mb-3 rounded-2xl bg-white/50 px-4 py-3 text-sm"
+                      style={{ boxShadow: NEU_INSET }}
                     >
                       Loading profile...
                     </div>
                   )}
 
                   {activeClubDisplay.hasClub && (
-                    <>
+                    <div className="mb-4 grid gap-4 xl:grid-cols-2">
                       <NotificationOverview
                         data={notificationsQuery.data}
                         isLoading={notificationsQuery.isLoading}
@@ -1637,7 +1610,7 @@ export default function AppShell() {
                         isLoading={scheduleQuery.isLoading}
                         onViewCalendar={openScheduleCalendar}
                       />
-                    </>
+                    </div>
                   )}
 
                   <Outlet context={outletContext} />

@@ -188,6 +188,7 @@ import { useNavigate } from "react-router-dom";
 import { gsap } from "gsap";
 import {
   BarChart2,
+  BadgeIndianRupee,
   ShoppingBag,
   Users,
   Info,
@@ -288,6 +289,7 @@ export default function Home() {
 
   // --- Navigation rules ---
   const handleModuleNavigation = (path: string) => {
+    if (path === "/pricing") return navigate("/pricing");
     if (!token) return navigate("/login");
     if (path === "/dashboard") return navigate(dashboardEntry);
     navigate(path);
@@ -594,6 +596,11 @@ export default function Home() {
                   label: "Marketplace",
                   onClick: () => handleModuleNavigation("/marketplace"),
                   children: <ShoppingBag size={22} />,
+                })}
+                {renderSidebarIcon({
+                  label: "Pricing",
+                  onClick: () => handleModuleNavigation("/pricing"),
+                  children: <BadgeIndianRupee size={22} />,
                 })}
                 {renderSidebarIcon({
                   label: "Social",

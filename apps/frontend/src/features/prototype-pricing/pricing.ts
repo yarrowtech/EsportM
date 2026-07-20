@@ -188,7 +188,7 @@ export const PRICING_PLAN_DETAILS: PricingPlanDetail[] = [
     key: "ENTERPRISE",
     name: "Enterprise",
     bestFor: "Federations, leagues and large multi-club operators",
-    monthly: "From INR 24,999",
+    monthly: "Starting INR 24,999",
     annual: "Custom",
     effectiveMonthly: "Custom",
     members: "Custom",

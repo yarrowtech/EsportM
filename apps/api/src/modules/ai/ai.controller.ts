@@ -2,11 +2,14 @@ import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nest
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { Permissions } from '../../common/decorators/permissions.decorator';
 import { PermissionsGuard } from '../../common/guards/permissions.guard';
+import { RequiresPaidFeature } from '../../common/pricing/requires-paid-feature.decorator';
+import { PaidFeatureGuard } from '../../common/pricing/paid-feature.guard';
 import { AskAiAssistantDto } from './dto';
 import { AiService } from './ai.service';
 
 @Controller('clubs/:clubId/ai')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PaidFeatureGuard)
+@RequiresPaidFeature('ai_assistant')
 export class AiController {
   constructor(private ai: AiService) {}
 

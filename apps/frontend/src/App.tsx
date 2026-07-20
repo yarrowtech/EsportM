@@ -34,6 +34,7 @@ import StatsPage from "./pages/dashboard/sections/StatsPage";
 import MedicalPage from "./pages/dashboard/sections/MedicalPage";
 import MessagesPage from "./pages/dashboard/sections/MessagesPage";
 import SettingsPage from "./pages/dashboard/sections/SettingsPage";
+import BillingPage from "./pages/dashboard/sections/BillingPage";
 import ProfilePage from "./pages/dashboard/sections/ProfilePage";
 import OnboardingPage from "./pages/dashboard/sections/OnboardingPage";
 import SchedulePage from "./pages/dashboard/sections/SchedulePage";
@@ -187,7 +188,9 @@ export default function App() {
           path="/marketplace"
           element={
             <ProtectedRoute>
-              <MarketplaceModulePage />
+              <PricingFeatureGate feature="marketplace_recruiting">
+                <MarketplaceModulePage />
+              </PricingFeatureGate>
             </ProtectedRoute>
           }
         />
@@ -388,7 +391,9 @@ export default function App() {
             path="social"
             element={
               <DashboardPermissionRoute permission="membership.self.read">
-                <SocialModulePage />
+                <PricingFeatureGate feature="social_publishing">
+                  <SocialModulePage />
+                </PricingFeatureGate>
               </DashboardPermissionRoute>
             }
           />
@@ -405,6 +410,14 @@ export default function App() {
             element={
               <DashboardPermissionRoute permission="membership.self.read">
                 <SettingsPage />
+              </DashboardPermissionRoute>
+            }
+          />
+          <Route
+            path="billing"
+            element={
+              <DashboardPermissionRoute permission="membership.self.read">
+                <BillingPage />
               </DashboardPermissionRoute>
             }
           />

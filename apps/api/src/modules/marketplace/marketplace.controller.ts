@@ -6,6 +6,8 @@ import {
   UpsertMarketplaceListingDto,
 } from './dto';
 import { MarketplaceService } from './marketplace.service';
+import { PaidFeatureGuard } from '../../common/pricing/paid-feature.guard';
+import { RequiresPaidFeature } from '../../common/pricing/requires-paid-feature.decorator';
 
 @Controller('marketplace')
 @UseGuards(JwtAuthGuard)
@@ -23,6 +25,8 @@ export class MarketplaceController {
   }
 
   @Post('me/listing')
+  @UseGuards(JwtAuthGuard, PaidFeatureGuard)
+  @RequiresPaidFeature('marketplace_recruiting')
   upsertMyListing(@Req() req: any, @Body() dto: UpsertMarketplaceListingDto) {
     return this.marketplace.upsertMyListing(req.user.sub, dto);
   }
@@ -33,6 +37,8 @@ export class MarketplaceController {
   }
 
   @Post('listings/:listingId/offers')
+  @UseGuards(JwtAuthGuard, PaidFeatureGuard)
+  @RequiresPaidFeature('marketplace_recruiting')
   sendOffer(
     @Req() req: any,
     @Param('listingId') listingId: string,
@@ -42,6 +48,8 @@ export class MarketplaceController {
   }
 
   @Get('recruiter/offers')
+  @UseGuards(JwtAuthGuard, PaidFeatureGuard)
+  @RequiresPaidFeature('marketplace_recruiting')
   recruiterOffers(@Req() req: any, @Query('clubId') clubId?: string) {
     return this.marketplace.recruiterOffers(req.user.sub, clubId);
   }
@@ -56,4 +64,3 @@ export class MarketplaceController {
     return this.marketplace.rejectOffer(req.user.sub, offerId);
   }
 }
-

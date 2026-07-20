@@ -17,6 +17,8 @@ import {
   SocialFeedQueryDto,
 } from './dto';
 import { SocialService } from './social.service';
+import { PaidFeatureGuard } from '../../common/pricing/paid-feature.guard';
+import { RequiresPaidFeature } from '../../common/pricing/requires-paid-feature.decorator';
 
 @Controller('social')
 @UseGuards(JwtAuthGuard)
@@ -29,21 +31,29 @@ export class SocialController {
   }
 
   @Post('media/signature')
+  @UseGuards(JwtAuthGuard, PaidFeatureGuard)
+  @RequiresPaidFeature('social_publishing')
   mediaSignature(@Body() dto: CreateMediaSignatureDto) {
     return this.social.createMediaSignature(dto);
   }
 
   @Post('posts')
+  @UseGuards(JwtAuthGuard, PaidFeatureGuard)
+  @RequiresPaidFeature('social_publishing')
   createPost(@Req() req: any, @Body() dto: CreateSocialPostDto) {
     return this.social.createPost(req.user.sub, dto);
   }
 
   @Post('posts/:postId/reactions/like')
+  @UseGuards(JwtAuthGuard, PaidFeatureGuard)
+  @RequiresPaidFeature('social_publishing')
   toggleLike(@Req() req: any, @Param('postId') postId: string) {
     return this.social.toggleLike(req.user.sub, postId);
   }
 
   @Post('posts/:postId/comments')
+  @UseGuards(JwtAuthGuard, PaidFeatureGuard)
+  @RequiresPaidFeature('social_publishing')
   createComment(
     @Req() req: any,
     @Param('postId') postId: string,

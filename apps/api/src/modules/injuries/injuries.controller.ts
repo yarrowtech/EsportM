@@ -15,8 +15,11 @@ import { InjuriesService } from './injuries.service';
 import { CreateInjuryDto, UpdateInjuryDto } from './dto';
 import { Permissions } from '../../common/decorators/permissions.decorator';
 import { PermissionsGuard } from '../../common/guards/permissions.guard';
+import { RequiresPaidFeature } from '../../common/pricing/requires-paid-feature.decorator';
+import { PaidFeatureGuard } from '../../common/pricing/paid-feature.guard';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PaidFeatureGuard)
+@RequiresPaidFeature('medical_management')
 @Controller('clubs/:clubId/injuries')
 export class InjuriesController {
   constructor(private injuries: InjuriesService) {}

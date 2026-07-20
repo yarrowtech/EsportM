@@ -10,13 +10,13 @@ export function PricingFeatureGate({
   feature: PricingFeatureKey;
 }) {
   const promptedRef = useRef(false);
-  const { hasFeatureAccess, requestFeatureAccess } = usePrototypePricing();
+  const { requestFeatureAccess } = usePrototypePricing();
 
   useEffect(() => {
-    if (promptedRef.current || hasFeatureAccess(feature)) return;
+    if (promptedRef.current) return;
     promptedRef.current = true;
     requestFeatureAccess(feature);
-  }, [feature, hasFeatureAccess, requestFeatureAccess]);
+  }, [feature, requestFeatureAccess]);
 
   return <>{children}</>;
 }

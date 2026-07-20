@@ -23,6 +23,8 @@ import { SocialModule } from './modules/social/social.module';
 import { AiModule } from './modules/ai/ai.module';
 import { ScheduleModule } from './modules/schedule/schedule.module';
 import { NotificationModule } from './modules/notifications/notification.module';
+import { BillingModule } from './modules/billing/billing.module';
+import { PricingModule } from './common/pricing/pricing.module';
 
 @Module({
   imports: [
@@ -30,6 +32,7 @@ import { NotificationModule } from './modules/notifications/notification.module'
       isGlobal: true,
       ignoreEnvFile: process.env.NODE_ENV === 'production',
     }),
+    PricingModule,
     PrismaModule,
     AuthorizationModule,
     UsersModule,
@@ -52,6 +55,7 @@ import { NotificationModule } from './modules/notifications/notification.module'
     AiModule,
     ScheduleModule,
     NotificationModule,
+    BillingModule,
   ],
   controllers: [DebugController],
 })

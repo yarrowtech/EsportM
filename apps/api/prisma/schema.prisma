@@ -73,6 +73,17 @@ enum DashboardAnalyticsCategory {
   CLUB
 }
 
+enum BillingCycle {
+  MONTHLY
+  ANNUAL
+}
+
+enum PaymentStatus {
+  CREATED
+  VERIFIED
+  FAILED
+}
+
 model User {
   id           String   @id @default(cuid())
   email        String   @unique
@@ -105,6 +116,7 @@ model User {
   notifications      Notification[]
   createdScheduleEvents ScheduleEvent[]  @relation("ScheduleEventCreatedBy")
   analyticsEntries   DashboardAnalyticsEntry[] @relation("AnalyticsEntryCreatedBy")
+  clubPayments       ClubPayment[]       @relation("ClubPaymentUser")
 }
 
 model Club {
@@ -149,6 +161,32 @@ model Club {
   analyticsEntries DashboardAnalyticsEntry[]
   wellnessEntries PlayerWellnessEntry[]
   trainingLoadEntries PlayerTrainingLoadEntry[]
+  payments       ClubPayment[]
+}
+
+model ClubPayment {
+  id                String        @id @default(cuid())
+  clubId            String
+  userId            String
+  provider          String
+  providerOrderId   String
+  providerPaymentId String?
+  providerSignature String?
+  plan              String
+  billingCycle      BillingCycle
+  amountInr         Int
+  status            PaymentStatus @default(CREATED)
+  metadata          Json?
+  createdAt         DateTime      @default(now())
+  verifiedAt        DateTime?
+
+  club Club @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  user User @relation("ClubPaymentUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerOrderId])
+  @@index([clubId, createdAt])
+  @@index([userId])
+  @@index([status])
 }
 
 model ClubRoleSetting {

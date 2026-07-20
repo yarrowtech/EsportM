@@ -2,6 +2,8 @@ import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/comm
 import { Permissions } from '../../common/decorators/permissions.decorator';
 import { PermissionsGuard } from '../../common/guards/permissions.guard';
 import { JwtAuthGuard } from '../auth/jwt.guard';
+import { PaidFeatureGuard } from '../../common/pricing/paid-feature.guard';
+import { RequiresPaidFeature } from '../../common/pricing/requires-paid-feature.decorator';
 import { DashboardsService } from './dashboards.service';
 import { CreateDashboardAnalyticsEntryDto } from './dto';
 
@@ -43,6 +45,8 @@ export class DashboardsController {
   }
 
   @Get('analytics')
+  @UseGuards(JwtAuthGuard, PaidFeatureGuard)
+  @RequiresPaidFeature('advanced_analytics')
   analytics(
     @Req() req: any,
     @Query('clubId') clubId?: string,
@@ -54,8 +58,9 @@ export class DashboardsController {
   }
 
   @Post('analytics')
-  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @UseGuards(JwtAuthGuard, PermissionsGuard, PaidFeatureGuard)
   @Permissions('analytics.write')
+  @RequiresPaidFeature('advanced_analytics')
   createAnalytics(
     @Req() req: any,
     @Body() dto: CreateDashboardAnalyticsEntryDto,
