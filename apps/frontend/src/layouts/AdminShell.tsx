@@ -52,22 +52,17 @@ function cx(...s: Array<string | false | undefined>) {
   return s.filter(Boolean).join(" ");
 }
 
-const GLASS_BORDER = "rgba(255,255,255,0.38)";
-const GLASS_BORDER_STRONG = "rgba(255,255,255,0.52)";
-const GLASS_SHADOW = "0 28px 80px rgba(20,24,32,0.10)";
-const GLASS_BG = "rgba(255,255,255,0.52)";
+const GLASS_BORDER = "transparent";
+const GLASS_BORDER_STRONG = "transparent";
+const GLASS_SHADOW = "var(--neu-raised)";
+const GLASS_BG = "rgb(var(--bg))";
 
 function GlassBackdrop() {
   return (
-    <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(900px 520px at 15% 15%, rgba(255,255,255,.70), transparent 55%), radial-gradient(900px 520px at 85% 20%, rgba(var(--primary),.22), transparent 60%), radial-gradient(900px 520px at 92% 85%, rgba(var(--primary),.14), transparent 60%), linear-gradient(180deg, rgba(255,255,255,.25), rgba(255,255,255,0))",
-        }}
-      />
-    </div>
+    <div
+      className="pointer-events-none absolute inset-0 -z-10"
+      style={{ background: "rgb(var(--bg))" }}
+    />
   );
 }
 
@@ -309,7 +304,7 @@ export default function AdminShell() {
     };
   }, [clubId, clubs, memberships, user.clubName]);
 
-  const HEADER_H = 84;
+  const HEADER_H = 68;
 
   const onClubCreated = (club: ClubItem) => {
     // Provisioning may target another owner; refresh memberships and switch only when allowed.
@@ -338,12 +333,10 @@ export default function AdminShell() {
       <div className="relative">
         <GlassBackdrop />
 
-        <div className="mx-auto max-w-[1440px] px-3 py-5 sm:px-6 sm:py-8">
+        <div className="mx-auto max-w-[1440px] px-7 py-7 sm:px-8 sm:py-8">
           <div
             className={cx(
-              "relative overflow-hidden rounded-[28px]",
-              "backdrop-blur-2xl",
-              "shadow-[0_28px_80px_rgba(20,24,32,0.10)]"
+              "relative rounded-[24px] bg-[rgb(var(--bg))]"
             )}
             style={{
               background: GLASS_BG,
@@ -351,33 +344,25 @@ export default function AdminShell() {
               boxShadow: GLASS_SHADOW,
             }}
           >
-            <div
-              className="pointer-events-none absolute inset-0"
-              style={{
-                background:
-                  "linear-gradient(135deg, rgba(255,255,255,0.70), rgba(255,255,255,0.18) 55%, rgba(255,255,255,0.30))",
-                opacity: 0.55,
-              }}
-            />
-
-            <div className="relative z-10 h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)]">
+            <div className="relative z-10 flex h-[calc(100vh-3.5rem)] min-h-0 flex-col sm:h-[calc(100vh-4rem)]">
               {/* HEADER */}
               <header
-                className="sticky top-0 z-20 backdrop-blur-2xl"
+                className="sticky top-0 z-20 shrink-0 rounded-t-[24px]"
                 style={{
-                  height: HEADER_H,
-                  background: "rgba(255,255,255,0.40)",
+                  minHeight: HEADER_H,
+                  background: "rgb(var(--bg))",
                   borderBottom: `1px solid ${GLASS_BORDER}`,
+                  boxShadow: "var(--neu-raised-sm)",
                 }}
               >
-                <div className="h-full px-4 sm:px-6">
-                  <div className="flex h-full items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
+                <div className="px-3 py-2 sm:px-4 lg:px-5">
+                  <div className="flex min-h-[52px] flex-wrap items-center justify-between gap-2 lg:flex-nowrap">
+                    <div className="flex min-w-0 flex-1 items-center gap-2">
                       <button
                         onClick={() => setSidebarOpen(true)}
-                        className="md:hidden rounded-full px-4 py-2 text-xs font-semibold shadow-sm transition hover:bg-white/70"
+                        className="shrink-0 rounded-full px-3 py-2 text-xs font-semibold shadow-sm transition hover:bg-white/70 md:hidden"
                         style={{
-                          background: "rgba(255,255,255,0.55)",
+                          background: "rgb(var(--bg))",
                           border: `1px solid ${GLASS_BORDER}`,
                         }}
                       >
@@ -385,21 +370,28 @@ export default function AdminShell() {
                       </button>
 
                       <div
-                        className="rounded-full px-4 py-2 text-sm font-semibold"
+                        className="flex h-10 shrink-0 items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold"
                         style={{
-                          background: "rgba(255,255,255,0.50)",
+                          background: "rgb(var(--bg))",
+                          boxShadow: "var(--neu-raised-sm)",
                           border: `1px solid ${GLASS_BORDER}`,
                         }}
                       >
-                        EsportM • Admin
+                        <img
+                          src="/logo/logo.png"
+                          alt="EsportM"
+                          className="h-6 w-auto max-w-[108px] object-contain"
+                        />
+                        <span className="text-xs font-extrabold text-[rgb(var(--muted))]">Admin</span>
                       </div>
 
                       {/* top pills */}
                       <nav
-                        className="hidden items-center gap-1 rounded-full p-1 sm:flex"
+                        className="hide-scrollbar hidden min-w-0 flex-1 items-center gap-1 overflow-x-auto rounded-full p-1 sm:flex"
                         style={{
-                          background: "rgba(255,255,255,0.44)",
+                          background: "rgb(var(--bg))",
                           border: `1px solid ${GLASS_BORDER}`,
+                          boxShadow: "var(--neu-inset)",
                         }}
                       >
                         {adminNav.map((item) => {
@@ -408,7 +400,7 @@ export default function AdminShell() {
                             <button
                               key={item.key}
                               onClick={() => navigate(item.to)}
-                              className="rounded-full px-3 py-2 text-xs font-semibold transition"
+                              className="shrink-0 rounded-full px-2.5 py-2 text-xs font-semibold transition xl:px-3"
                               style={{
                                 background: on ? "rgb(var(--primary))" : "transparent",
                                 color: on ? "rgb(var(--primary-2))" : "rgb(var(--text))",
@@ -425,12 +417,12 @@ export default function AdminShell() {
                       </nav>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      <div className="hidden sm:block text-right">
-                        <p className="text-sm font-semibold text-[rgb(var(--text))]">
+                    <div className="flex min-w-0 shrink-0 items-center gap-2">
+                      <div className="hidden max-w-[190px] text-right xl:block">
+                        <p className="truncate text-xs font-semibold text-[rgb(var(--text))]">
                           {loading ? "Loading…" : `${user.clubName} • ${user.role}`}
                         </p>
-                        <p className="text-xs text-[rgb(var(--muted))]">
+                        <p className="truncate text-[11px] text-[rgb(var(--muted))]">
                           Players {clubStats.players} • Squads {clubStats.squads} • Matches{" "}
                           {clubStats.matches}
                         </p>
@@ -440,7 +432,7 @@ export default function AdminShell() {
                       <select
                         value={clubId}
                         onChange={(e) => setClubId(e.target.value)}
-                        className="hidden sm:block rounded-full border bg-white/70 px-4 py-2 text-xs font-semibold outline-none"
+                        className="hidden max-w-[160px] rounded-full border bg-white/70 px-3 py-2 text-xs font-semibold outline-none sm:block"
                         style={{ borderColor: GLASS_BORDER }}
                         title="Select club"
                       >
@@ -454,9 +446,9 @@ export default function AdminShell() {
                       {isPlatformAdmin && (
                         <button
                           onClick={() => navigate("/platform")}
-                          className="rounded-full px-4 py-2 text-xs font-semibold shadow-sm transition hover:bg-white/70"
+                          className="hidden rounded-full px-3 py-2 text-xs font-semibold shadow-sm transition hover:bg-white/70 sm:inline-flex"
                           style={{
-                            background: "rgba(255,255,255,0.50)",
+                            background: "rgb(var(--bg))",
                             color: "rgb(var(--text))",
                             border: `1px solid ${GLASS_BORDER}`,
                           }}
@@ -467,9 +459,9 @@ export default function AdminShell() {
 
                       <button
                         onClick={() => setThemeOpen(true)}
-                        className="rounded-full px-4 py-2 text-xs font-semibold shadow-sm transition hover:bg-white/70"
+                        className="rounded-full px-3 py-2 text-xs font-semibold shadow-sm transition hover:bg-white/70"
                         style={{
-                          background: "rgba(255,255,255,0.50)",
+                          background: "rgb(var(--bg))",
                           color: "rgb(var(--text))",
                           border: `1px solid ${GLASS_BORDER}`,
                         }}
@@ -482,9 +474,9 @@ export default function AdminShell() {
               </header>
 
               {/* BODY */}
-              <div className="flex h-[calc(100%-84px)] gap-4 px-4 py-4 sm:gap-6 sm:px-6 sm:py-6">
+              <div className="flex min-h-0 flex-1 gap-3 px-3 py-3 sm:gap-4 sm:px-4 sm:py-4">
                 {/* Desktop sidebar */}
-                <div className="hidden md:block shrink-0" style={{ width: 240 }}>
+                <div className="hidden shrink-0 p-2 md:block" style={{ width: 232 }}>
                   <div className="sticky top-[96px]">
                     <AdminSidebar
                       open={sidebarOpen}
@@ -515,7 +507,7 @@ export default function AdminShell() {
                   />
                 </div>
 
-                <main className="min-w-0 flex-1 overflow-y-auto pr-1">
+                <main className="dashboard-scroll min-w-0 flex-1 overflow-y-auto">
                   <Outlet
                     context={{
                       clubId,

@@ -39,8 +39,10 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Poppins", '"Segoe UI"', "system-ui", "sans-serif"],
-        display: ["Poppins", '"Segoe UI"', "system-ui", "sans-serif"],
+        sans: ["Onest", "sans-serif"],
+        display: ["Onest", "sans-serif"],
+        serif: ["Onest", "sans-serif"],
+        mono: ["Onest", "sans-serif"],
       },
       colors: {
         background: "var(--bg-color)",

@@ -186,16 +186,15 @@ export default function AdminSidebar({
             to={to}
             className={({ isActive }) =>
                 cx(
-                    "group relative flex items-center justify-between overflow-hidden rounded-xl border px-3 py-3 text-sm",
-                    "backdrop-blur-md transition-all duration-200",
-                    "hover:bg-white/70 hover:-translate-y-[1px]",
+                    "group relative flex items-center justify-between rounded-xl border px-3 py-2 text-sm",
+                    "transition-[box-shadow,transform] duration-150",
                     isActive && "font-extrabold"
                 )
             }
             style={({ isActive }) => ({
                 borderColor: isActive ? "rgba(var(--primary), .92)" : cardBorder,
-                background: isActive ? "rgb(var(--primary))" : "rgba(255,255,255,0.55)",
-                boxShadow: isActive ? "0 14px 30px rgba(var(--primary), .34)" : undefined,
+                background: isActive ? "#96b2f2" : "rgb(var(--bg))",
+                boxShadow: "var(--neu-raised-sm)",
             })}
         >
             {({ isActive }) => (
@@ -212,12 +211,12 @@ export default function AdminSidebar({
 
                     <div className="relative flex items-center gap-3">
                         <span
-                            className="grid h-9 w-9 place-items-center rounded-lg border transition"
+                            className="grid h-8 w-8 place-items-center rounded-lg border transition"
                             style={{
                                 borderColor: isActive ? "rgba(var(--primary-2), .35)" : cardBorder,
-                                background: isActive ? "rgba(255,255,255,.88)" : "rgba(255,255,255,.64)",
+                                background: isActive ? "rgba(255,255,255,.38)" : "rgb(var(--bg))",
                                 color: isActive ? "rgb(var(--primary-2))" : "rgb(var(--text))",
-                                boxShadow: isActive ? "0 10px 26px rgba(20,24,32,0.22)" : undefined,
+                                boxShadow: isActive ? "var(--neu-inset)" : "var(--neu-raised-sm)",
                             }}
                         >
                             {navGlyph(label, to)}
@@ -232,7 +231,7 @@ export default function AdminSidebar({
                     </div>
 
                     <span
-                        className="relative text-xs transition group-hover:translate-x-[1px]"
+                        className="relative text-xs"
                         style={{ color: isActive ? "rgba(var(--primary-2), .86)" : "rgb(var(--muted))" }}
                     >
                         {"->"}
@@ -251,7 +250,7 @@ export default function AdminSidebar({
     );
 
     const ProfileBlock = () => (
-        <div className="mb-4">
+        <div className="mb-3">
             <p className="flex items-center gap-1.5 text-xs text-[rgb(var(--muted))]">
                 <BellRing size={12} />
                 Club Admin
@@ -259,8 +258,8 @@ export default function AdminSidebar({
 
             <div className="mt-2 flex items-center gap-3">
                 <div
-                    className="grid h-10 w-10 place-items-center rounded-full border bg-white/60 text-xs font-extrabold"
-                    style={{ borderColor: cardBorder }}
+                    className="grid h-10 w-10 place-items-center rounded-full border bg-[rgb(var(--bg))] text-xs font-extrabold"
+                    style={{ borderColor: cardBorder, boxShadow: "var(--neu-raised-sm)" }}
                     title={user.fullName}
                 >
                     {initials(user.fullName)}
@@ -275,7 +274,7 @@ export default function AdminSidebar({
                         </p>
                         <button
                             onClick={copyId}
-                            className="rounded-full border bg-white/70 px-2 py-0.5 text-[10px] font-semibold hover:bg-white/85"
+                            className="rounded-full border bg-[rgb(var(--bg))] px-2 py-0.5 text-[10px] font-semibold"
                             style={{ borderColor: cardBorder }}
                             title="Copy user id"
                         >
@@ -288,39 +287,39 @@ export default function AdminSidebar({
             </div>
 
             <div className="mt-3 flex flex-wrap items-center gap-2">
-                <span className="rounded-full border bg-white/55 px-2.5 py-1 text-[10px] font-semibold" style={{ borderColor: cardBorder }}>
+                <span className="rounded-full border bg-[rgb(var(--bg))] px-2.5 py-1 text-[10px] font-semibold" style={{ borderColor: cardBorder, boxShadow: "var(--neu-inset)" }}>
                     Role: <span className="font-extrabold">{user.role}</span>
                 </span>
 
-                <span className="rounded-full border bg-white/55 px-2.5 py-1 text-[10px] font-semibold" style={{ borderColor: cardBorder }}>
+                <span className="rounded-full border bg-[rgb(var(--bg))] px-2.5 py-1 text-[10px] font-semibold" style={{ borderColor: cardBorder, boxShadow: "var(--neu-inset)" }}>
                     Players: <span className="font-extrabold">{stats.players}</span>
                 </span>
-                <span className="rounded-full border bg-white/55 px-2.5 py-1 text-[10px] font-semibold" style={{ borderColor: cardBorder }}>
+                <span className="rounded-full border bg-[rgb(var(--bg))] px-2.5 py-1 text-[10px] font-semibold" style={{ borderColor: cardBorder, boxShadow: "var(--neu-inset)" }}>
                     Squads: <span className="font-extrabold">{stats.squads}</span>
                 </span>
-                <span className="rounded-full border bg-white/55 px-2.5 py-1 text-[10px] font-semibold" style={{ borderColor: cardBorder }}>
+                <span className="rounded-full border bg-[rgb(var(--bg))] px-2.5 py-1 text-[10px] font-semibold" style={{ borderColor: cardBorder, boxShadow: "var(--neu-inset)" }}>
                     Matches: <span className="font-extrabold">{stats.matches}</span>
                 </span>
             </div>
 
             <div className="mt-3 grid grid-cols-3 gap-2">
                 <div
-                    className="flex items-center justify-center gap-1 rounded-lg border bg-white/55 px-2 py-1 text-[10px] font-semibold"
-                    style={{ borderColor: cardBorder }}
+                    className="flex items-center justify-center gap-1 rounded-lg border bg-[rgb(var(--bg))] px-2 py-1 text-[10px] font-semibold"
+                    style={{ borderColor: cardBorder, boxShadow: "var(--neu-inset)" }}
                 >
                     <Sparkles size={11} />
                     Live
                 </div>
                 <div
-                    className="flex items-center justify-center gap-1 rounded-lg border bg-white/55 px-2 py-1 text-[10px] font-semibold"
-                    style={{ borderColor: cardBorder }}
+                    className="flex items-center justify-center gap-1 rounded-lg border bg-[rgb(var(--bg))] px-2 py-1 text-[10px] font-semibold"
+                    style={{ borderColor: cardBorder, boxShadow: "var(--neu-inset)" }}
                 >
                     <Activity size={11} />
                     Ops
                 </div>
                 <div
-                    className="flex items-center justify-center gap-1 rounded-lg border bg-white/55 px-2 py-1 text-[10px] font-semibold"
-                    style={{ borderColor: cardBorder }}
+                    className="flex items-center justify-center gap-1 rounded-lg border bg-[rgb(var(--bg))] px-2 py-1 text-[10px] font-semibold"
+                    style={{ borderColor: cardBorder, boxShadow: "var(--neu-inset)" }}
                 >
                     <ChartNoAxesCombined size={11} />
                     Trends
@@ -331,7 +330,7 @@ export default function AdminSidebar({
                 <select
                     value={clubId}
                     onChange={(e) => onChangeClub(e.target.value)}
-                    className="w-full rounded-xl border bg-white/70 px-3 py-2 text-sm font-semibold outline-none"
+                    className="w-full rounded-xl border bg-[rgb(var(--bg))] px-3 py-2 text-sm font-semibold outline-none"
                     style={{ borderColor: cardBorder }}
                     disabled={!canManage}
                     title={!canManage ? "No permission to manage club data" : "Select club"}
@@ -350,7 +349,7 @@ export default function AdminSidebar({
         <div className="mt-auto grid gap-2">
             <button
                 onClick={() => navigate("/")}
-                className="flex w-full items-center justify-center gap-2 rounded-xl border bg-white/55 px-3 py-2 text-sm font-semibold backdrop-blur-md transition hover:bg-white/70"
+                className="flex w-full items-center justify-center gap-2 rounded-xl border bg-[rgb(var(--bg))] px-3 py-2 text-sm font-semibold"
                 style={{ borderColor: cardBorder }}
             >
                 <Home size={14} />
@@ -376,22 +375,15 @@ export default function AdminSidebar({
         <>
             <aside
                 className={cx(
-                    "relative hidden overflow-hidden md:flex flex-col shrink-0",
-                    "w-[240px] min-w-[240px] max-w-[240px]",
-                    "rounded-2xl border bg-white/55 p-4",
-                    "backdrop-blur-xl",
-                    "shadow-[0_18px_55px_rgba(20,24,32,0.14)]"
+                    "dashboard-sidebar relative hidden max-h-[calc(100vh-11rem)] flex-col shrink-0 md:flex",
+                    "w-[216px] min-w-[216px] max-w-[216px]",
+                    "rounded-2xl border bg-[rgb(var(--bg))] p-3"
                 )}
-                style={{ borderColor: cardBorder }}
+                style={{ borderColor: cardBorder, boxShadow: "var(--neu-raised)" }}
             >
-                <div className="pointer-events-none absolute inset-0 -z-10">
-                    <div className="absolute -right-10 -top-12 h-28 w-28 rounded-full bg-[rgba(var(--primary),.22)] blur-2xl" />
-                    <div className="absolute -left-10 bottom-8 h-24 w-24 rounded-full bg-[rgba(var(--primary),.14)] blur-2xl" />
-                </div>
-
                 <ProfileBlock />
 
-                <nav className="mb-4 flex flex-col gap-2">
+                <nav className="hide-scrollbar -mx-3 mb-3 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-4 py-3">
                     {effectiveNav.map((it) => (
                         <NavRow key={it.to} label={it.label} to={it.to} />
                     ))}
@@ -409,22 +401,17 @@ export default function AdminSidebar({
             <aside
                 ref={mobileRef}
                 className={cx(
-                    "fixed left-0 top-0 z-[90] h-full w-[300px] overflow-hidden border-r bg-white/92 p-4 backdrop-blur-xl md:hidden",
+                    "dashboard-sidebar fixed left-0 top-0 z-[90] h-full w-[280px] border-r bg-[rgb(var(--bg))] p-4 md:hidden",
                     open ? "block" : "hidden"
                 )}
-                style={{ borderColor: cardBorder }}
+                style={{ borderColor: cardBorder, boxShadow: "var(--neu-raised)" }}
             >
-                <div className="pointer-events-none absolute inset-0 -z-10">
-                    <div className="absolute -right-12 -top-14 h-32 w-32 rounded-full bg-[rgba(var(--primary),.20)] blur-2xl" />
-                    <div className="absolute -left-12 bottom-14 h-28 w-28 rounded-full bg-[rgba(var(--primary),.16)] blur-2xl" />
-                </div>
-
                 <div className="flex h-full flex-col">
                     <div className="mb-3 flex items-center justify-between">
                         <p className="text-sm font-extrabold">Admin Menu</p>
                         <button
                             onClick={onClose}
-                            className="rounded-full border bg-white/60 px-3 py-2 text-xs font-semibold"
+                            className="rounded-full border bg-[rgb(var(--bg))] px-3 py-2 text-xs font-semibold"
                             style={{ borderColor: cardBorder }}
                         >
                             Close
@@ -433,7 +420,7 @@ export default function AdminSidebar({
 
                     <ProfileBlock />
 
-                    <nav className="mb-4 flex flex-col gap-2">
+                    <nav className="hide-scrollbar -mx-3 mb-3 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-4 py-3">
                         {effectiveNav.map((it) => (
                             <NavRow key={it.to} label={it.label} to={it.to} />
                         ))}

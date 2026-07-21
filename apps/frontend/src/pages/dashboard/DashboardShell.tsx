@@ -20,14 +20,13 @@ export default function DashboardShell({
   );
 
   return (
-    <div className="p-4 sm:p-6">
+    <div className="p-2 sm:p-3">
       <div
-        className="mx-auto max-w-7xl rounded-[30px] border p-4 sm:p-6"
+        className="neu-surface mx-auto max-w-7xl rounded-[20px] border p-3 sm:p-4"
         style={{
-          borderColor: "rgba(var(--primary-2), .14)",
-          background:
-            "radial-gradient(900px 320px at 88% 8%, rgba(var(--primary), .22), transparent 58%), linear-gradient(145deg, rgba(255,255,255,.72), rgba(255,255,255,.44))",
-          boxShadow: "0 20px 55px rgba(20,24,32,0.12)",
+          borderColor: "rgba(var(--border), .72)",
+          background: "rgb(var(--bg))",
+          boxShadow: "var(--neu-raised)",
         }}
       >
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -40,7 +39,7 @@ export default function DashboardShell({
 
           <div className="flex gap-2">
             <select
-              className="rounded-xl border bg-white/80 px-3 py-2 text-sm text-[rgb(var(--text))] outline-none"
+              className="rounded-xl border bg-[rgb(var(--bg))] px-3 py-2 text-sm text-[rgb(var(--text))] outline-none"
               style={{ borderColor: "rgba(var(--primary-2), .14)" }}
               value={activeClubId ?? ""}
               onChange={(e) => {
@@ -56,7 +55,7 @@ export default function DashboardShell({
             </select>
 
             <select
-              className="rounded-xl border bg-white/80 px-3 py-2 text-sm text-[rgb(var(--text))] outline-none"
+              className="rounded-xl border bg-[rgb(var(--bg))] px-3 py-2 text-sm text-[rgb(var(--text))] outline-none"
               style={{ borderColor: "rgba(var(--primary-2), .14)" }}
               value={range}
               onChange={(e) => setRange(e.target.value)}
@@ -68,7 +67,7 @@ export default function DashboardShell({
           </div>
         </div>
 
-        <div className="mt-6">{children && React.cloneElement(children as any, { range })}</div>
+        <div className="mt-4">{children && React.cloneElement(children as any, { range })}</div>
       </div>
     </div>
   );

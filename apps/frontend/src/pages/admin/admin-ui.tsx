@@ -1,4 +1,4 @@
-import { type ReactNode } from "react";
+import { type CSSProperties, type ReactNode } from "react";
 import {
   BarChart3,
   Clock3,
@@ -10,17 +10,12 @@ import {
   Trophy,
 } from "lucide-react";
 
-export const adminCardBorder = "rgba(255,255,255,.54)";
-export const adminCardBg =
-  "linear-gradient(145deg, rgba(255,255,255,.86), rgba(236,241,248,.72))";
-export const adminSoftBg =
-  "linear-gradient(145deg, rgba(255,255,255,.92), rgba(236,241,248,.76))";
-export const adminDarkBg =
-  "linear-gradient(145deg, rgba(255,255,255,.90), rgba(232,238,248,.76))";
-export const adminGlassShadow =
-  "20px 20px 48px rgba(120,132,158,.24), -20px -20px 48px rgba(255,255,255,.98)";
-const adminInsetShadow =
-  "inset 8px 8px 18px rgba(120,132,158,.16), inset -8px -8px 18px rgba(255,255,255,.90)";
+export const adminCardBorder = "rgba(var(--border), .72)";
+export const adminCardBg = "rgb(var(--bg))";
+export const adminSoftBg = "rgb(var(--bg))";
+export const adminDarkBg = "rgb(var(--bg))";
+export const adminGlassShadow = "var(--neu-raised)";
+const adminInsetShadow = "var(--neu-inset)";
 
 export function cx(...parts: Array<string | false | null | undefined>) {
   return parts.filter(Boolean).join(" ");
@@ -59,7 +54,7 @@ export function formatCountdown(input?: string | null) {
 
 export function PageWrap({ children }: { children: ReactNode }) {
   return (
-    <div className="mx-auto w-full max-w-[1180px] space-y-4 p-3 sm:space-y-5 sm:p-5">
+    <div className="dashboard-page mx-auto w-full max-w-[1180px] space-y-3 p-2 sm:p-3">
       {children}
     </div>
   );
@@ -76,26 +71,17 @@ export function Hero({
 }) {
   return (
     <div
-      className="neu-surface relative mb-1 overflow-hidden rounded-[28px] px-5 py-4 sm:flex sm:items-start sm:justify-between sm:px-6"
+      className="neu-surface relative mb-1 overflow-hidden rounded-[20px] px-4 py-3 sm:flex sm:items-start sm:justify-between sm:px-5 sm:py-4"
       style={{
-        background:
-          "radial-gradient(520px 180px at 76% 12%, rgba(139,92,246,.20), transparent 62%), linear-gradient(145deg, rgba(255,255,255,.88), rgba(234,240,249,.76))",
+        background: adminCardBg,
         boxShadow: adminGlassShadow,
       }}
     >
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.14]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(15,23,42,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(15,23,42,.08) 1px, transparent 1px)",
-          backgroundSize: "32px 32px",
-        }}
-      />
       <div className="relative min-w-0">
         <p className="text-[10px] font-extrabold uppercase tracking-[0.28em] text-[rgb(var(--muted))]">
           Dashboard
         </p>
-        <h1 className="mt-2 max-w-3xl text-3xl font-extrabold leading-[1.05] tracking-normal text-[rgb(var(--text))] sm:text-4xl">
+        <h1 className="mt-1.5 max-w-3xl text-2xl font-extrabold leading-tight tracking-normal text-[rgb(var(--text))] sm:text-3xl">
           {title}
         </h1>
         <p className="mt-2 max-w-2xl text-sm font-medium text-[rgb(var(--muted))] sm:text-base">{subtitle}</p>
@@ -122,23 +108,13 @@ export function Section({
 }) {
   return (
     <section
-      className={cx("neu-surface relative overflow-hidden rounded-[26px] p-4 sm:p-5", className)}
+      className={cx("neu-surface relative overflow-hidden rounded-[20px] p-3 sm:p-4", className)}
       style={{
-        background: dark
-          ? adminDarkBg
-          : "linear-gradient(145deg, rgba(255,255,255,.88), rgba(235,241,249,.76))",
+        background: dark ? adminDarkBg : adminCardBg,
         boxShadow: adminGlassShadow,
       }}
     >
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.10]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(15,23,42,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(15,23,42,.08) 1px, transparent 1px)",
-          backgroundSize: "28px 28px",
-        }}
-      />
-      <div className="relative mb-4 flex flex-wrap items-start justify-between gap-3">
+      <div className="relative mb-3 flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2
             className={cx(
@@ -179,68 +155,71 @@ export function Stat({
 
   return (
     <article
-      className="neu-surface group relative min-w-0 overflow-hidden rounded-[22px] px-4 py-4 transition-all duration-300 hover:-translate-y-1 active:translate-y-[1px]"
+      className="neu-surface neu-stat-tile group relative min-w-0 overflow-hidden rounded-[18px] px-3 py-3"
       style={{
-        background: "linear-gradient(145deg, rgba(255,255,255,.90), rgba(235,241,249,.78))",
+        "--stat-tile-bg": visual.tileBg,
         boxShadow: adminGlassShadow,
-      }}
+      } as CSSProperties}
     >
       <div
-        className="absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full"
-        style={{ background: visual.bg, color: visual.color, boxShadow: adminInsetShadow }}
+        className="absolute right-3 top-3 grid h-10 w-10 place-items-center rounded-full"
+        style={{ color: visual.color, boxShadow: adminInsetShadow }}
         aria-hidden="true"
       >
         {visual.icon}
       </div>
-      <div
-        className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full"
-        style={{ background: visual.bg }}
-      />
       <p className="relative pr-12 text-[10px] font-extrabold uppercase tracking-[0.24em] text-[rgb(var(--muted))]">{label}</p>
-      <p className="relative mt-3 text-3xl font-extrabold leading-none tracking-normal text-[rgb(var(--text))] [overflow-wrap:anywhere] break-words">
+      <p className="relative mt-2.5 text-2xl font-extrabold leading-none tracking-normal text-[rgb(var(--text))] [overflow-wrap:anywhere] break-words">
         {value}
       </p>
       {hint ? <p className="relative mt-1 text-xs font-medium text-[rgb(var(--muted))]">{hint}</p> : null}
-      <div className="relative mt-4 flex h-7 items-end gap-1.5">
-        {[34, 54, 76, 50, 88, 42, 66].map((height, index) => (
-          <span
-            key={index}
-            className="w-1.5 rounded-full"
-            style={{
-              height: `${height}%`,
-              background: index % 3 === 0 ? visual.color : index % 3 === 1 ? `${visual.color}99` : `${visual.color}55`,
-            }}
-          />
-        ))}
-      </div>
     </article>
   );
 }
 
 function statVisual(label: string) {
   const text = label.toLowerCase();
-  if (text.includes("goal")) {
-    return { icon: <Goal size={20} />, color: "#22c55e", bg: "rgba(34,197,94,.13)" };
-  }
-  if (text.includes("assist")) {
-    return { icon: <Sparkles size={20} />, color: "#8b5cf6", bg: "rgba(139,92,246,.13)" };
-  }
-  if (text.includes("minute") || text.includes("time")) {
-    return { icon: <Clock3 size={20} />, color: "#f97316", bg: "rgba(249,115,22,.13)" };
-  }
-  if (text.includes("injur") || text.includes("medical") || text.includes("readiness")) {
-    return { icon: <HeartPulse size={20} />, color: "#10b981", bg: "rgba(16,185,129,.13)" };
-  }
-  if (text.includes("match") || text.includes("fixture")) {
-    return { icon: <Trophy size={20} />, color: "#3157ff", bg: "rgba(49,87,255,.13)" };
-  }
-  if (text.includes("squad") || text.includes("player")) {
-    return { icon: <ShieldCheck size={20} />, color: "#06b6d4", bg: "rgba(6,182,212,.13)" };
-  }
-  if (text.includes("rate") || text.includes("avg") || text.includes("/")) {
-    return { icon: <Target size={20} />, color: "#14b8a6", bg: "rgba(20,184,166,.13)" };
-  }
-  return { icon: <BarChart3 size={20} />, color: "#3157ff", bg: "rgba(49,87,255,.13)" };
+  const lavender = {
+    color: "#7c5cff",
+    tileBg: "linear-gradient(145deg, rgba(230,225,255,.76), rgba(211,204,246,.58))",
+  };
+  const red = {
+    color: "#ef4444",
+    tileBg: "linear-gradient(145deg, rgba(255,222,226,.78), rgba(247,190,198,.56))",
+  };
+  const green = {
+    color: "#16a34a",
+    tileBg: "linear-gradient(145deg, rgba(218,246,228,.78), rgba(187,229,203,.56))",
+  };
+
+  const isRed =
+    text.includes("minute") ||
+    text.includes("time") ||
+    text.includes("injur") ||
+    text.includes("medical") ||
+    text.includes("cancel") ||
+    text.includes("high") ||
+    text.includes("not fit") ||
+    text.includes("due");
+  const isGreen =
+    text.includes("goal") ||
+    text.includes("readiness") ||
+    text.includes("fit") ||
+    text.includes("done") ||
+    text.includes("complete") ||
+    text.includes("rate") ||
+    text.includes("avg") ||
+    text.includes("/");
+  const tone = isRed ? red : isGreen ? green : lavender;
+
+  if (text.includes("goal")) return { icon: <Goal size={20} />, ...tone };
+  if (text.includes("assist")) return { icon: <Sparkles size={20} />, ...tone };
+  if (text.includes("minute") || text.includes("time")) return { icon: <Clock3 size={20} />, ...tone };
+  if (text.includes("injur") || text.includes("medical") || text.includes("readiness")) return { icon: <HeartPulse size={20} />, ...tone };
+  if (text.includes("match") || text.includes("fixture")) return { icon: <Trophy size={20} />, ...tone };
+  if (text.includes("squad") || text.includes("player")) return { icon: <ShieldCheck size={20} />, ...tone };
+  if (text.includes("rate") || text.includes("avg") || text.includes("/")) return { icon: <Target size={20} />, ...tone };
+  return { icon: <BarChart3 size={20} />, ...tone };
 }
 
 export function DotTag({
@@ -252,7 +231,7 @@ export function DotTag({
 }) {
   const styleByTone = {
     default: {
-      bg: "rgba(255,255,255,.65)",
+      bg: "rgb(var(--bg))",
       border: adminCardBorder,
       text: "rgb(var(--text))",
       dot: "rgba(var(--primary), .95)",

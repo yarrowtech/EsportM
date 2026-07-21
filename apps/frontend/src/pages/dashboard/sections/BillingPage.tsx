@@ -252,8 +252,27 @@ export default function BillingPage() {
               const isDowngrade = rankDelta < 0;
               const amount = amountFor(plan, cycle);
               return (
-                <article key={plan.key} className="rounded-2xl border bg-white/70 p-4" style={{ borderColor: adminCardBorder }}>
-                  <h3 className="text-lg font-bold tracking-normal">{plan.name}</h3>
+                <article
+                  key={plan.key}
+                  className={`relative rounded-2xl border p-4 transition ${
+                    isCurrent ? "ring-2 ring-[#9b8cff]/45" : ""
+                  }`}
+                  style={{
+                    borderColor: isCurrent ? "rgba(124, 92, 255, .72)" : adminCardBorder,
+                    background: isCurrent
+                      ? "linear-gradient(145deg, rgba(230,225,255,.82), rgba(218,246,228,.54))"
+                      : "rgba(255,255,255,.70)",
+                    boxShadow: isCurrent
+                      ? "var(--neu-raised), inset 0 0 0 1px rgba(255,255,255,.58)"
+                      : undefined,
+                  }}
+                >
+                  {isCurrent ? (
+                    <span className="absolute right-3 top-3 rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#5b4bd6]" style={{ background: "rgba(255,255,255,.56)", boxShadow: "var(--neu-inset)" }}>
+                      Current
+                    </span>
+                  ) : null}
+                  <h3 className="pr-20 text-lg font-bold tracking-normal">{plan.name}</h3>
                   <p className="mt-2 text-2xl font-extrabold">{formatInr(amount)}</p>
                   <p className="text-xs text-[rgb(var(--muted))]">{cycle === "annual" ? "per year" : "per month"}</p>
                   <p className="mt-3 text-sm leading-5 text-[rgb(var(--muted))]">{plan.note}</p>

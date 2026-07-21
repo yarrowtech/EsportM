@@ -826,11 +826,9 @@ function topNavIcon(key: NavKey) {
  * OK Glass tokens
  * Use these instead of dark borders.
  */
-const GLASS_SHADOW =
-  "26px 26px 62px rgba(120,132,158,.26), -24px -24px 58px rgba(255,255,255,.98)";
-const GLASS_BG = "rgba(239,244,250,0.92)";
-const NEU_INSET =
-  "inset 8px 8px 18px rgba(120,132,158,.16), inset -8px -8px 18px rgba(255,255,255,.92)";
+const GLASS_SHADOW = "var(--neu-raised)";
+const GLASS_BG = "rgb(var(--bg))";
+const NEU_INSET = "var(--neu-inset)";
 
 type ScheduleNotificationProps = {
   events?: ScheduleEvent[];
@@ -855,12 +853,12 @@ function NotificationOverview({
     <div
       className="neu-surface h-full rounded-[24px] px-4 py-3"
       style={{
-        background: "linear-gradient(145deg, rgba(255,255,255,.90), rgba(235,241,249,.78))",
+        background: "rgb(var(--bg))",
         boxShadow: GLASS_SHADOW,
       }}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-4">
+        <div className="flex min-w-0 items-center gap-3">
           <div
             className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#eef2ff] text-[#3157ff]"
             style={{ boxShadow: NEU_INSET }}
@@ -923,7 +921,7 @@ function NotificationOverview({
                   disabled={notification.isRead}
                   className="rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] transition"
                   style={{
-                    background: notification.isRead ? "rgba(255,255,255,.75)" : "rgb(var(--primary))",
+                    background: notification.isRead ? "rgb(var(--bg))" : "rgb(var(--primary))",
                     color: notification.isRead ? "rgb(var(--text))" : "rgb(var(--primary-2))",
                     boxShadow: notification.isRead ? NEU_INSET : "5px 5px 12px rgba(49,87,255,.18), -5px -5px 12px rgba(255,255,255,.72)",
                   }}
@@ -960,12 +958,12 @@ function ScheduleNotification({
     <div
       className="neu-surface h-full rounded-[24px] px-4 py-3"
       style={{
-        background: "linear-gradient(145deg, rgba(255,255,255,.90), rgba(235,241,249,.78))",
+        background: "rgb(var(--bg))",
         boxShadow: GLASS_SHADOW,
       }}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-4">
+        <div className="flex min-w-0 items-center gap-3">
           <div
             className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#f3e8ff] text-[#8b5cf6]"
             style={{ boxShadow: NEU_INSET }}
@@ -997,8 +995,8 @@ function ScheduleNotification({
           onClick={onViewCalendar}
           className="inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-xs font-bold"
           style={{
-            background: "rgba(255,255,255,.85)",
-            boxShadow: "6px 6px 14px rgba(120,132,158,.14), -6px -6px 14px rgba(255,255,255,.82)",
+            background: "rgb(var(--bg))",
+            boxShadow: "var(--neu-raised-sm)",
           }}
         >
           <CalendarDays size={14} />
@@ -1013,7 +1011,7 @@ function ScheduleNotification({
               key={event.id}
               className="flex items-center justify-between gap-3 rounded-2xl px-3 py-2"
               style={{
-                background: "rgba(255,255,255,.65)",
+                background: "rgb(var(--bg))",
                 boxShadow: NEU_INSET,
               }}
             >
@@ -1042,29 +1040,10 @@ function ScheduleNotification({
 
 function GlassBackdrop() {
   return (
-    <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(135deg, #eef3f8, #f8fbff)",
-        }}
-      />
-      <div
-        className="absolute inset-0 opacity-[0.32]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(15,23,42,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(15,23,42,.07) 1px, transparent 1px)",
-          backgroundSize: "32px 32px",
-        }}
-      />
-      <div
-        className="absolute inset-x-0 top-0 h-44"
-        style={{
-          background: "linear-gradient(180deg, rgba(255,255,255,.72), rgba(255,255,255,0))",
-        }}
-      />
-    </div>
+    <div
+      className="pointer-events-none absolute inset-0 -z-10"
+      style={{ background: "rgb(var(--bg))" }}
+    />
   );
 }
 
@@ -1123,7 +1102,7 @@ export default function AppShell() {
     return map[active];
   }, [active]);
 
-  const HEADER_H = 84;
+  const HEADER_H = 68;
 
   const roleAccess = useMemo(() => getDashboardRoleAccess(meData), [meData]);
   const isPlatformAdmin = !!meData?.isPlatformAdmin;
@@ -1306,56 +1285,38 @@ export default function AppShell() {
       <div className="relative">
         <GlassBackdrop />
 
-        <div className="mx-auto max-w-[1440px] px-3 py-5 sm:px-6 sm:py-8">
+        <div className="mx-auto max-w-[1440px] px-7 py-7 sm:px-8 sm:py-8">
           {/* CANVAS (no black border) */}
           <div
             className={cx(
-              "relative overflow-hidden rounded-[30px]",
-              "shadow-[18px_18px_46px_rgba(120,132,158,0.18),-18px_-18px_46px_rgba(255,255,255,0.92)]"
+              "relative rounded-[24px] bg-[rgb(var(--bg))]"
             )}
             style={{
               background: GLASS_BG,
               boxShadow: GLASS_SHADOW,
             }}
           >
-            {/* glass highlight + subtle stroke */}
-            <div
-              className="pointer-events-none absolute inset-0"
-              style={{
-                background:
-                  "linear-gradient(145deg, rgba(255,255,255,0.56), rgba(236,242,249,0.42))",
-                opacity: 0.72,
-              }}
-            />
-            <div
-              className="pointer-events-none absolute inset-0"
-              style={{
-                boxShadow:
-                  "inset 1px 1px 0 rgba(255,255,255,.92), inset -1px -1px 0 rgba(120,132,158,.08)",
-              }}
-            />
-
             {/* Layout */}
-            <div className="relative z-10 h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)]">
+            <div className="relative z-10 flex h-[calc(100vh-3.5rem)] min-h-0 flex-col sm:h-[calc(100vh-4rem)]">
               {/* HEADER (glass, no dark divider) */}
               <header
-                className="sticky top-0 z-20 backdrop-blur-2xl"
+                className="sticky top-0 z-20 shrink-0 rounded-t-[24px]"
                 style={{
-                  height: HEADER_H,
-                  background: "rgba(239,244,250,0.72)",
-                  boxShadow: "0 10px 22px rgba(120,132,158,.10)",
+                  minHeight: HEADER_H,
+                  background: "rgb(var(--bg))",
+                  boxShadow: "var(--neu-raised-sm)",
                 }}
               >
-                <div className="h-full px-4 sm:px-6">
-                  <div className="flex h-full items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
+                <div className="px-3 py-2 sm:px-4 lg:px-5">
+                  <div className="flex min-h-[52px] flex-wrap items-center justify-between gap-2 lg:flex-nowrap">
+                    <div className="flex min-w-0 flex-1 items-center gap-2">
                       {/* mobile menu */}
                       <button
                         onClick={() => setSidebarOpen(true)}
-                        className="md:hidden rounded-full px-4 py-2 text-xs font-semibold shadow-sm transition hover:bg-white/70"
+                        className="shrink-0 rounded-full px-3 py-2 text-xs font-semibold shadow-sm transition hover:bg-white/70 md:hidden"
                         style={{
-                          background: "linear-gradient(145deg, rgba(255,255,255,.92), rgba(232,238,248,.76))",
-                          boxShadow: "6px 6px 14px rgba(120,132,158,.14), -6px -6px 14px rgba(255,255,255,.86)",
+                          background: "rgb(var(--bg))",
+                          boxShadow: "var(--neu-raised-sm)",
                         }}
                       >
                         Menu
@@ -1363,24 +1324,25 @@ export default function AppShell() {
 
                       {/* brand pill */}
                       <div
-                        className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-extrabold"
+                        className="flex h-10 shrink-0 items-center rounded-full px-3 py-2"
                         style={{
-                          background: "linear-gradient(145deg, rgba(255,255,255,.92), rgba(232,238,248,.78))",
-                          boxShadow: "6px 6px 14px rgba(120,132,158,.14), -6px -6px 14px rgba(255,255,255,.86)",
+                          background: "rgb(var(--bg))",
+                          boxShadow: "var(--neu-raised-sm)",
                         }}
                       >
-                        <span className="grid h-6 w-6 place-items-center rounded-full bg-[#3157ff] text-white">
-                          <Activity size={14} />
-                        </span>
-                        EsportM
+                        <img
+                          src="/logo/logo.png"
+                          alt="EsportM"
+                          className="h-6 w-auto max-w-[108px] object-contain"
+                        />
                       </div>
 
                       {/* top pills */}
                       <nav
-                        className="hidden items-center gap-2 rounded-full p-1.5 sm:flex"
+                        className="hide-scrollbar hidden min-w-0 flex-1 items-center gap-1 overflow-x-auto rounded-full p-1 sm:flex"
                         style={{
-                          background: "linear-gradient(145deg, rgba(255,255,255,.82), rgba(232,238,248,.68))",
-                          boxShadow: "inset 6px 6px 14px rgba(120,132,158,.12), inset -6px -6px 14px rgba(255,255,255,.82)",
+                          background: "rgb(var(--bg))",
+                          boxShadow: "var(--neu-inset)",
                         }}
                       >
                         {topNav.map((item) => {
@@ -1392,7 +1354,7 @@ export default function AppShell() {
                                 setActive(item.key);
                                 navigate(topNavTargets[item.key]);
                               }}
-                              className="inline-flex items-center gap-2 rounded-xl px-3.5 py-2.5 text-sm font-bold transition-all duration-300 active:translate-y-[1px]"
+                              className="inline-flex shrink-0 items-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-bold xl:px-3 xl:text-sm"
                               style={{
                                 background: on
                                   ? "linear-gradient(145deg, #3157ff, #7c5cff)"
@@ -1413,27 +1375,26 @@ export default function AppShell() {
                       </nav>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex min-w-0 shrink-0 items-center gap-2">
                       <div
-                        className="hidden lg:block rounded-2xl px-3 py-2"
+                        className="hidden rounded-2xl px-3 py-2 2xl:block"
                         style={{
-                          background:
-                            "linear-gradient(145deg, rgba(255,255,255,.92), rgba(232,238,248,.76))",
-                          boxShadow: "8px 8px 18px rgba(120,132,158,.13), -8px -8px 18px rgba(255,255,255,.86)",
+                          background: "rgb(var(--bg))",
+                          boxShadow: "var(--neu-raised-sm)",
                         }}
                       >
                         <div className="flex items-center gap-2.5">
                           <div
                             className="grid h-8 w-8 place-items-center rounded-xl"
                             style={{
-                              background: "rgba(255,255,255,.86)",
+                              background: "rgb(var(--bg))",
                               boxShadow: NEU_INSET,
                               color: "rgb(var(--text))",
                             }}
                           >
                             {activeClubDisplay.hasClub ? <BadgeCheck size={16} /> : <Building2 size={16} />}
                           </div>
-                          <div className="min-w-0 max-w-[210px]">
+                          <div className="min-w-0 max-w-[170px]">
                             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[rgb(var(--muted))]">
                               Current Club
                             </p>
@@ -1448,22 +1409,22 @@ export default function AppShell() {
                         </div>
                       </div>
 
-                      <div className="hidden sm:block text-right">
-                        <p className="text-sm font-semibold text-[rgb(var(--text))]">
+                      <div className="hidden max-w-[140px] text-right xl:block">
+                        <p className="truncate text-xs font-semibold text-[rgb(var(--text))]">
                           EsportM  -  {userLoading ? "Loading..." : formatDashboardRole(dashboardRole as DashboardRole)}
                         </p>
-                        <p className="text-xs text-[rgb(var(--muted))]">{subtitle}</p>
+                        <p className="truncate text-[11px] text-[rgb(var(--muted))]">{subtitle}</p>
                       </div>
 
                       {canSwitchRole && (
                         <select
                           value={dashboardRole}
                           onChange={(event) => onSwitchRole(event.target.value)}
-                          className="rounded-full px-3 py-2 text-xs font-semibold outline-none"
+                          className="max-w-[132px] rounded-full px-3 py-2 text-xs font-semibold outline-none"
                           style={{
-                            background: "linear-gradient(145deg, rgba(255,255,255,.92), rgba(232,238,248,.76))",
+                            background: "rgb(var(--bg))",
                             color: "rgb(var(--text))",
-                            boxShadow: "6px 6px 14px rgba(120,132,158,.14), -6px -6px 14px rgba(255,255,255,.86)",
+                            boxShadow: "var(--neu-raised-sm)",
                           }}
                           title="Switch authorized role context"
                         >
@@ -1478,11 +1439,11 @@ export default function AppShell() {
                       {isPlatformAdmin && (
                         <button
                           onClick={() => navigate("/platform")}
-                          className="rounded-full px-4 py-2 text-xs font-semibold shadow-sm transition hover:bg-white/70"
+                          className="hidden rounded-full px-3 py-2 text-xs font-semibold shadow-sm transition hover:bg-white/70 sm:inline-flex"
                           style={{
-                            background: "linear-gradient(145deg, rgba(255,255,255,.92), rgba(232,238,248,.76))",
+                            background: "rgb(var(--bg))",
                             color: "rgb(var(--text))",
-                            boxShadow: "6px 6px 14px rgba(120,132,158,.14), -6px -6px 14px rgba(255,255,255,.86)",
+                            boxShadow: "var(--neu-raised-sm)",
                           }}
                         >
                           Platform
@@ -1490,10 +1451,10 @@ export default function AppShell() {
                       )}
 
                       <div
-                        className="grid h-9 w-9 place-items-center rounded-full text-xs font-bold"
+                        className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-xs font-bold"
                         style={{
-                          background: "linear-gradient(145deg, rgba(255,255,255,.92), rgba(232,238,248,.76))",
-                          boxShadow: "6px 6px 14px rgba(120,132,158,.14), -6px -6px 14px rgba(255,255,255,.86)",
+                          background: "rgb(var(--bg))",
+                          boxShadow: "var(--neu-raised-sm)",
                         }}
                         title={user.fullName}
                       >
@@ -1505,9 +1466,9 @@ export default function AppShell() {
               </header>
 
               {/* BODY */}
-              <div className="flex h-[calc(100%-84px)] gap-4 px-4 py-4 sm:gap-6 sm:px-6 sm:py-6">
+              <div className="flex min-h-0 flex-1 gap-3 px-3 py-3 sm:gap-4 sm:px-4 sm:py-4">
                 {/* Desktop sticky sidebar (glass) */}
-                <div className="hidden md:block shrink-0" style={{ width: 238 }}>
+                <div className="hidden shrink-0 p-2 md:block" style={{ width: 226 }}>
                   <div className="sticky top-[96px]">
                     <Sidebar
                       open={sidebarOpen}
@@ -1529,12 +1490,11 @@ export default function AppShell() {
                 </div>
 
                 {/* Scroll only main */}
-                <main className="min-w-0 flex-1 overflow-y-auto pr-1">
+                <main className="dashboard-scroll min-w-0 flex-1 overflow-y-auto">
                   <div
                     className="mb-4 rounded-2xl px-4 py-3 lg:hidden"
                     style={{
-                      background:
-                        "linear-gradient(145deg, rgba(255,255,255,.90), rgba(232,238,248,.76))",
+                      background: "rgb(var(--bg))",
                       boxShadow: GLASS_SHADOW,
                     }}
                   >
@@ -1542,7 +1502,7 @@ export default function AppShell() {
                       <div
                         className="grid h-8 w-8 shrink-0 place-items-center rounded-xl"
                         style={{
-                          background: "rgba(255,255,255,.74)",
+                          background: "rgb(var(--bg))",
                           color: "rgb(var(--text))",
                           boxShadow: NEU_INSET,
                         }}
@@ -1566,8 +1526,8 @@ export default function AppShell() {
                       onClick={() => navigate("/")}
                       className="flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold shadow-sm transition hover:bg-white/70"
                       style={{
-                        background: "linear-gradient(145deg, rgba(255,255,255,.92), rgba(232,238,248,.76))",
-                        boxShadow: "6px 6px 14px rgba(120,132,158,.14), -6px -6px 14px rgba(255,255,255,.86)",
+                        background: "rgb(var(--bg))",
+                        boxShadow: "var(--neu-raised-sm)",
                       }}
                     >
                       <Home size={13} />
@@ -1599,7 +1559,7 @@ export default function AppShell() {
                   )}
 
                   {activeClubDisplay.hasClub && (
-                    <div className="mb-4 grid gap-4 xl:grid-cols-2">
+                    <div className="neu-compact-grid mb-3 grid xl:grid-cols-2">
                       <NotificationOverview
                         data={notificationsQuery.data}
                         isLoading={notificationsQuery.isLoading}

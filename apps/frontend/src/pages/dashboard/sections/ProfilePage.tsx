@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
+import { useOutletContext } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMe } from "../../../hooks/useMe";
+import {
+  getClubMatches,
+  getClubMembers,
+  getClubSquads,
+} from "../../../api/admin.api";
 import {
   DotTag,
   Hero,
@@ -35,6 +41,13 @@ type FormValues = {
   healthNotes: string;
 };
 
+type ProfileOutletContext = {
+  clubId?: string;
+  role?: string;
+  subRoles?: string[];
+  permissions?: string[];
+};
+
 function toNumberOrNull(value: string) {
   if (!value) return null;
   const parsed = Number(value);
@@ -42,6 +55,132 @@ function toNumberOrNull(value: string) {
 }
 
 export default function ProfilePage() {
+  const ctx = (useOutletContext() as ProfileOutletContext) || {};
+  const isPlayerDashboard = String(ctx.role || "").toUpperCase() === "PLAYER";
+
+  if (!isPlayerDashboard) {
+    return <ClubProfileContent ctx={ctx} />;
+  }
+
+  return <PlayerProfileContent />;
+}
+
+function ClubProfileContent({ ctx }: { ctx: ProfileOutletContext }) {
+  const meQuery = useMe();
+  const clubId = String(ctx.clubId || localStorage.getItem("activeClubId") || "").trim();
+  const permissions = Array.isArray(ctx.permissions) ? ctx.permissions : [];
+  const canReadMembers = permissions.includes("members.read");
+  const canReadSquads = permissions.includes("squads.read");
+  const canReadMatches = permissions.includes("matches.read");
+
+  const memberships = Array.isArray((meQuery.data as any)?.memberships)
+    ? (meQuery.data as any).memberships
+    : [];
+  const activeMembership =
+    (meQuery.data as any)?.activeMembership ||
+    memberships.find((membership: any) => membership?.clubId === clubId) ||
+    memberships[0] ||
+    null;
+  const club = activeMembership?.club || null;
+  const role = String(activeMembership?.primary || ctx.role || "-").toUpperCase();
+  const subRoles = Array.isArray(activeMembership?.subRoles)
+    ? activeMembership.subRoles
+    : Array.isArray(ctx.subRoles)
+      ? ctx.subRoles
+      : [];
+
+  const membersQuery = useQuery({
+    queryKey: ["club-members", clubId],
+    queryFn: () => getClubMembers(clubId),
+    enabled: !!clubId && canReadMembers,
+    staleTime: 30_000,
+  });
+  const squadsQuery = useQuery({
+    queryKey: ["club-squads", clubId],
+    queryFn: () => getClubSquads(clubId),
+    enabled: !!clubId && canReadSquads,
+    staleTime: 30_000,
+  });
+  const matchesQuery = useQuery({
+    queryKey: ["club-matches", clubId],
+    queryFn: () => getClubMatches(clubId),
+    enabled: !!clubId && canReadMatches,
+    staleTime: 30_000,
+  });
+
+  const members = membersQuery.data || [];
+  const squads = squadsQuery.data || [];
+  const matches = matchesQuery.data || [];
+  const upcomingMatches = matches.filter((match: any) => {
+    const status = String(match.status || "").toUpperCase();
+    if (status === "CANCELLED" || status === "FINISHED") return false;
+    if (!match.kickoffAt) return status === "SCHEDULED";
+    return new Date(match.kickoffAt).getTime() >= Date.now();
+  });
+
+  if (meQuery.isLoading) {
+    return (
+      <PageWrap>
+        <div
+          className="rounded-3xl border bg-white/60 px-5 py-6 text-sm font-semibold text-[rgb(var(--muted))]"
+          style={{ borderColor: adminCardBorder }}
+        >
+          Loading club profile...
+        </div>
+      </PageWrap>
+    );
+  }
+
+  return (
+    <PageWrap>
+      <Hero
+        title="Club Profile"
+        subtitle="Club identity, workspace context, and operating details for the active club dashboard."
+        right={<DotTag tone="ok">{role}</DotTag>}
+      />
+
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        <Stat label="Members" value={canReadMembers ? members.length : "-"} />
+        <Stat label="Squads" value={canReadSquads ? squads.length : "-"} />
+        <Stat label="Matches" value={canReadMatches ? matches.length : "-"} />
+        <Stat label="Upcoming" value={canReadMatches ? upcomingMatches.length : "-"} />
+        <Stat label="Sub Roles" value={subRoles.length || "-"} />
+      </div>
+
+      <div className="grid gap-4 xl:grid-cols-[1fr_0.9fr]">
+        <Section title="Club Details" subtitle="Active club profile shown for club-level dashboards.">
+          <div className="space-y-5">
+            <div className="grid gap-3 md:grid-cols-2">
+              <ReadOnlyField label="Club name" value={club?.name || "-"} />
+              <ReadOnlyField label="Club slug" value={club?.slug || "-"} />
+            </div>
+            <ReadOnlyField label="Club ID" value={club?.id || clubId || "-"} />
+            <div className="grid gap-3 md:grid-cols-2">
+              <ReadOnlyField label="Your primary role" value={role} />
+              <ReadOnlyField label="Your sub roles" value={subRoles.length ? subRoles.join(", ") : "-"} />
+            </div>
+          </div>
+        </Section>
+
+        <Section title="Workspace Access" subtitle="Permission-backed club modules available to this context.">
+          <div className="flex flex-wrap gap-2">
+            <DotTag tone={canReadMembers ? "ok" : "default"}>Members</DotTag>
+            <DotTag tone={canReadSquads ? "ok" : "default"}>Squads</DotTag>
+            <DotTag tone={canReadMatches ? "ok" : "default"}>Matches</DotTag>
+            <DotTag tone={permissions.includes("stats.read") ? "ok" : "default"}>Stats</DotTag>
+            <DotTag tone={permissions.includes("injuries.read") ? "ok" : "default"}>Medical</DotTag>
+          </div>
+          <div className="mt-5 space-y-3">
+            <ReadOnlyField label="Signed-in account" value={(meQuery.data as any)?.user?.email || "-"} />
+            <ReadOnlyField label="Display name" value={(meQuery.data as any)?.user?.fullName || "-"} />
+          </div>
+        </Section>
+      </div>
+    </PageWrap>
+  );
+}
+
+function PlayerProfileContent() {
   const queryClient = useQueryClient();
   const meQuery = useMe();
   const profileQuery = useQuery({

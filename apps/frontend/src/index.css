@@ -7,16 +7,25 @@
 
 html, body, #root { height: 100%; }
 html {
-  font-family: var(--font-sans, Onest, "Segoe UI", system-ui, sans-serif);
+  font-family: var(--font-sans, "Onest", sans-serif);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scrollbar-color: rgba(var(--muted), 0.46) rgb(var(--bg));
+  scrollbar-width: thin;
 }
 body {
   font-family: inherit;
   line-height: 1.5;
-  background: linear-gradient(135deg, #eef3f8, #f8fbff);
+  background: rgb(var(--bg));
   color: rgb(var(--text));
+}
+
+.dashboard-readable,
+.dashboard-readable *,
+.dashboard-readable *::before,
+.dashboard-readable *::after {
+  font-family: "Onest", sans-serif !important;
 }
 
 button,
@@ -32,7 +41,7 @@ h3,
 h4,
 h5,
 h6 {
-  letter-spacing: -0.018em;
+  letter-spacing: 0;
 }
 
 /* Keep scroll behavior but hide the visual scrollbar when needed. */
@@ -42,6 +51,37 @@ h6 {
 }
 
 .hide-scrollbar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+html::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+html::-webkit-scrollbar-track {
+  background: rgb(var(--bg));
+}
+
+html::-webkit-scrollbar-thumb {
+  min-height: 42px;
+  border: 2px solid rgb(var(--bg));
+  border-radius: 999px;
+  background: rgba(var(--muted), 0.42);
+  background-clip: padding-box;
+  box-shadow:
+    inset 2px 2px 5px rgba(0, 0, 0, 0.18),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.62);
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--muted), 0.58);
+  background-clip: padding-box;
+}
+
+html::-webkit-scrollbar-button {
+  display: none;
   width: 0;
   height: 0;
 }
@@ -59,8 +99,16 @@ h6 {
   color: rgba(var(--muted), 0.74) !important;
 }
 
-.dashboard-readable :where([class*="bg-white/10"]) {
-  background: rgba(255, 255, 255, 0.62) !important;
+.dashboard-readable :where([class*="bg-white/"], [class~="bg-white"]) {
+  background-color: rgb(var(--bg)) !important;
+}
+
+/* Normalize legacy inline white/glass fills without touching colored status accents. */
+.dashboard-readable :where(
+  [style*="background: rgba(255, 255, 255"],
+  [style*="background: linear-gradient(145deg, rgba(255, 255, 255"]
+) {
+  background: rgb(var(--bg)) !important;
 }
 
 .dashboard-readable :where([class*="border-white/20"]) {
@@ -68,6 +116,7 @@ h6 {
 }
 
 .dashboard-readable .dashboard-sidebar {
+  background: rgb(var(--bg));
   color: rgb(var(--text));
 }
 
@@ -81,33 +130,30 @@ h6 {
 
 .dashboard-readable :where(input, textarea, select) {
   border-color: transparent !important;
-  background: linear-gradient(145deg, rgba(255,255,255,.88), rgba(232,238,248,.74)) !important;
-  box-shadow:
-    inset 5px 5px 12px rgba(120,132,158,.12),
-    inset -5px -5px 12px rgba(255,255,255,.84) !important;
+  background: rgb(var(--bg)) !important;
+  box-shadow: var(--neu-inset) !important;
 }
 
-.dashboard-readable :where(button:not([disabled])) {
+.dashboard-readable :where(button:not([disabled]), a.neu-press) {
   border-color: transparent;
+  box-shadow: var(--neu-raised-sm) !important;
+  transform: scale(1) !important;
+  transform-origin: center;
   transition:
-    transform 180ms ease,
-    box-shadow 220ms ease,
-    background 220ms ease,
-    color 180ms ease;
+    transform 120ms cubic-bezier(.2, .8, .2, 1),
+    box-shadow 120ms ease,
+    background-color 120ms ease,
+    color 120ms ease;
 }
 
-.dashboard-readable :where(button:not([disabled]):hover) {
-  transform: translateY(-2px);
-  box-shadow:
-    13px 13px 28px rgba(120,132,158,.22),
-    -13px -13px 28px rgba(255,255,255,.94);
+.dashboard-readable :where(button:not([disabled]), a.neu-press):hover {
+  box-shadow: var(--neu-inset) !important;
+  transform: scale(.985) !important;
 }
 
-.dashboard-readable :where(button:not([disabled]):active) {
-  transform: translateY(2px) scale(.985);
-  box-shadow:
-    inset 9px 9px 20px rgba(120,132,158,.20),
-    inset -9px -9px 20px rgba(255,255,255,.90) !important;
+.dashboard-readable :where(button:not([disabled]), a.neu-press):active {
+  box-shadow: var(--neu-inset-strong) !important;
+  transform: scale(.965) !important;
 }
 
 .dashboard-readable :where(.recharts-wrapper) {
@@ -115,28 +161,131 @@ h6 {
 }
 
 .dashboard-readable .neu-surface {
+  background: rgb(var(--bg)) !important;
+  box-shadow: var(--neu-raised) !important;
+  transform: scale(1) !important;
+  transform-origin: center;
   transition:
-    transform 220ms ease,
-    box-shadow 260ms ease,
-    background 260ms ease;
+    transform 140ms cubic-bezier(.2, .8, .2, 1),
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+  will-change: transform, box-shadow;
 }
 
 .dashboard-readable .neu-surface:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    28px 28px 60px rgba(120,132,158,.26),
-    -28px -28px 60px rgba(255,255,255,.98) !important;
+  box-shadow: var(--neu-inset) !important;
+  transform: scale(.992) !important;
 }
 
-.dashboard-readable .dashboard-sidebar a:not([aria-current="page"]):hover {
-  background: linear-gradient(145deg, rgba(255,255,255,.72), rgba(232,238,248,.58)) !important;
-  box-shadow:
-    9px 9px 20px rgba(120,132,158,.14),
-    -9px -9px 20px rgba(255,255,255,.86) !important;
+.dashboard-readable .neu-surface:active {
+  box-shadow: var(--neu-inset-strong) !important;
+  transform: scale(.982) !important;
+}
+
+.dashboard-readable .neu-stat-tile {
+  background: var(--stat-tile-bg, rgb(var(--bg))) !important;
+}
+
+.dashboard-readable .dashboard-sidebar a {
+  transform: scale(1) !important;
+  transition: transform 120ms cubic-bezier(.2, .8, .2, 1), box-shadow 120ms ease;
+}
+
+.dashboard-readable .dashboard-sidebar a:not([aria-current="page"]) {
+  background: rgb(var(--bg)) !important;
+  box-shadow: var(--neu-raised-sm) !important;
+}
+
+.dashboard-readable .dashboard-sidebar a:hover {
+  box-shadow: var(--neu-inset) !important;
+  transform: scale(.985) !important;
 }
 
 .dashboard-readable .dashboard-sidebar a:active {
+  box-shadow: var(--neu-inset-strong) !important;
+  transform: scale(.965) !important;
+}
+
+/* Scroll containers keep breathing room around raised surfaces so shadows remain visible. */
+.dashboard-readable .dashboard-scroll {
+  padding: 18px 22px 32px;
+  scroll-padding: 18px;
+  scrollbar-color: rgba(var(--muted), 0.46) rgb(var(--bg));
+  scrollbar-width: thin;
+}
+
+.dashboard-readable :where(.dashboard-scroll, .dashboard-sidebar, .dashboard-page)::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dashboard-readable :where(.dashboard-scroll, .dashboard-sidebar, .dashboard-page)::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: rgb(var(--bg));
+  box-shadow: var(--neu-inset);
+}
+
+.dashboard-readable :where(.dashboard-scroll, .dashboard-sidebar, .dashboard-page)::-webkit-scrollbar-thumb {
+  min-height: 42px;
+  border: 2px solid rgb(var(--bg));
+  border-radius: 999px;
+  background: rgba(var(--muted), 0.42);
+  background-clip: padding-box;
   box-shadow:
-    inset 6px 6px 14px rgba(120,132,158,.16),
-    inset -6px -6px 14px rgba(255,255,255,.80) !important;
+    -2px -2px 5px rgba(255, 255, 255, 0.84),
+    2px 2px 6px rgba(0, 0, 0, 0.18),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.42);
+}
+
+.dashboard-readable :where(.dashboard-scroll, .dashboard-sidebar, .dashboard-page)::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--muted), 0.58);
+  background-clip: padding-box;
+}
+
+.dashboard-readable :where(.dashboard-scroll, .dashboard-sidebar, .dashboard-page)::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.dashboard-readable :where(.dashboard-scroll, .dashboard-sidebar, .dashboard-page)::-webkit-scrollbar-corner {
+  background: rgb(var(--bg));
+}
+
+.dashboard-readable .neu-compact-grid {
+  gap: 12px;
+  padding: 14px;
+  margin: -14px;
+  overflow: visible;
+}
+
+.dashboard-readable .dashboard-page :where(.grid[class~="gap-4"], .grid[class~="gap-5"], .grid[class~="gap-6"]) {
+  gap: 12px;
+  padding: 14px;
+  margin: -14px;
+  overflow: visible;
+}
+
+.dashboard-readable .dashboard-page > .grid,
+.dashboard-readable .dashboard-page :where(.grid):has(> .neu-surface) {
+  padding: 14px;
+  margin: -14px;
+  overflow: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-readable :where(button:not([disabled]), a.neu-press),
+  .dashboard-readable .dashboard-sidebar a,
+  .dashboard-readable .neu-surface {
+    transition: none;
+  }
+
+  .dashboard-readable :where(button:not([disabled]), a.neu-press):hover,
+  .dashboard-readable :where(button:not([disabled]), a.neu-press):active,
+  .dashboard-readable .dashboard-sidebar a:hover,
+  .dashboard-readable .dashboard-sidebar a:active,
+  .dashboard-readable .neu-surface:hover,
+  .dashboard-readable .neu-surface:active {
+    transform: none !important;
+  }
 }
