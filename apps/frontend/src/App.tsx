@@ -188,9 +188,7 @@ export default function App() {
           path="/marketplace"
           element={
             <ProtectedRoute>
-              <PricingFeatureGate feature="marketplace_recruiting">
-                <MarketplaceModulePage />
-              </PricingFeatureGate>
+              <MarketplaceModulePage />
             </ProtectedRoute>
           }
         />
@@ -391,9 +389,7 @@ export default function App() {
             path="social"
             element={
               <DashboardPermissionRoute permission="membership.self.read">
-                <PricingFeatureGate feature="social_publishing">
-                  <SocialModulePage />
-                </PricingFeatureGate>
+                <SocialModulePage />
               </DashboardPermissionRoute>
             }
           />

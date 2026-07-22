@@ -8,6 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../../prisma/prisma.service';
+import { assertPasswordPolicy } from '../../common/security/password-policy';
 import { LoginDto, RegisterDto } from './dto';
 
 @Injectable()
@@ -56,6 +57,7 @@ export class AuthService {
 
   async register(dto: RegisterDto) {
     const email = this.normalizeEmail(dto.email);
+    assertPasswordPolicy(dto.password);
 
     const existing = await this.prisma.user.findUnique({ where: { email } });
     if (existing) throw new BadRequestException('Email already in use');

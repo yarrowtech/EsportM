@@ -64,7 +64,7 @@ declare global {
 type PricingContextValue = {
   currentPlan: BillingPlanKey;
   activeClubName: string | null;
-  isPrototypeMode: boolean;
+  isPricingLoading: boolean;
   hasFeatureAccess: (featureKey: PricingFeatureKey) => boolean;
   requestFeatureAccess: (
     featureKey: PricingFeatureKey,
@@ -74,7 +74,6 @@ type PricingContextValue = {
 };
 
 const PricingContext = createContext<PricingContextValue | null>(null);
-const isPrototypeMode = import.meta.env.VITE_PRICING_LOCK_MODE !== "locked";
 
 function getActiveMembership(meData: any) {
   const memberships = Array.isArray(meData?.memberships) ? meData.memberships : [];
@@ -90,25 +89,6 @@ function getClubName(club: unknown) {
   if (!club) return null;
   if (typeof club === "string") return club;
   return String((club as { name?: string })?.name || "").trim() || null;
-}
-
-function getScopeKey(meData: any, membership: any) {
-  const userId = meData?.user?.id || meData?.user?._id || meData?.id || "guest";
-  return membership?.clubId ? `club:${membership.clubId}` : `player:${userId}`;
-}
-
-function storageKey(scopeKey: string, featureKey: PricingFeatureKey) {
-  return `prototype-pricing:${scopeKey}:${featureKey}`;
-}
-
-function readPrototypeAccess(scopeKey: string, featureKey: PricingFeatureKey) {
-  if (typeof sessionStorage === "undefined") return false;
-  return sessionStorage.getItem(storageKey(scopeKey, featureKey)) === "1";
-}
-
-function writePrototypeAccess(scopeKey: string, featureKey: PricingFeatureKey) {
-  if (typeof sessionStorage === "undefined") return;
-  sessionStorage.setItem(storageKey(scopeKey, featureKey), "1");
 }
 
 function planLabel(plan: BillingPlanKey) {
@@ -179,32 +159,25 @@ export function PrototypePricingProvider({ children }: { children: ReactNode }) 
   const meQuery = useMe({ enabled: hasToken });
   const meData = meQuery.data as any;
   const membership = useMemo(() => getActiveMembership(meData), [meData]);
-  const scopeKey = useMemo(() => getScopeKey(meData, membership), [meData, membership]);
   const activeClubName = useMemo(() => getClubName(membership?.club), [membership]);
   const currentPlan = normalizeBillingPlan(membership?.club?.billingPlan);
   const [pendingRequest, setPendingRequest] = useState<PendingRequest | null>(null);
-  const [sessionUnlocks, setSessionUnlocks] = useState<Record<string, boolean>>({});
   const [checkoutPlan, setCheckoutPlan] = useState<BillingPlanCheckoutKey | null>(null);
   const [checkoutMessage, setCheckoutMessage] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const isPricingLoading = hasToken && meQuery.isLoading;
 
   const hasFeatureAccess = useCallback(
     (featureKey: PricingFeatureKey) => {
       const feature = FEATURE_PRICING[featureKey];
-      if (planMeetsRequirement(currentPlan, feature.requiredPlan)) return true;
-      if (!isPrototypeMode) return false;
-      return Boolean(sessionUnlocks[featureKey]) || readPrototypeAccess(scopeKey, featureKey);
+      return planMeetsRequirement(currentPlan, feature.requiredPlan);
     },
-    [currentPlan, scopeKey, sessionUnlocks]
+    [currentPlan]
   );
 
-  const dismissPrototype = useCallback(() => {
-    if (!pendingRequest) return;
-    writePrototypeAccess(scopeKey, pendingRequest.featureKey);
-    setSessionUnlocks((prev) => ({ ...prev, [pendingRequest.featureKey]: true }));
+  const dismissUpgradePrompt = useCallback(() => {
     setPendingRequest(null);
-    pendingRequest.onContinue?.();
-  }, [pendingRequest, scopeKey]);
+  }, []);
 
   const requestFeatureAccess = useCallback(
     (featureKey: PricingFeatureKey, onContinue?: () => void) => {
@@ -231,7 +204,7 @@ export function PrototypePricingProvider({ children }: { children: ReactNode }) 
     () => ({
       currentPlan,
       activeClubName,
-      isPrototypeMode,
+      isPricingLoading,
       hasFeatureAccess,
       requestFeatureAccess,
       runWithPricingLayer,
@@ -239,6 +212,7 @@ export function PrototypePricingProvider({ children }: { children: ReactNode }) 
     [
       currentPlan,
       activeClubName,
+      isPricingLoading,
       hasFeatureAccess,
       requestFeatureAccess,
       runWithPricingLayer,
@@ -327,11 +301,11 @@ export function PrototypePricingProvider({ children }: { children: ReactNode }) 
   return (
     <PricingContext.Provider value={value}>
       {children}
-      <Dialog open={Boolean(feature)} onOpenChange={(open) => !open && dismissPrototype()}>
-        <DialogContent className="w-[calc(100vw-1rem)] max-w-[960px] overflow-hidden rounded-[24px] border-slate-200 bg-white p-0 shadow-[0_30px_90px_rgba(15,23,42,0.22)] sm:w-[calc(100vw-2rem)]">
+      <Dialog open={Boolean(feature)} onOpenChange={(open) => !open && dismissUpgradePrompt()}>
+        <DialogContent className="pricing-neu-modal w-[calc(100vw-1rem)] max-w-[960px] overflow-hidden rounded-[24px] p-0 sm:w-[calc(100vw-2rem)]">
           {feature ? (
-            <div className="max-h-[90dvh] overflow-y-auto bg-white">
-              <DialogHeader className="relative overflow-hidden border-b border-slate-100 px-5 pb-6 pt-6 text-center sm:px-8 sm:pt-8">
+            <div className="pricing-neu-scroll max-h-[90dvh] overflow-y-auto">
+              <DialogHeader className="relative overflow-hidden border-b border-slate-200/70 px-5 pb-6 pt-6 text-center sm:px-8 sm:pt-8">
                 <div
                   className="absolute inset-0 opacity-80"
                   style={{
@@ -342,14 +316,14 @@ export function PrototypePricingProvider({ children }: { children: ReactNode }) 
                   aria-hidden="true"
                 />
                 <div className="relative mx-auto flex max-w-3xl flex-col items-center pr-8">
-                  <Badge className="rounded-full border-indigo-200 bg-indigo-50 px-4 py-1 text-[11px] uppercase tracking-[0.2em] text-indigo-800">
+                  <Badge className="pricing-neu-pill rounded-full px-4 py-1 text-[11px] uppercase tracking-[0.2em] text-indigo-800">
                     Paid feature
                   </Badge>
                   <div className="mt-4 flex flex-wrap justify-center gap-2">
-                    <Badge className="rounded-full border-slate-200 bg-white/85 text-slate-700">
-                    Current: {planLabel(currentPlan)}
+                    <Badge className="pricing-neu-pill rounded-full text-slate-700">
+                      Current: {planLabel(currentPlan)}
                     </Badge>
-                    <Badge className="rounded-full bg-indigo-100 text-indigo-800">
+                    <Badge className="pricing-neu-pill rounded-full text-indigo-800">
                       Recommended: {planLabel(feature.requiredPlan)}
                     </Badge>
                   </div>
@@ -362,7 +336,7 @@ export function PrototypePricingProvider({ children }: { children: ReactNode }) 
                 </div>
               </DialogHeader>
 
-              <div className="space-y-5 bg-slate-50 px-5 py-5 sm:px-7 sm:py-6">
+              <div className="space-y-5 px-5 py-5 sm:px-7 sm:py-6">
                 <div className="grid gap-4 md:grid-cols-3">
                   {modalPlans.map((plan) => {
                     const isRecommended = plan.key === feature.requiredPlan;
@@ -370,9 +344,9 @@ export function PrototypePricingProvider({ children }: { children: ReactNode }) 
                     return (
                       <div
                         key={plan.key}
-                        className={`relative flex min-h-[252px] flex-col overflow-hidden rounded-[20px] border p-5 text-slate-950 transition ${
+                        className={`pricing-neu-card relative flex min-h-[252px] flex-col overflow-hidden rounded-[20px] border text-slate-950 ${
                           style.card
-                        } ${isRecommended ? "md:-mt-4" : ""}`}
+                        } ${isRecommended ? "px-5 pb-5 pt-9 md:-mt-4" : "p-5"}`}
                       >
                         <div className={`absolute -right-10 -top-16 h-36 w-36 rounded-full blur-3xl ${style.glow}`} />
                         <div
@@ -386,7 +360,7 @@ export function PrototypePricingProvider({ children }: { children: ReactNode }) 
                           aria-hidden="true"
                         />
                         {isRecommended ? (
-                          <div className="absolute -top-2 right-5 rotate-[-6deg] rounded-full bg-slate-900 px-3 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white shadow-lg">
+                          <div className="absolute right-4 top-3 z-20 rotate-[-4deg] rounded-full bg-slate-900 px-3 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white shadow-lg shadow-slate-950/20">
                             Most popular
                           </div>
                         ) : null}
@@ -440,7 +414,7 @@ export function PrototypePricingProvider({ children }: { children: ReactNode }) 
                               type="button"
                               onClick={() => startCheckout(plan.key as BillingPlanCheckoutKey)}
                               disabled={checkoutPlan === plan.key}
-                              className={`mt-5 h-10 rounded-full px-4 text-sm font-semibold shadow-lg transition hover:opacity-90 disabled:cursor-wait disabled:opacity-70 ${style.button}`}
+                              className={`pricing-neu-button mt-5 h-10 rounded-full px-4 text-sm font-semibold ${style.button}`}
                             >
                               {checkoutPlan === plan.key ? "Opening checkout..." : "Upgrade with Razorpay"}
                             </button>
@@ -452,7 +426,7 @@ export function PrototypePricingProvider({ children }: { children: ReactNode }) 
                 </div>
 
                 {isIndividual ? (
-                  <div className="rounded-lg border border-violet-200 bg-violet-50 p-4">
+                  <div className="pricing-neu-panel rounded-[18px] border p-4">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <div>
                         <p className="text-sm font-semibold tracking-normal text-slate-950">
@@ -468,25 +442,25 @@ export function PrototypePricingProvider({ children }: { children: ReactNode }) 
                 ) : null}
 
                 {!isClubAdmin && !isIndividual ? (
-                  <div className="rounded-[18px] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                  <div className="pricing-neu-panel rounded-[18px] border px-4 py-3 text-sm text-amber-900">
                     This service is available to your role after the club upgrades. Ask a club admin
                     to activate the recommended plan.
                   </div>
                 ) : null}
 
                 {checkoutError ? (
-                  <div className="rounded-[18px] border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">
+                  <div className="pricing-neu-panel rounded-[18px] border px-4 py-3 text-sm font-medium text-rose-700">
                     {checkoutError}
                   </div>
                 ) : null}
 
                 {checkoutMessage ? (
-                  <div className="rounded-[18px] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+                  <div className="pricing-neu-panel rounded-[18px] border px-4 py-3 text-sm font-medium text-emerald-700">
                     {checkoutMessage}
                   </div>
                 ) : null}
 
-                <div className="rounded-[18px] border border-slate-200 bg-white p-4 shadow-sm shadow-slate-200/60">
+                <div className="pricing-neu-panel rounded-[18px] border p-4">
                   <p className="text-sm font-semibold tracking-normal text-slate-950">
                     Included in {feature.shortTitle}
                   </p>
@@ -494,7 +468,7 @@ export function PrototypePricingProvider({ children }: { children: ReactNode }) 
                     {feature.bullets.map((item) => (
                       <li
                         key={item}
-                        className="flex min-h-12 items-start gap-2 rounded-md border border-indigo-100 bg-indigo-50 px-3 py-3 text-sm leading-5 text-slate-700"
+                        className="pricing-neu-pill flex min-h-12 items-start gap-2 rounded-md border px-3 py-3 text-sm leading-5 text-slate-700"
                       >
                         <Check className="mt-0.5 h-4 w-4 shrink-0 text-indigo-600" />
                         <span>{item}</span>
@@ -504,7 +478,7 @@ export function PrototypePricingProvider({ children }: { children: ReactNode }) 
                 </div>
 
                 {activeClubName ? (
-                  <div className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+                  <div className="pricing-neu-panel rounded-[18px] border px-4 py-3 text-sm text-slate-600">
                     <span className="font-semibold text-slate-950">Plan context:</span>{" "}
                     {activeClubName}
                   </div>

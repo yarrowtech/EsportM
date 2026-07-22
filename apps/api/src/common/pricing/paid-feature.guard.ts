@@ -3,6 +3,7 @@ import {
   ExecutionContext,
   ForbiddenException,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { PrismaService } from '../../prisma/prisma.service';
@@ -28,6 +29,9 @@ export class PaidFeatureGuard implements CanActivate {
     if (!feature) return true;
 
     const req = context.switchToHttp().getRequest();
+    const userId: string | undefined = req.user?.sub;
+    if (!userId) throw new UnauthorizedException('Unauthorized');
+
     const params = req.params || {};
     const query = req.query || {};
     const body = req.body || {};
@@ -52,6 +56,21 @@ export class PaidFeatureGuard implements CanActivate {
       throw new ForbiddenException('Club is inactive or unavailable');
     }
 
+    const [membership, user] = await Promise.all([
+      this.prisma.membership.findUnique({
+        where: { userId_clubId: { userId, clubId: String(clubId) } },
+        select: { clubId: true, primary: true, subRoles: true },
+      }),
+      this.prisma.user.findUnique({
+        where: { id: userId },
+        select: { isPlatformAdmin: true },
+      }),
+    ]);
+
+    if (!membership && !user?.isPlatformAdmin) {
+      throw new ForbiddenException('No club access');
+    }
+
     const requiredPlan = PAID_FEATURE_REQUIRED_PLAN[feature];
     if (!planMeetsRequirement(club.billingPlan, requiredPlan)) {
       throw new ForbiddenException({
@@ -61,6 +80,9 @@ export class PaidFeatureGuard implements CanActivate {
         currentPlan: club.billingPlan || 'FREE',
       });
     }
+
+    req.clubId = String(clubId);
+    if (membership) req.membership = membership;
 
     return true;
   }

@@ -259,6 +259,386 @@ html::-webkit-scrollbar-button {
   overflow: visible;
 }
 
+.pricing-neu-modal {
+  border-color: rgb(var(--border) / 0.82) !important;
+  background: rgb(var(--bg)) !important;
+  box-shadow: none !important;
+}
+
+.pricing-neu-scroll {
+  background: rgb(var(--bg));
+  scrollbar-color: rgb(var(--muted) / 0.46) rgb(var(--bg));
+  scrollbar-width: thin;
+}
+
+.pricing-neu-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.pricing-neu-scroll::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: rgb(var(--bg));
+  box-shadow: var(--neu-inset);
+}
+
+.pricing-neu-scroll::-webkit-scrollbar-thumb {
+  min-height: 42px;
+  border: 2px solid rgb(var(--bg));
+  border-radius: 999px;
+  background: rgb(var(--muted) / 0.42);
+  background-clip: padding-box;
+  box-shadow:
+    -2px -2px 5px rgba(255, 255, 255, 0.84),
+    2px 2px 6px rgba(0, 0, 0, 0.18),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.42);
+}
+
+.pricing-neu-card {
+  background: rgb(var(--bg));
+  box-shadow: var(--neu-raised-sm);
+  transform: translateY(0) scale(1);
+  transform-origin: center;
+  transition:
+    transform 150ms cubic-bezier(.2, .8, .2, 1),
+    box-shadow 150ms ease,
+    filter 150ms ease;
+}
+
+.pricing-neu-card:hover {
+  box-shadow: var(--neu-raised);
+  transform: translateY(-3px) scale(1.006);
+}
+
+.pricing-neu-card:active {
+  box-shadow: var(--neu-inset);
+  transform: translateY(1px) scale(.992);
+}
+
+.pricing-neu-panel {
+  border-color: rgb(var(--border) / 0.8);
+  background: rgb(var(--bg));
+  box-shadow: var(--neu-raised-sm);
+}
+
+.pricing-neu-pill {
+  border-color: rgb(var(--border) / 0.84) !important;
+  background: rgb(var(--bg)) !important;
+  box-shadow: var(--neu-raised-sm);
+}
+
+.pricing-neu-button {
+  box-shadow:
+    inset 10px 8px 22px rgba(255, 255, 255, 0.28),
+    -4px -4px 12px rgba(255, 255, 255, 0.78),
+    5px 5px 12px rgba(15, 23, 42, 0.22);
+  transform: scale(1);
+  transform-origin: center;
+  transition:
+    transform 120ms cubic-bezier(.2, .8, .2, 1),
+    box-shadow 120ms ease,
+    filter 120ms ease,
+    opacity 120ms ease;
+}
+
+.pricing-neu-button:not(:disabled):hover {
+  filter: brightness(1.04) saturate(1.06);
+  box-shadow:
+    inset 8px 7px 18px rgba(255, 255, 255, 0.18),
+    -3px -3px 10px rgba(255, 255, 255, 0.72),
+    4px 4px 10px rgba(15, 23, 42, 0.2);
+  transform: translateY(-1px) scale(.992);
+}
+
+.pricing-neu-button:not(:disabled):active {
+  box-shadow:
+    inset 5px 5px 13px rgba(15, 23, 42, 0.25),
+    inset -4px -4px 12px rgba(255, 255, 255, 0.32);
+  transform: translateY(1px) scale(.972);
+}
+
+.pricing-neu-button:disabled {
+  cursor: wait;
+  opacity: .72;
+}
+
+.pricing-locked-shell {
+  display: flex;
+  min-height: min(620px, calc(100dvh - 96px));
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  color: rgb(var(--text));
+}
+
+.pricing-locked-panel {
+  display: grid;
+  width: min(720px, 100%);
+  grid-template-columns: auto 1fr;
+  gap: 18px;
+  border: 1px solid rgb(var(--border) / 0.82);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 18% 0%, rgb(var(--primary) / 0.14), transparent 18rem),
+    rgb(var(--bg));
+  box-shadow: var(--neu-raised);
+  padding: 24px;
+  text-align: left;
+}
+
+.pricing-locked-panel--loading {
+  display: block;
+  color: rgb(var(--muted));
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.pricing-locked-icon {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  border-radius: 18px;
+  background: rgb(var(--bg));
+  color: rgb(var(--primary-2));
+  box-shadow: var(--neu-raised-sm);
+}
+
+.pricing-locked-kicker {
+  margin: 0;
+  color: rgb(var(--muted));
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.pricing-locked-panel h1 {
+  margin: 8px 0 0;
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.pricing-locked-copy {
+  max-width: 58ch;
+  margin: 12px 0 0;
+  color: rgb(var(--muted));
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.pricing-locked-status,
+.pricing-locked-includes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.pricing-locked-status span,
+.pricing-locked-includes span {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgb(var(--border) / 0.8);
+  border-radius: 999px;
+  background: rgb(var(--bg));
+  box-shadow: var(--neu-raised-sm);
+  padding: 7px 12px;
+  color: rgb(var(--text));
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pricing-locked-includes span {
+  border-radius: 14px;
+  color: rgb(var(--muted));
+  font-weight: 600;
+}
+
+.pricing-locked-button {
+  min-height: 42px;
+  margin-top: 20px;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(var(--primary-2));
+  padding: 0 18px;
+  color: white;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.signup-neu-page {
+  --signup-accent: #5F5EA6;
+  --signup-accent-light: #CAD9FF;
+  --signup-bg: #eef1f7;
+  --signup-shadow-dark: rgba(0, 0, 0, 0.25);
+  --signup-shadow-soft: rgba(0, 0, 0, 0.16);
+  min-height: 100vh;
+  background: var(--signup-bg);
+}
+
+.signup-neu-card {
+  border: 1px solid rgba(95, 94, 166, 0.12);
+  background: var(--signup-bg);
+  box-shadow:
+    -7px -5px 9.2px rgba(255, 255, 255, 0.83),
+    8px 8px 13.5px rgba(0, 0, 0, 0.18);
+}
+
+.signup-neu-surface {
+  border: 1px solid rgba(95, 94, 166, 0.12);
+  background: var(--signup-bg);
+  box-shadow:
+    inset 8px 5px 12.3px rgba(202, 217, 255, 0.85),
+    -7px -5px 9.2px rgba(255, 255, 255, 0.83),
+    8px 8px 13.5px rgba(0, 0, 0, 0.16);
+}
+
+.signup-neu-input {
+  border: 1px solid rgba(95, 94, 166, 0.12);
+  background: var(--signup-bg);
+  box-shadow:
+    inset 8px 10px 8.9px rgba(0, 0, 0, 0.12),
+    inset -8px -7px 11.7px rgba(255, 255, 255, 0.58);
+}
+
+.signup-neu-input:focus-within,
+.signup-neu-input:focus {
+  border-color: rgba(95, 94, 166, 0.36);
+  box-shadow:
+    inset 8px 10px 8.9px rgba(0, 0, 0, 0.14),
+    inset -8px -7px 11.7px rgba(255, 255, 255, 0.7),
+    0 0 0 3px rgba(95, 94, 166, 0.12);
+}
+
+.signup-neu-button {
+  border: 1px solid rgba(95, 94, 166, 0.22);
+  background: #9fb7f6;
+  color: #252454;
+  box-shadow:
+    inset 8px 5px 12.3px rgba(202, 217, 255, 1),
+    -7px -5px 9.2px rgba(255, 255, 255, 0.83),
+    8px 8px 13.5px rgba(0, 0, 0, 0.37);
+  transform: translateY(0) scale(1);
+  transform-origin: center;
+  transition:
+    transform 120ms cubic-bezier(.2, .8, .2, 1),
+    box-shadow 120ms ease,
+    background-color 120ms ease,
+    color 120ms ease;
+}
+
+.signup-neu-button:not(:disabled):hover {
+  background: #a9bfff;
+  transform: translateY(-1px) scale(.992);
+  box-shadow:
+    inset 8px 5px 12.3px rgba(202, 217, 255, 1),
+    -7px -5px 9.2px rgba(255, 255, 255, 0.83),
+    7px 7px 11px rgba(0, 0, 0, 0.32);
+}
+
+.signup-neu-button:not(:disabled):active {
+  transform: translateY(1px) scale(.972);
+  box-shadow:
+    inset -8px -7px 11.7px rgba(255, 255, 255, 0.58),
+    inset 8px 10px 8.9px rgba(0, 0, 0, 0.25);
+}
+
+.signup-neu-button:disabled {
+  cursor: not-allowed;
+  opacity: .58;
+  box-shadow:
+    inset 8px 5px 12.3px rgba(202, 217, 255, 0.55),
+    -5px -4px 8px rgba(255, 255, 255, 0.6),
+    5px 5px 9px rgba(0, 0, 0, 0.16);
+}
+
+.signup-neu-ghost {
+  border: 1px solid rgba(95, 94, 166, 0.12);
+  background: var(--signup-bg);
+  box-shadow:
+    inset 8px 5px 12.3px rgba(202, 217, 255, 0.6),
+    -7px -5px 9.2px rgba(255, 255, 255, 0.78),
+    8px 8px 13.5px rgba(0, 0, 0, 0.14);
+  transform: translateY(0) scale(1);
+  transition:
+    transform 120ms cubic-bezier(.2, .8, .2, 1),
+    box-shadow 120ms ease;
+}
+
+.signup-neu-ghost:not(:disabled):hover {
+  transform: translateY(-1px) scale(.992);
+}
+
+.signup-neu-ghost:not(:disabled):active {
+  transform: translateY(1px) scale(.972);
+  box-shadow:
+    inset -8px -7px 11.7px rgba(255, 255, 255, 0.58),
+    inset 8px 10px 8.9px rgba(0, 0, 0, 0.22);
+}
+
+.signup-neu-icon {
+  border: 1px solid rgba(95, 94, 166, 0.14);
+  background: var(--signup-bg);
+  box-shadow:
+    inset 8px 5px 12.3px rgba(202, 217, 255, 0.7),
+    -5px -4px 8px rgba(255, 255, 255, 0.8),
+    5px 5px 10px rgba(0, 0, 0, 0.16);
+  transition:
+    transform 120ms cubic-bezier(.2, .8, .2, 1),
+    box-shadow 120ms ease;
+}
+
+.signup-neu-icon:hover {
+  transform: scale(.992);
+}
+
+.signup-neu-icon:active {
+  transform: scale(.965);
+  box-shadow:
+    inset -8px -7px 11.7px rgba(255, 255, 255, 0.58),
+    inset 8px 10px 8.9px rgba(0, 0, 0, 0.22);
+}
+
+@media (max-width: 640px) {
+  .pricing-locked-shell {
+    align-items: flex-start;
+    padding: 18px;
+  }
+
+  .pricing-locked-panel {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pricing-neu-card,
+  .pricing-neu-button,
+  .signup-neu-button,
+  .signup-neu-ghost,
+  .signup-neu-icon {
+    transition: none;
+  }
+
+  .pricing-neu-card:hover,
+  .pricing-neu-card:active,
+  .pricing-neu-button:not(:disabled):hover,
+  .pricing-neu-button:not(:disabled):active,
+  .signup-neu-button:not(:disabled):hover,
+  .signup-neu-button:not(:disabled):active,
+  .signup-neu-ghost:not(:disabled):hover,
+  .signup-neu-ghost:not(:disabled):active,
+  .signup-neu-icon:hover,
+  .signup-neu-icon:active {
+    transform: none;
+  }
+}
+
 .dashboard-readable .dashboard-page :where(.grid[class~="gap-4"], .grid[class~="gap-5"], .grid[class~="gap-6"]) {
   gap: 12px;
   padding: 14px;

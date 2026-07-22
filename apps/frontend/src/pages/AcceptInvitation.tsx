@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { acceptInvitation, validateInvitation } from "../api/admin.api";
+import { getPasswordRuleStatus, isStrongPassword } from "../utils/passwordPolicy";
 
 type InviteInfo = {
   email: string;
@@ -24,6 +25,13 @@ export default function AcceptInvitation() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [msg, setMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
   const [accepted, setAccepted] = useState(false);
+  const trimmedPassword = password.trim();
+  const passwordRules = useMemo(
+    () => getPasswordRuleStatus(trimmedPassword),
+    [trimmedPassword]
+  );
+  const matchedPasswordRules = passwordRules.filter((rule) => rule.met).length;
+  const passwordMeetsPolicy = isStrongPassword(trimmedPassword);
 
   useEffect(() => {
     setToken(tokenFromQuery);
@@ -66,21 +74,26 @@ export default function AcceptInvitation() {
     return (
       token.trim().length > 8 &&
       fullName.trim().length >= 2 &&
-      password.length >= 6 &&
+      passwordMeetsPolicy &&
       confirmPassword === password
     );
-  }, [token, fullName, password, confirmPassword]);
+  }, [token, fullName, passwordMeetsPolicy, confirmPassword, password]);
 
   const onAccept = async () => {
     setMsg(null);
     if (!canSubmit || loading) return;
+
+    if (!passwordMeetsPolicy) {
+      setMsg({ type: "err", text: "Password must match all security requirements." });
+      return;
+    }
 
     try {
       setLoading(true);
       await acceptInvitation({
         token: token.trim(),
         fullName: fullName.trim(),
-        password: password.trim(),
+        password: trimmedPassword,
       });
       setAccepted(true);
       setMsg({ type: "ok", text: "Invitation accepted. You can now login." });
@@ -146,10 +159,44 @@ export default function AcceptInvitation() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="At least 6 characters"
+              placeholder="At least 8 characters"
               className="w-full rounded-xl border border-black/15 bg-white/85 px-3 py-2 text-sm outline-none"
               disabled={accepted}
             />
+          </div>
+
+          <div className="rounded-xl border border-black/10 bg-white/70 px-3 py-2">
+            <div className="mb-1.5 flex items-center justify-between gap-3 text-[11px] font-bold text-[rgb(var(--text))]">
+              <span>Password strength</span>
+              <span>
+                {matchedPasswordRules}/{passwordRules.length} matched
+              </span>
+            </div>
+            <div className="mb-2 h-1.5 overflow-hidden rounded-full bg-black/10" aria-hidden="true">
+              <div
+                className="h-full rounded-full bg-emerald-500 transition-all"
+                style={{ width: `${(matchedPasswordRules / passwordRules.length) * 100}%` }}
+              />
+            </div>
+            <ul className="flex flex-wrap gap-1.5 text-[11px] leading-none">
+              {passwordRules.map((rule) => (
+                <li
+                  key={rule.id}
+                  className={`flex h-5 items-center gap-1.5 rounded-full border px-2 ${
+                    rule.met ? "text-emerald-700" : "text-[rgb(var(--muted))]"
+                  } ${rule.met ? "border-emerald-500/25 bg-emerald-500/10" : "border-black/10 bg-white/60"}`}
+                >
+                  <span
+                    className={`h-1.5 w-1.5 shrink-0 rounded-full ${
+                      rule.met
+                        ? "bg-emerald-500"
+                        : "bg-black/20"
+                    }`}
+                  />
+                  {rule.shortLabel}
+                </li>
+              ))}
+            </ul>
           </div>
 
           <div>

@@ -92,6 +92,7 @@ export default function SocialModulePage() {
   const meData = (meQuery.data || {}) as any;
   const userId = String(meData?.user?.id || "");
   const canPublish = canPublishFromMe(meData);
+  const canUseSocialPublishing = pricing.hasFeatureAccess("social_publishing");
 
   const [filter, setFilter] = useState<FeedFilter>("ALL");
   const [savedByMe, setSavedByMe] = useState<Record<string, boolean>>({});
@@ -282,13 +283,17 @@ export default function SocialModulePage() {
   function submitComment(postId: string) {
     const draft = (draftByPost[postId] || "").trim();
     if (!draft) return;
-    commentMutation.mutate(
-      { postId, text: draft },
-      {
-        onSuccess: () => {
-          setDraftByPost((prev) => ({ ...prev, [postId]: "" }));
-        },
-      }
+    pricing.runWithPricingLayer(
+      "social_publishing",
+      () =>
+        commentMutation.mutate(
+          { postId, text: draft },
+          {
+            onSuccess: () => {
+              setDraftByPost((prev) => ({ ...prev, [postId]: "" }));
+            },
+          }
+        )
     );
   }
 
@@ -449,6 +454,11 @@ export default function SocialModulePage() {
                     Publishing is restricted to PLAYER accounts. Your role can still react and comment.
                   </p>
                 ) : null}
+                {canPublish && !canUseSocialPublishing ? (
+                  <p className="social-note">
+                    Publishing, reactions, and comments require a Professional club plan.
+                  </p>
+                ) : null}
                 <div className="social-composer-row">
                   <button
                     type="submit"
@@ -541,7 +551,11 @@ export default function SocialModulePage() {
                       <button
                         type="button"
                         className={post.stats.likedByMe ? "is-active" : ""}
-                        onClick={() => likeMutation.mutate(post.id)}
+                        onClick={() =>
+                          pricing.runWithPricingLayer("social_publishing", () =>
+                            likeMutation.mutate(post.id)
+                          )
+                        }
                         disabled={likeMutation.isPending}
                       >
                         <Heart size={16} />

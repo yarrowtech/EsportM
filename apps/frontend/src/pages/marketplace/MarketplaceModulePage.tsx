@@ -15,6 +15,10 @@ import {
 } from "../../hooks/useMarketplace";
 import { useMe } from "../../hooks/useMe";
 import { usePrototypePricing } from "../../features/prototype-pricing/PrototypePricingProvider";
+import {
+  normalizeBillingPlan,
+  planMeetsRequirement,
+} from "../../features/prototype-pricing/pricing";
 import { PageWrap, formatDateTime } from "../admin/admin-ui";
 import "./marketplace.css";
 
@@ -22,7 +26,7 @@ type Membership = {
   clubId: string;
   primary: "ADMIN" | "MANAGER" | "PLAYER" | "MEMBER";
   subRoles?: string[];
-  club?: { id: string; name: string; slug: string };
+  club?: { id: string; name: string; slug: string; billingPlan?: string };
 };
 
 type IconName = "home" | "marketplace" | "dashboard";
@@ -95,6 +99,17 @@ export default function MarketplaceModulePage() {
   const [selectedClubId, setSelectedClubId] = useState("");
   const [search, setSearch] = useState("");
   const [position, setPosition] = useState("");
+  const effectiveRecruiterClubId = selectedClubId || recruiterMemberships[0]?.clubId || "";
+  const selectedRecruiterMembership = useMemo(
+    () => recruiterMemberships.find((item) => item.clubId === effectiveRecruiterClubId),
+    [effectiveRecruiterClubId, recruiterMemberships]
+  );
+  const canUseMarketplaceRecruiting = selectedRecruiterMembership
+    ? planMeetsRequirement(
+        normalizeBillingPlan(selectedRecruiterMembership.club?.billingPlan),
+        "PROFESSIONAL"
+      )
+    : pricing.hasFeatureAccess("marketplace_recruiting");
 
   useEffect(() => {
     if (selectedClubId) return;
@@ -114,7 +129,10 @@ export default function MarketplaceModulePage() {
   );
   const myListingQuery = useMyMarketplaceListing(true);
   const myOffersQuery = useMyMarketplaceOffers(isUnassignedPlayer);
-  const recruiterOffersQuery = useRecruiterMarketplaceOffers(selectedClubId || undefined, isRecruiter);
+  const recruiterOffersQuery = useRecruiterMarketplaceOffers(
+    effectiveRecruiterClubId || undefined,
+    isRecruiter && canUseMarketplaceRecruiting
+  );
 
   const [headline, setHeadline] = useState("");
   const [bio, setBio] = useState("");
@@ -207,9 +225,9 @@ export default function MarketplaceModulePage() {
     (isRecruiter && recruiterOffersQuery.isLoading);
 
   const activeClubName = useMemo(() => {
-    const row = recruiterMemberships.find((item) => item.clubId === selectedClubId);
+    const row = recruiterMemberships.find((item) => item.clubId === effectiveRecruiterClubId);
     return row?.club?.name || row?.clubId || "-";
-  }, [recruiterMemberships, selectedClubId]);
+  }, [effectiveRecruiterClubId, recruiterMemberships]);
 
   const pendingOfferCount = useMemo(() => {
     if (isUnassignedPlayer) return myOffers.filter((offer) => offer.status === "PENDING").length;
@@ -223,6 +241,14 @@ export default function MarketplaceModulePage() {
 
   const jumpTo = (node: HTMLElement | null) => {
     node?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const runMarketplaceRecruitingAction = (action: () => void) => {
+    if (canUseMarketplaceRecruiting) {
+      action();
+      return;
+    }
+    pricing.requestFeatureAccess("marketplace_recruiting");
   };
 
   if (loading) {
@@ -295,14 +321,16 @@ export default function MarketplaceModulePage() {
                         type="button"
                         className="mpx-btn mpx-btn-dark"
                         onClick={() =>
-                          upsertListingMutation.mutate({
-                            headline: headline.trim(),
-                            bio: bio.trim() || undefined,
-                            positions: positions.split(",").map((item) => item.trim()).filter(Boolean),
-                            nationality: nationality.trim() || undefined,
-                            expectedSalary: expectedSalary ? Number(expectedSalary) : undefined,
-                            openToOffers: true,
-                          })
+                          runMarketplaceRecruitingAction(() =>
+                            upsertListingMutation.mutate({
+                              headline: headline.trim(),
+                              bio: bio.trim() || undefined,
+                              positions: positions.split(",").map((item) => item.trim()).filter(Boolean),
+                              nationality: nationality.trim() || undefined,
+                              expectedSalary: expectedSalary ? Number(expectedSalary) : undefined,
+                              openToOffers: true,
+                            })
+                          )
                         }
                         disabled={upsertListingMutation.isPending || !headline.trim()}
                       >
@@ -315,6 +343,11 @@ export default function MarketplaceModulePage() {
                 ) : (
                   <>
                     <p className="mpx-msg">Recruiter mode. Pick the club to send offers from.</p>
+                    {isRecruiter && !canUseMarketplaceRecruiting ? (
+                      <p className="mpx-msg">
+                        Recruiter offers require a Professional club plan.
+                      </p>
+                    ) : null}
                     {isRecruiter ? (
                       <label className="mpx-field">
                         <span>Active Club</span>
@@ -351,7 +384,7 @@ export default function MarketplaceModulePage() {
                           type="button"
                           className="mpx-btn mpx-btn-light"
                           onClick={() =>
-                            pricing.runWithPricingLayer("marketplace_recruiting", () => {
+                            runMarketplaceRecruitingAction(() => {
                               setOfferTargetId(row.id);
                               setOfferNote(`Offer from ${activeClubName} for your listing "${row.headline}".`);
                             })
@@ -472,7 +505,7 @@ export default function MarketplaceModulePage() {
                           type="button"
                           className="mpx-btn mpx-btn-light"
                           onClick={() =>
-                            pricing.runWithPricingLayer("marketplace_recruiting", () => {
+                            runMarketplaceRecruitingAction(() => {
                               setOfferTargetId(row.id);
                               setOfferNote(`Offer from ${activeClubName} for your listing "${row.headline}".`);
                             })
@@ -490,16 +523,16 @@ export default function MarketplaceModulePage() {
                               type="button"
                               className="mpx-btn mpx-btn-dark"
                               onClick={() =>
-                                pricing.runWithPricingLayer("marketplace_recruiting", () =>
+                                runMarketplaceRecruitingAction(() =>
                                   sendOfferMutation.mutate({
                                     listingId: row.id,
-                                    clubId: selectedClubId,
+                                    clubId: effectiveRecruiterClubId,
                                     message: offerNote.trim(),
                                     offeredSalary: offerSalary ? Number(offerSalary) : undefined,
                                   })
                                 )
                               }
-                              disabled={sendOfferMutation.isPending || !selectedClubId || !offerNote.trim()}
+                              disabled={sendOfferMutation.isPending || !effectiveRecruiterClubId || !offerNote.trim()}
                             >
                               {sendOfferMutation.isPending ? "Sending..." : "Confirm Offer"}
                             </button>

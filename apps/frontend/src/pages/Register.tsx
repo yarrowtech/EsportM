@@ -189,12 +189,26 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Eye,
+  EyeOff,
+  LockKeyhole,
+  Mail,
+  Phone,
+  ShieldCheck,
+  User,
+} from "lucide-react";
 import { registerUser } from "../api/auth";
 import { getAccessToken, setAccessToken } from "../utils/authStorage";
+import { getPasswordRuleStatus, isStrongPassword } from "../utils/passwordPolicy";
 
 export default function Register() {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
+  const [step, setStep] = useState(0);
 
   // --- State Management ---
   const [fullName, setFullName] = useState("");
@@ -209,6 +223,49 @@ export default function Register() {
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const trimmedPassword = password.trim();
+  const passwordRules = useMemo(
+    () => getPasswordRuleStatus(trimmedPassword),
+    [trimmedPassword]
+  );
+  const matchedPasswordRules = passwordRules.filter((rule) => rule.met).length;
+  const passwordMeetsPolicy = isStrongPassword(trimmedPassword);
+  const passwordsMatch = retypePassword.length > 0 && password === retypePassword;
+  const steps = [
+    {
+      label: "Name",
+      title: "What should we call you?",
+      helper: "Use your real full name for invitations, clubs, and profile records.",
+    },
+    {
+      label: "Email",
+      title: "Where should we reach you?",
+      helper: "This email becomes your login and account identity.",
+    },
+    {
+      label: "Phone",
+      title: "Add a phone number",
+      helper: "Optional for now. You can skip this and complete it later.",
+      optional: true,
+    },
+    {
+      label: "Password",
+      title: "Create a secure password",
+      helper: "Use a mix of letters, number, and a special character.",
+    },
+    {
+      label: "Confirm",
+      title: "Confirm your password",
+      helper: "Re-enter it once so we know there are no typos.",
+    },
+    {
+      label: "Terms",
+      title: "Review and finish",
+      helper: "Confirm the terms to create your EsportM account.",
+    },
+  ];
+  const currentStep = steps[step];
+  const isLastStep = step === steps.length - 1;
 
   // --- Redirect if already logged in ---
   useEffect(() => {
@@ -221,11 +278,40 @@ export default function Register() {
     return (
       fullName.trim().length >= 2 &&
       email.trim().length > 3 &&
-      password.trim().length >= 6 &&
+      passwordMeetsPolicy &&
       password === retypePassword &&
       agreeTerms
     );
-  }, [fullName, email, password, retypePassword, agreeTerms]);
+  }, [fullName, email, passwordMeetsPolicy, password, retypePassword, agreeTerms]);
+  const canGoNext = useMemo(() => {
+    if (step === 0) return fullName.trim().length >= 2;
+    if (step === 1) return email.trim().length > 3;
+    if (step === 2) return true;
+    if (step === 3) return passwordMeetsPolicy;
+    if (step === 4) return passwordsMatch;
+    return agreeTerms;
+  }, [agreeTerms, email, fullName, passwordMeetsPolicy, passwordsMatch, step]);
+
+  const goBack = () => {
+    setErr(null);
+    setStep((current) => Math.max(0, current - 1));
+  };
+
+  const goNext = () => {
+    setErr(null);
+    if (isLastStep) {
+      void onSubmit();
+      return;
+    }
+    if (!canGoNext) return;
+    setStep((current) => Math.min(steps.length - 1, current + 1));
+  };
+
+  const skipStep = () => {
+    setErr(null);
+    if (!currentStep.optional) return;
+    setStep((current) => Math.min(steps.length - 1, current + 1));
+  };
 
   // --- Backend Integration ---
   const onSubmit = async () => {
@@ -237,11 +323,16 @@ export default function Register() {
       return;
     }
 
+    if (!passwordMeetsPolicy) {
+      setErr("Password must match all security requirements.");
+      return;
+    }
+
     try {
       setLoading(true);
       const data = await registerUser({
         email: email.trim(),
-        password: password.trim(),
+        password: trimmedPassword,
         fullName: fullName.trim(),
       });
 
@@ -258,204 +349,310 @@ export default function Register() {
 
   // --- GSAP Animations ---
   useGSAP(() => {
-    // Animate the main container
-    gsap.from(".glass-card", {
-      y: 50,
+    gsap.from(".signup-card", {
+      y: 24,
       opacity: 0,
-      duration: 1,
+      duration: 0.55,
       ease: "power3.out",
-    });
-
-    // Stagger animate the form elements
-    gsap.from(".anim-item", {
-      y: 20,
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.08,
-      ease: "power2.out",
-      delay: 0.3,
     });
   }, { scope: containerRef });
 
   return (
     <div
       ref={containerRef}
-      className="min-h-screen bg-gradient-to-br from-[#5a5ba6] via-[#5a5ba6] to-[#5a5ba6] flex items-center justify-center p-4 sm:p-6 lg:p-10 font-sans"
+      className="signup-neu-page px-4 py-6 font-sans text-slate-950 sm:px-6"
     >
-      {/* Main Glass Container */}
-      <div className="glass-card w-full max-w-[1100px] bg-white/10 backdrop-blur-xl border border-white/20 rounded-[2rem] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] flex flex-col lg:flex-row overflow-hidden">
-
-        
-        {/* --- Left Column: Image Area --- */}
-        <div className="relative w-full lg:w-1/2 min-h-[200px] sm:min-h-[300px] lg:min-h-full p-4 lg:p-6 hidden sm:flex items-center justify-center">
-          <div className="w-full h-full rounded-[1.5rem] overflow-hidden shadow-2xl bg-white/5 flex items-center justify-center">
-            <img
-              src="/images/signup-image.jpg"
-              alt="VR Esport Setup"
-              className="max-w-full max-h-full object-contain"
-            />
-
-            {/* Logo Overlay */}
-            <div className="absolute top-8 left-1/2 transform -translate-x-1/2">
-              <svg
-                className="w-10 h-10 text-white drop-shadow-lg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-              >
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        {/* --- Right Column: Form Area --- */}
-        <div className="w-full lg:w-1/2 p-6 sm:p-10 lg:p-12 flex flex-col justify-center relative">
-
-          {/* Back Button */}
-          <Link to="/" className="anim-item absolute top-6 left-6 lg:top-10 lg:left-10 text-white/70 hover:text-white transition-colors">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
+      <div className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-5xl flex-col">
+        <header className="flex items-center justify-between gap-4 py-2">
+          <Link
+            to="/"
+            className="signup-neu-icon inline-flex h-10 w-10 items-center justify-center rounded-full text-[#5F5EA6]"
+            aria-label="Go home"
+          >
+            <ArrowLeft size={18} />
           </Link>
+          <Link to="/login" className="signup-neu-ghost rounded-full px-4 py-2 text-sm font-bold text-[#5F5EA6]">
+            Log in
+          </Link>
+        </header>
 
-          <div className="max-w-md mx-auto w-full mt-8 lg:mt-0">
-            {/* Headings */}
-            <div className="anim-item mb-6">
-              <h1 className="text-3xl lg:text-4xl font-semibold text-white mb-2">Create Account</h1>
-              <p className="text-white/70 text-sm">
-                Already have an account?{" "}
-                <Link to="/login" className="text-white font-medium hover:underline">
-                  Log in
-                </Link>
-              </p>
+        <div className="flex flex-1 items-center justify-center py-6">
+          <main className="signup-card signup-neu-card w-full max-w-[560px] rounded-[32px] p-5 sm:p-7">
+            <div className="mb-7">
+              <div className="mb-4 flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#5F5EA6]/70">
+                    Step {step + 1} of {steps.length}
+                  </p>
+                  <h1 className="mt-2 text-3xl font-bold tracking-normal text-[#252454]">
+                    Create Account
+                  </h1>
+                </div>
+                <span className="signup-neu-surface rounded-full px-3 py-1 text-xs font-bold text-[#5F5EA6]">
+                  {currentStep.label}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-6 gap-1.5" aria-hidden="true">
+                {steps.map((item, index) => (
+                  <span
+                    key={item.label}
+                    className={`h-1.5 rounded-full transition ${
+                      index <= step ? "bg-[#5F5EA6]" : "bg-[#dce2f0]"
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
 
-            {/* Form Inputs */}
-            <div className="space-y-4">
-              {/* Full Name Input */}
-              <div className="anim-item">
-                <input
-                  type="text"
-                  placeholder="Full Name"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="w-full bg-white/5 border border-white/20 text-white placeholder-white/40 rounded-full px-5 py-3 focus:outline-none focus:border-white/50 focus:bg-white/10 transition-all text-sm"
-                />
+            <section className="min-h-[260px]">
+              <p className="text-sm font-semibold text-[#5F5EA6]/75">{currentStep.helper}</p>
+              <h2 className="mt-2 text-2xl font-semibold tracking-normal text-[#252454]">
+                {currentStep.title}
+              </h2>
+
+              <div className="mt-8">
+                {step === 0 ? (
+                  <label className="block">
+                    <span className="mb-2 block text-sm font-bold text-[#252454]">Full name</span>
+                    <div className="relative">
+                      <User className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#5F5EA6]/65" />
+                      <input
+                        autoFocus
+                        type="text"
+                        value={fullName}
+                        onChange={(event) => setFullName(event.target.value)}
+                        onKeyDown={(event) => event.key === "Enter" && goNext()}
+                        placeholder="Srijon Karmakar"
+                        autoComplete="name"
+                        className="signup-neu-input h-14 w-full rounded-2xl px-12 text-base text-[#252454] outline-none transition placeholder:text-[#5F5EA6]/45"
+                      />
+                    </div>
+                  </label>
+                ) : null}
+
+                {step === 1 ? (
+                  <label className="block">
+                    <span className="mb-2 block text-sm font-bold text-[#252454]">Email address</span>
+                    <div className="relative">
+                      <Mail className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#5F5EA6]/65" />
+                      <input
+                        autoFocus
+                        type="email"
+                        value={email}
+                        onChange={(event) => setEmail(event.target.value)}
+                        onKeyDown={(event) => event.key === "Enter" && goNext()}
+                        placeholder="you@example.com"
+                        autoComplete="email"
+                        className="signup-neu-input h-14 w-full rounded-2xl px-12 text-base text-[#252454] outline-none transition placeholder:text-[#5F5EA6]/45"
+                      />
+                    </div>
+                  </label>
+                ) : null}
+
+                {step === 2 ? (
+                  <label className="block">
+                    <span className="mb-2 block text-sm font-bold text-[#252454]">
+                      Phone number
+                    </span>
+                    <div className="relative">
+                      <Phone className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#5F5EA6]/65" />
+                      <input
+                        autoFocus
+                        type="tel"
+                        value={phoneNumber}
+                        onChange={(event) => setPhoneNumber(event.target.value)}
+                        onKeyDown={(event) => event.key === "Enter" && goNext()}
+                        placeholder="+91 98765 43210"
+                        autoComplete="tel"
+                        className="signup-neu-input h-14 w-full rounded-2xl px-12 text-base text-[#252454] outline-none transition placeholder:text-[#5F5EA6]/45"
+                      />
+                    </div>
+                    <p className="mt-3 text-xs font-medium text-[#5F5EA6]/60">
+                      Phone is not required for account creation.
+                    </p>
+                  </label>
+                ) : null}
+
+                {step === 3 ? (
+                  <div>
+                    <label className="block">
+                      <span className="mb-2 block text-sm font-bold text-[#252454]">Password</span>
+                      <div className="relative">
+                        <LockKeyhole className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#5F5EA6]/65" />
+                        <input
+                          autoFocus
+                          type={showPassword ? "text" : "password"}
+                          value={password}
+                          onChange={(event) => setPassword(event.target.value)}
+                          onKeyDown={(event) => event.key === "Enter" && goNext()}
+                          placeholder="Create password"
+                          autoComplete="new-password"
+                          className="signup-neu-input h-14 w-full rounded-2xl px-12 pr-14 text-base text-[#252454] outline-none transition placeholder:text-[#5F5EA6]/45"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          aria-label={showPassword ? "Hide password" : "Show password"}
+                          className="signup-neu-icon absolute right-2.5 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full text-[#5F5EA6] focus:outline-none focus:ring-2 focus:ring-[#5F5EA6]/25"
+                        >
+                          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                      </div>
+                    </label>
+
+                    <div className="mt-4 px-1 py-1">
+                      <div className="mb-1.5 flex items-center justify-between gap-3 text-[11px] font-bold text-[#5F5EA6]/75">
+                        <span>Password strength</span>
+                        <span>
+                          {matchedPasswordRules}/{passwordRules.length} matched
+                        </span>
+                      </div>
+                      <div className="mb-2 h-1.5 overflow-hidden rounded-full bg-[#dce2f0]" aria-hidden="true">
+                        <div
+                          className="h-full rounded-full bg-[#5F5EA6] transition-all"
+                          style={{ width: `${(matchedPasswordRules / passwordRules.length) * 100}%` }}
+                        />
+                      </div>
+                      <ul className="flex flex-wrap gap-1.5 text-[11px] leading-none">
+                        {passwordRules.map((rule) => (
+                          <li
+                            key={rule.id}
+                            className={`flex h-5 items-center gap-1.5 ${
+                              rule.met
+                                ? "text-[#5F5EA6]"
+                                : "text-[#5F5EA6]/55"
+                            }`}
+                          >
+                            <span
+                              className={`h-1.5 w-1.5 shrink-0 rounded-full ${
+                                rule.met ? "bg-[#5F5EA6]" : "bg-[#bdc7dd]"
+                              }`}
+                            />
+                            {rule.shortLabel}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                ) : null}
+
+                {step === 4 ? (
+                  <div>
+                    <label className="block">
+                      <span className="mb-2 block text-sm font-bold text-[#252454]">
+                        Confirm password
+                      </span>
+                      <div className="relative">
+                        <ShieldCheck className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#5F5EA6]/65" />
+                        <input
+                          autoFocus
+                          type={showRetypePassword ? "text" : "password"}
+                          value={retypePassword}
+                          onChange={(event) => setRetypePassword(event.target.value)}
+                          onKeyDown={(event) => event.key === "Enter" && goNext()}
+                          placeholder="Re-type password"
+                          autoComplete="new-password"
+                          className="signup-neu-input h-14 w-full rounded-2xl px-12 pr-14 text-base text-[#252454] outline-none transition placeholder:text-[#5F5EA6]/45"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowRetypePassword(!showRetypePassword)}
+                          aria-label={showRetypePassword ? "Hide password confirmation" : "Show password confirmation"}
+                          className="signup-neu-icon absolute right-2.5 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full text-[#5F5EA6] focus:outline-none focus:ring-2 focus:ring-[#5F5EA6]/25"
+                        >
+                          {showRetypePassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                      </div>
+                    </label>
+                    {retypePassword ? (
+                      <p
+                        className={`mt-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold ${
+                          passwordsMatch
+                            ? "bg-[#5F5EA6]/10 text-[#5F5EA6]"
+                            : "bg-rose-50 text-rose-700"
+                        }`}
+                      >
+                        {passwordsMatch ? <Check size={13} /> : null}
+                        {passwordsMatch ? "Passwords match" : "Passwords do not match"}
+                      </p>
+                    ) : null}
+                  </div>
+                ) : null}
+
+                {step === 5 ? (
+                  <div className="space-y-4">
+                    <div className="signup-neu-surface rounded-2xl p-4 text-sm">
+                      <div className="flex items-center justify-between gap-3 border-b border-[#5F5EA6]/15 pb-3">
+                        <span className="font-semibold text-[#5F5EA6]/70">Name</span>
+                        <span className="truncate font-bold text-[#252454]">{fullName}</span>
+                      </div>
+                      <div className="flex items-center justify-between gap-3 pt-3">
+                        <span className="font-semibold text-[#5F5EA6]/70">Email</span>
+                        <span className="truncate font-bold text-[#252454]">{email}</span>
+                      </div>
+                    </div>
+
+                    <label className="signup-neu-surface flex cursor-pointer items-start gap-3 rounded-2xl p-4">
+                      <input
+                        type="checkbox"
+                        checked={agreeTerms}
+                        onChange={(event) => setAgreeTerms(event.target.checked)}
+                        className="mt-0.5 h-4 w-4 rounded border-[#5F5EA6]/30 text-[#5F5EA6] focus:ring-[#5F5EA6]/25"
+                      />
+                      <span className="text-sm leading-6 text-[#5F5EA6]/80">
+                        I agree to the{" "}
+                        <Link to="/terms" className="font-bold text-[#252454] hover:underline">
+                          Terms & Condition
+                        </Link>
+                      </span>
+                    </label>
+                  </div>
+                ) : null}
               </div>
 
-              {/* Email Input */}
-              <div className="anim-item">
-                <input
-                  type="email"
-                  placeholder="Email Address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-white/5 border border-white/20 text-white placeholder-white/40 rounded-full px-5 py-3 focus:outline-none focus:border-white/50 focus:bg-white/10 transition-all text-sm"
-                />
-              </div>
-
-              {/* Phone Number Input */}
-              <div className="anim-item">
-                <input
-                  type="tel"
-                  placeholder="Phone Number (optional)"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  className="w-full bg-white/5 border border-white/20 text-white placeholder-white/40 rounded-full px-5 py-3 focus:outline-none focus:border-white/50 focus:bg-white/10 transition-all text-sm"
-                />
-              </div>
-
-              {/* Password Input */}
-              <div className="anim-item relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-white/5 border border-white/20 text-white placeholder-white/40 rounded-full px-5 py-3 pr-12 focus:outline-none focus:border-white/50 focus:bg-white/10 transition-all text-sm"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors"
-                >
-                  {showPassword ? (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                  ) : (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
-                  )}
-                </button>
-              </div>
-
-              {/* Retype Password Input */}
-              <div className="anim-item relative">
-                <input
-                  type={showRetypePassword ? "text" : "password"}
-                  placeholder="Re-type Password"
-                  value={retypePassword}
-                  onChange={(e) => setRetypePassword(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && onSubmit()}
-                  className="w-full bg-white/5 border border-white/20 text-white placeholder-white/40 rounded-full px-5 py-3 pr-12 focus:outline-none focus:border-white/50 focus:bg-white/10 transition-all text-sm"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowRetypePassword(!showRetypePassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors"
-                >
-                  {showRetypePassword ? (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                  ) : (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
-                  )}
-                </button>
-              </div>
-
-              {/* Error Message */}
-              {err && (
-                <div className="anim-item text-[#ffb3b3] bg-red-500/10 p-3 rounded-lg text-sm text-center border border-red-500/20 backdrop-blur-sm">
+              {err ? (
+                <div className="mt-5 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">
                   {err}
                 </div>
-              )}
+              ) : null}
+            </section>
 
-              {/* Terms & Conditions */}
-              <div className="anim-item flex items-center gap-2 pt-2">
-                <input
-                  type="checkbox"
-                  id="terms"
-                  checked={agreeTerms}
-                  onChange={(e) => setAgreeTerms(e.target.checked)}
-                  className="w-4 h-4 rounded border-gray-300 text-black focus:ring-black bg-white/20 cursor-pointer"
-                />
-                <label htmlFor="terms" className="text-sm text-white/70 cursor-pointer">
-                  I agree to the <Link to="/terms" className="text-white font-medium hover:underline">Terms & Condition</Link>
-                </label>
-              </div>
+            <div className="mt-7 flex items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={goBack}
+                disabled={step === 0 || loading}
+                className="signup-neu-ghost inline-flex h-11 items-center gap-2 rounded-full px-4 text-sm font-bold text-[#5F5EA6] disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <ArrowLeft size={16} />
+                Back
+              </button>
 
-              {/* Signup Button */}
-              <div className="anim-item pt-4">
+              <div className="flex items-center gap-2">
+                {currentStep.optional ? (
+                  <button
+                    type="button"
+                    onClick={skipStep}
+                    disabled={loading}
+                    className="signup-neu-ghost h-11 rounded-full px-4 text-sm font-bold text-[#5F5EA6]"
+                  >
+                    Skip
+                  </button>
+                ) : null}
+
                 <button
-                  onClick={onSubmit}
-                  disabled={!canSubmit || loading}
-                  className="w-full bg-white text-black font-semibold rounded-full py-3.5 hover:bg-gray-200 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  type="button"
+                  onClick={goNext}
+                  disabled={(!canGoNext && !isLastStep) || (isLastStep && !canSubmit) || loading}
+                  className="signup-neu-button inline-flex h-11 items-center gap-2 rounded-full px-5 text-sm font-bold disabled:cursor-not-allowed"
                 >
-                  {loading ? "Creating Account..." : "Sign Up"}
+                  {isLastStep ? (loading ? "Creating..." : "Sign Up") : "Next"}
+                  {!isLastStep ? <ArrowRight size={16} /> : null}
                 </button>
               </div>
-
-              {/* Divider */}
-              <div className="anim-item flex items-center gap-4 my-6 opacity-60">
-                <div className="flex-1 h-px bg-white/20"></div>
-                <span className="text-sm text-white/80"></span>
-                <div className="flex-1 h-px bg-white/20"></div>
-              </div>
-
-              {/* Social Logins */}
-              <div className="anim-item grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-              </div>
-
             </div>
-          </div>
+          </main>
         </div>
       </div>
     </div>

@@ -8,6 +8,7 @@ import { PrimaryRole, SubRole } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { PrismaService } from '../../prisma/prisma.service';
+import { assertPasswordPolicy } from '../../common/security/password-policy';
 
 @Injectable()
 export class InvitationsService {
@@ -98,6 +99,7 @@ export class InvitationsService {
   async accept(dto: { token: string; fullName: string; password: string }) {
     const token = dto.token?.trim();
     if (!token) throw new BadRequestException('Invalid token');
+    assertPasswordPolicy(dto.password);
 
     const tokenHash = this.hashToken(token);
 
