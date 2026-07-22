@@ -10,7 +10,7 @@ export type MeResponse = {
     playerId?: string;
     employeeId?: string;
     clubName?: string;
-    club?: { name?: string } | string;
+    club?: { id?: string; name?: string; slug?: string; logoUrl?: string } | string;
     role?: string;
     position?: string;
     avatarUrl?: string;
@@ -24,6 +24,7 @@ export type MeResponse = {
       | {
           name?: string;
           slug?: string;
+          logoUrl?: string;
           billingPlan?: string;
           subscriptionStatus?: string;
         }
@@ -38,6 +39,7 @@ export type MeResponse = {
       | {
           name?: string;
           slug?: string;
+          logoUrl?: string;
           billingPlan?: string;
           subscriptionStatus?: string;
         }
@@ -56,7 +58,7 @@ export type MeResponse = {
   employeeId?: string;
 
   clubName?: string;
-  club?: { name?: string } | string;
+  club?: { id?: string; name?: string; slug?: string; logoUrl?: string } | string;
 
   role?: string;
   position?: string;

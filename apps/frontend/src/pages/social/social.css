@@ -1,7 +1,7 @@
 .social-module {
   --social-bg: #f3f4f8;
   --social-surface: #ffffff;
-  --social-line: #e5e7ef;
+  --social-line: #d9deea;
   --social-text: #101528;
   --social-muted: #67708a;
   --social-accent: #e11d48;
@@ -65,9 +65,13 @@
 
 .social-search input {
   width: 100%;
-  background: transparent;
-  border: 0;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
   outline: 0;
+  min-width: 0;
+  height: auto;
+  padding: 0;
   font-size: 0.85rem;
   color: var(--social-text);
 }

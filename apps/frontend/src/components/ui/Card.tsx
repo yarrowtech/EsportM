@@ -19,7 +19,7 @@ export function Card({
         "rounded-[22px] border bg-white/70 backdrop-blur-md shadow - [0_10px_30px_rgba(20, 24, 32, 0.06)] hover: shadow - [0_14px_38px_rgba(20, 24, 32, 0.09)] transition",
         className,
       ].join(" ")}
-      style={{ borderColor: "rgba(var(--primary-2), .08)" }}
+      style={{ borderColor: "rgb(var(--border) / .1)" }}
     >
       {(title || right) && (
         <div className="mb-3 flex items-center justify-between gap-3">

@@ -9,7 +9,11 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../../prisma/prisma.service';
 import { assertPasswordPolicy } from '../../common/security/password-policy';
-import { LoginDto, RegisterDto } from './dto';
+import {
+  assertCloudinarySecureUrl,
+  createCloudinaryUploadSignature,
+} from '../../common/media/cloudinary-signature';
+import { LoginDto, RegisterDto, UpdateMyAvatarDto } from './dto';
 
 @Injectable()
 export class AuthService {
@@ -89,6 +93,7 @@ export class AuthService {
                   id: true,
                   name: true,
                   slug: true,
+                  logoUrl: true,
                   billingPlan: true,
                   subscriptionStatus: true,
                 },
@@ -116,6 +121,7 @@ export class AuthService {
                   id: true,
                   name: true,
                   slug: true,
+                  logoUrl: true,
                   billingPlan: true,
                   subscriptionStatus: true,
                 },
@@ -143,6 +149,7 @@ export class AuthService {
                 id: true,
                 name: true,
                 slug: true,
+                logoUrl: true,
                 billingPlan: true,
                 subscriptionStatus: true,
               },
@@ -206,6 +213,7 @@ export class AuthService {
                 id: true,
                 name: true,
                 slug: true,
+                logoUrl: true,
                 billingPlan: true,
                 subscriptionStatus: true,
               },
@@ -223,6 +231,38 @@ export class AuthService {
 
     const accessToken = await this.signAccessToken(user.id, user.email);
     return { user: this.safeUser(user), accessToken };
+  }
+
+  async createAvatarUploadSignature(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true },
+    });
+    if (!user) throw new ForbiddenException('User not found');
+
+    return createCloudinaryUploadSignature(this.config, {
+      folder: `esportm/profile/avatars/${userId}`,
+      resourceType: 'image',
+      transformation: 'c_fill,g_face,w_512,h_512,q_auto,f_auto',
+    });
+  }
+
+  async updateMyAvatar(userId: string, dto: UpdateMyAvatarDto) {
+    assertCloudinarySecureUrl(this.config, dto.avatarUrl, 'avatarUrl');
+
+    const user = await (this.prisma as any).user.update({
+      where: { id: userId },
+      data: { avatarUrl: dto.avatarUrl },
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        avatarUrl: true,
+        updatedAt: true,
+      },
+    });
+
+    return { user };
   }
 
   private signAccessToken(userId: string, email: string) {

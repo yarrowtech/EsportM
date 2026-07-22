@@ -10,7 +10,7 @@ import {
   Trophy,
 } from "lucide-react";
 
-export const adminCardBorder = "rgba(var(--border), .72)";
+export const adminCardBorder = "rgb(var(--border) / .14)";
 export const adminCardBg = "rgb(var(--bg))";
 export const adminSoftBg = "rgb(var(--bg))";
 export const adminDarkBg = "rgb(var(--bg))";
@@ -244,7 +244,7 @@ export function DotTag({
     },
     warn: {
       bg: "rgba(var(--primary), .20)",
-      border: "rgba(var(--primary), .38)",
+      border: "rgb(var(--primary) / .22)",
       text: "rgb(var(--primary-2))",
       dot: "rgb(var(--primary))",
     },

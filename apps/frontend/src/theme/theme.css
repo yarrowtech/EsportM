@@ -13,7 +13,7 @@
   --primary-2: 20 24 32;
   --ring: 255 205 95;
 
-  --border: 220 224 229;
+  --border: 128 140 162;
   --shadow: 0 0 0;
   --radius: 18px;
 
@@ -40,7 +40,7 @@
   --surface-2: 28 30 35;
   --text: 240 244 255;
   --muted: 160 170 190;
-  --border: 45 48 55;
+  --border: 82 90 106;
   --shadow: 0 0 0;
 
   --neu-raised:

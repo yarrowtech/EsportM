@@ -6,7 +6,9 @@ import {
   IsInt,
   IsOptional,
   IsString,
+  IsUrl,
   Max,
+  MaxLength,
   Matches,
   Min,
   MinLength,
@@ -93,6 +95,18 @@ export class UpdateClubThemeDto {
     message: 'deep must be a 6-digit hex color (e.g., #141820)',
   })
   deep?: string;
+}
+
+export class UpdateClubLogoDto {
+  @IsString()
+  @IsUrl({ protocols: ['https'], require_protocol: true })
+  @MaxLength(2000)
+  logoUrl!: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(180)
+  logoPublicId?: string;
 }
 
 export class PendingSignupsQueryDto {

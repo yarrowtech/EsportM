@@ -17,7 +17,7 @@ export default function DashboardRouter() {
         <div
           className="rounded-3xl border px-5 py-6 text-sm font-semibold text-[rgb(var(--muted))]"
           style={{
-            borderColor: "rgba(var(--primary-2), .14)",
+            borderColor: "rgb(var(--border) / .14)",
             background:
               "linear-gradient(145deg, rgba(255,255,255,.72), rgba(255,255,255,.44) 62%, rgba(var(--primary), .10))",
           }}
@@ -33,7 +33,7 @@ export default function DashboardRouter() {
         <div
           className="rounded-3xl border px-5 py-6 text-sm font-semibold text-rose-700"
           style={{
-            borderColor: "rgba(var(--primary-2), .14)",
+            borderColor: "rgb(var(--border) / .14)",
             background: "rgba(255,255,255,.70)",
           }}
         >

@@ -182,7 +182,7 @@ export default function OnboardingPage() {
                       style={{
                         background: "rgb(var(--primary))",
                         color: "rgb(var(--primary-2))",
-                        border: `1px solid rgba(var(--primary-2), .20)`,
+                        border: `1px solid rgb(var(--border) / .14)`,
                       }}
                     >
                       {acceptingId === p.invitationId ? "Accepting..." : "Accept Invitation"}
@@ -223,7 +223,7 @@ export default function OnboardingPage() {
                   style={{
                     background: "rgb(var(--primary))",
                     color: "rgb(var(--primary-2))",
-                    border: `1px solid rgba(var(--primary-2), .20)`,
+                    border: `1px solid rgb(var(--border) / .14)`,
                   }}
                 >
                   {creatingClub ? "Creating..." : "Create Club"}

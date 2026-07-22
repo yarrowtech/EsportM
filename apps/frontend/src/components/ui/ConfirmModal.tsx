@@ -58,7 +58,7 @@ export default function ConfirmModal({
           aria-labelledby={titleId}
           aria-describedby={messageId}
           className="pointer-events-auto w-full max-w-md rounded-3xl border bg-white/80 p-5 backdrop-blur-xl shadow-[0_24px_65px_rgba(0,0,0,0.32)]"
-          style={{ borderColor: "rgba(var(--primary-2), .20)" }}
+          style={{ borderColor: "rgb(var(--border) / .14)" }}
           onClick={(event) => event.stopPropagation()}
         >
           <h2 id={titleId} className="text-base font-bold text-[rgb(var(--text))]">
@@ -73,7 +73,7 @@ export default function ConfirmModal({
               type="button"
               onClick={onCancel}
               className="rounded-xl border bg-white/75 px-4 py-2 text-sm font-semibold backdrop-blur-sm transition hover:bg-white/90"
-              style={{ borderColor: "rgba(var(--primary-2), .20)" }}
+              style={{ borderColor: "rgb(var(--border) / .14)" }}
             >
               {cancelText}
             </button>

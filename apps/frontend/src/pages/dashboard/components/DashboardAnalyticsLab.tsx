@@ -11,6 +11,8 @@ import {
 } from "recharts";
 import { dashboardApi } from "../../../api/dashboard.api";
 import { PricingFeatureGate } from "../../../features/prototype-pricing/PricingFeatureGate";
+import { usePrototypePricing } from "../../../features/prototype-pricing/PrototypePricingProvider";
+import { planMeetsRequirement } from "../../../features/prototype-pricing/pricing";
 import { useDashboardAnalytics } from "../../../hooks/useDashboard";
 import {
   DotTag,
@@ -142,6 +144,8 @@ export default function DashboardAnalyticsLab({
   });
 
   const queryClient = useQueryClient();
+  const pricing = usePrototypePricing();
+  const canSaveAnalytics = canWrite && planMeetsRequirement(pricing.currentPlan, "PROFESSIONAL");
   const analyticsQuery = useDashboardAnalytics(range, asRole);
   const analytics = (analyticsQuery.data || {}) as AnalyticsPayload;
 
@@ -217,9 +221,9 @@ export default function DashboardAnalyticsLab({
       <Section
         title="Analytics Input Lab"
         subtitle={
-          canWrite
+          canSaveAnalytics
             ? "Capture match, player, and club inputs from the team. Stored entries are converted into KPI indices and trend lines for every dashboard role."
-            : "Trend and recent inputs from the club analytics stream. Only admins can save new analytics records."
+            : "Trend and recent inputs from the club analytics stream. Professional plan admins can save new analytics records."
         }
         right={
           <div className="flex flex-wrap items-center gap-2">
@@ -241,7 +245,7 @@ export default function DashboardAnalyticsLab({
         }
       >
       <div className="grid gap-4 xl:grid-cols-12">
-        {canWrite ? (
+        {canSaveAnalytics ? (
           <div className="space-y-4 xl:col-span-5">
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="space-y-1">
@@ -349,13 +353,18 @@ export default function DashboardAnalyticsLab({
               <p className="text-sm font-semibold text-[rgb(var(--text))]">Read-Only Stream</p>
               <p className="mt-2 text-sm text-[rgb(var(--muted))]">
                 Analytics inputs are locked for this role. Club admins can save match, player, and
-                club records here.
+                club records here on Professional or higher.
               </p>
+              {canWrite && pricing.currentPlan === "STARTER" ? (
+                <p className="mt-3 text-xs font-semibold text-[rgb(var(--text))]">
+                  Starter includes read-only analytics. Upgrade to Professional to save analytics inputs.
+                </p>
+              ) : null}
             </div>
           </div>
         )}
 
-        <div className={cx("space-y-4", canWrite ? "xl:col-span-7" : "xl:col-span-8")}>
+        <div className={cx("space-y-4", canSaveAnalytics ? "xl:col-span-7" : "xl:col-span-8")}>
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <Stat label="Entries" value={totalEntries} hint={`Top category: ${topCategory}`} />
             <Stat

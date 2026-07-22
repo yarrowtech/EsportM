@@ -229,6 +229,17 @@ export default function Register() {
     [trimmedPassword]
   );
   const matchedPasswordRules = passwordRules.filter((rule) => rule.met).length;
+  const passwordProgress = (matchedPasswordRules / passwordRules.length) * 100;
+  const passwordProgressColor =
+    passwordProgress <= 50
+      ? "#ef4444"
+      : passwordProgress < 100
+        ? "#f59e0b"
+        : "#22c55e";
+  const passwordRingRadius = 15;
+  const passwordRingCircumference = 2 * Math.PI * passwordRingRadius;
+  const passwordRingOffset =
+    passwordRingCircumference * (1 - passwordProgress / 100);
   const passwordMeetsPolicy = isStrongPassword(trimmedPassword);
   const passwordsMatch = retypePassword.length > 0 && password === retypePassword;
   const steps = [
@@ -508,11 +519,36 @@ export default function Register() {
                           {matchedPasswordRules}/{passwordRules.length} matched
                         </span>
                       </div>
-                      <div className="mb-2 h-1.5 overflow-hidden rounded-full bg-[#dce2f0]" aria-hidden="true">
-                        <div
-                          className="h-full rounded-full bg-[#5F5EA6] transition-all"
-                          style={{ width: `${(matchedPasswordRules / passwordRules.length) * 100}%` }}
-                        />
+                      <div className="mb-2 flex items-center gap-3">
+                        <svg
+                          viewBox="0 0 40 40"
+                          className="h-10 w-10 shrink-0 -rotate-90"
+                          aria-hidden="true"
+                        >
+                          <circle
+                            cx="20"
+                            cy="20"
+                            r={passwordRingRadius}
+                            fill="none"
+                            stroke="#dce2f0"
+                            strokeWidth="5"
+                          />
+                          <circle
+                            cx="20"
+                            cy="20"
+                            r={passwordRingRadius}
+                            fill="none"
+                            stroke={passwordProgressColor}
+                            strokeWidth="5"
+                            strokeLinecap="round"
+                            strokeDasharray={passwordRingCircumference}
+                            strokeDashoffset={passwordRingOffset}
+                            className="transition-all"
+                          />
+                        </svg>
+                        <span className="text-xs font-bold text-[#5F5EA6]/70">
+                          {Math.round(passwordProgress)}%
+                        </span>
                       </div>
                       <ul className="flex flex-wrap gap-1.5 text-[11px] leading-none">
                         {passwordRules.map((rule) => (

@@ -38,7 +38,7 @@ function initials(name: string) {
     return (a + b).toUpperCase();
 }
 
-const cardBorder = "rgba(var(--border), .92)";
+const cardBorder = "rgb(var(--border) / .1)";
 const logoutBorder = "rgba(220, 38, 38, .42)";
 
 const adminNav = [
@@ -192,7 +192,7 @@ export default function AdminSidebar({
                 )
             }
             style={({ isActive }) => ({
-                borderColor: isActive ? "rgba(var(--primary), .92)" : cardBorder,
+                borderColor: isActive ? "rgb(var(--primary) / .34)" : cardBorder,
                 background: isActive ? "#96b2f2" : "rgb(var(--bg))",
                 boxShadow: "var(--neu-raised-sm)",
             })}
@@ -213,7 +213,7 @@ export default function AdminSidebar({
                         <span
                             className="grid h-8 w-8 place-items-center rounded-lg border transition"
                             style={{
-                                borderColor: isActive ? "rgba(var(--primary-2), .35)" : cardBorder,
+                                borderColor: isActive ? "rgb(var(--primary-2) / .16)" : cardBorder,
                                 background: isActive ? "rgba(255,255,255,.38)" : "rgb(var(--bg))",
                                 color: isActive ? "rgb(var(--primary-2))" : "rgb(var(--text))",
                                 boxShadow: isActive ? "var(--neu-inset)" : "var(--neu-raised-sm)",

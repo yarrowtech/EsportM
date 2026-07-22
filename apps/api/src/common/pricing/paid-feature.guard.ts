@@ -50,7 +50,13 @@ export class PaidFeatureGuard implements CanActivate {
 
     const club = await this.prisma.club.findUnique({
       where: { id: String(clubId) },
-      select: { id: true, billingPlan: true, isActive: true },
+      select: {
+        id: true,
+        billingPlan: true,
+        subscriptionStatus: true,
+        subscriptionNextBillingAt: true,
+        isActive: true,
+      },
     });
     if (!club || club.isActive === false) {
       throw new ForbiddenException('Club is inactive or unavailable');
@@ -72,6 +78,23 @@ export class PaidFeatureGuard implements CanActivate {
     }
 
     const requiredPlan = PAID_FEATURE_REQUIRED_PLAN[feature];
+    const subscriptionStatus = String(club.subscriptionStatus || 'TRIAL').toUpperCase();
+    const nextBillingAt = club.subscriptionNextBillingAt
+      ? new Date(club.subscriptionNextBillingAt).getTime()
+      : null;
+    const isExpired = nextBillingAt !== null && nextBillingAt < Date.now();
+
+    if (subscriptionStatus !== 'ACTIVE' || isExpired) {
+      throw new ForbiddenException({
+        message: 'Active subscription required for this feature',
+        feature,
+        requiredPlan,
+        currentPlan: club.billingPlan || 'FREE',
+        subscriptionStatus,
+        subscriptionExpired: isExpired,
+      });
+    }
+
     if (!planMeetsRequirement(club.billingPlan, requiredPlan)) {
       throw new ForbiddenException({
         message: 'Upgrade required for this feature',

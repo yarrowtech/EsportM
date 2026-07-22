@@ -492,7 +492,7 @@ export default function AdminMembers() {
                                 (!canAssignSignup || !canEditSubRoles || !roleAllowed) && "cursor-not-allowed opacity-60"
                               )}
                               style={{
-                                borderColor: active ? "rgba(var(--primary),.8)" : adminCardBorder,
+                                borderColor: active ? "rgb(var(--primary) / .34)" : adminCardBorder,
                               }}
                               title={
                                 !roleAllowed
@@ -737,7 +737,7 @@ function MemberCard({
                     (!canEditSubRoles || !roleAllowed) && "cursor-not-allowed opacity-60"
                   )}
                   style={{
-                    borderColor: active ? "rgba(var(--primary),.8)" : adminCardBorder,
+                    borderColor: active ? "rgb(var(--primary) / .34)" : adminCardBorder,
                   }}
                   title={
                     !roleAllowed

@@ -1,4 +1,12 @@
-import { IsEmail, IsOptional, IsString, Matches, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsOptional,
+  IsString,
+  IsUrl,
+  Matches,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 import { PASSWORD_POLICY_MESSAGE } from '../../common/security/password-policy';
 
 export class RegisterDto {
@@ -24,4 +32,16 @@ export class LoginDto {
 
   @IsString()
   password!: string;
+}
+
+export class UpdateMyAvatarDto {
+  @IsString()
+  @IsUrl({ protocols: ['https'], require_protocol: true })
+  @MaxLength(2000)
+  avatarUrl!: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(180)
+  avatarPublicId?: string;
 }

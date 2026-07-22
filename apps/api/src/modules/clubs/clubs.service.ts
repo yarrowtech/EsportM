@@ -8,10 +8,15 @@ import { ConfigService } from '@nestjs/config';
 import { PrimaryRole, SubRole } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import {
+  assertCloudinarySecureUrl,
+  createCloudinaryUploadSignature,
+} from '../../common/media/cloudinary-signature';
+import {
   AssignSignupDto,
   CreateClubDto,
   InviteMemberDto,
   PendingSignupsQueryDto,
+  UpdateClubLogoDto,
   UpdateMemberRoleDto,
 } from './dto';
 import { InvitationsService } from '../invitations/invitations.service';
@@ -32,6 +37,17 @@ export class ClubsService {
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
       .replace(/^-|-$/g, '');
+  }
+
+  private async requireClubAdmin(userId: string, clubId: string) {
+    const membership = await this.prisma.membership.findUnique({
+      where: { userId_clubId: { userId, clubId } },
+      select: { primary: true },
+    });
+    if (!membership) throw new NotFoundException('Club not found (or no access)');
+    if (membership.primary !== PrimaryRole.ADMIN) {
+      throw new ForbiddenException('Only ADMIN can update club profile media');
+    }
   }
 
   private getPlatformAdminEmails() {
@@ -289,6 +305,35 @@ export class ClubsService {
       primary: updated.themePrimary || '#FFC840',
       deep: updated.themeDeep || '#141820',
     };
+  }
+
+  async createClubLogoUploadSignature(userId: string, clubId: string) {
+    await this.requireClubAdmin(userId, clubId);
+
+    return createCloudinaryUploadSignature(this.config, {
+      folder: `esportm/clubs/${clubId}/logo`,
+      resourceType: 'image',
+      transformation: 'c_fit,w_600,h_600,q_auto,f_auto',
+    });
+  }
+
+  async updateClubLogo(userId: string, clubId: string, dto: UpdateClubLogoDto) {
+    await this.requireClubAdmin(userId, clubId);
+    assertCloudinarySecureUrl(this.config, dto.logoUrl, 'logoUrl');
+
+    const updated = await (this.prisma as any).club.update({
+      where: { id: clubId },
+      data: { logoUrl: dto.logoUrl },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        logoUrl: true,
+        updatedAt: true,
+      },
+    });
+
+    return updated;
   }
 
   async listPendingSignups(clubId: string, query?: PendingSignupsQueryDto) {

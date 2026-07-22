@@ -5,7 +5,7 @@ export default function ChartCard({ title, points }: { title: string; points: an
     <div
       className="rounded-2xl border p-4"
       style={{
-        borderColor: "rgba(var(--primary-2), .14)",
+        borderColor: "rgb(var(--border) / .14)",
         background:
           "linear-gradient(145deg, rgba(255,255,255,.72), rgba(255,255,255,.46) 65%, rgba(var(--primary), .12))",
       }}

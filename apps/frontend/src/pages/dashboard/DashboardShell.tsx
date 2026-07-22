@@ -24,7 +24,7 @@ export default function DashboardShell({
       <div
         className="neu-surface mx-auto max-w-7xl rounded-[20px] border p-3 sm:p-4"
         style={{
-          borderColor: "rgba(var(--border), .72)",
+          borderColor: "rgb(var(--border) / .14)",
           background: "rgb(var(--bg))",
           boxShadow: "var(--neu-raised)",
         }}
@@ -40,7 +40,7 @@ export default function DashboardShell({
           <div className="flex gap-2">
             <select
               className="rounded-xl border bg-[rgb(var(--bg))] px-3 py-2 text-sm text-[rgb(var(--text))] outline-none"
-              style={{ borderColor: "rgba(var(--primary-2), .14)" }}
+              style={{ borderColor: "rgb(var(--border) / .14)" }}
               value={activeClubId ?? ""}
               onChange={(e) => {
                 localStorage.setItem("activeClubId", e.target.value);
@@ -56,7 +56,7 @@ export default function DashboardShell({
 
             <select
               className="rounded-xl border bg-[rgb(var(--bg))] px-3 py-2 text-sm text-[rgb(var(--text))] outline-none"
-              style={{ borderColor: "rgba(var(--primary-2), .14)" }}
+              style={{ borderColor: "rgb(var(--border) / .14)" }}
               value={range}
               onChange={(e) => setRange(e.target.value)}
             >

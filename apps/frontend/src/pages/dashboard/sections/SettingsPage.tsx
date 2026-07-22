@@ -403,7 +403,7 @@ function PreferenceToggle({
           />
           <span
             className="inline-flex h-7 w-12 items-center rounded-full border bg-white/80 shadow-sm transition peer-checked:border-transparent peer-checked:bg-gradient-to-r peer-checked:from-[rgb(var(--primary))] peer-checked:to-[rgb(var(--primary-2))]"
-            style={{ borderColor: "rgba(var(--border), .45)" }}
+            style={{ borderColor: "rgb(var(--border) / .14)" }}
           >
             <span className={knobClasses} />
           </span>

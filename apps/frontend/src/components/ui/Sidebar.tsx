@@ -155,7 +155,7 @@ export default function Sidebar({
     );
   }, [recentQuery.data]);
 
-  const cardBorder = "rgba(15,23,42,.09)";
+  const cardBorder = "rgb(var(--border) / .1)";
   const logoutBorder = "rgba(220, 38, 38, .42)";
 
   const copyId = async () => {
@@ -254,7 +254,15 @@ export default function Sidebar({
           }}
           title={user.fullName}
         >
-          {initials(user.fullName)}
+          {user.avatarUrl ? (
+            <img
+              src={user.avatarUrl}
+              alt=""
+              className="h-full w-full rounded-2xl object-cover"
+            />
+          ) : (
+            initials(user.fullName)
+          )}
         </div>
 
         <div className="min-w-0 flex-1">
@@ -329,7 +337,7 @@ export default function Sidebar({
         {user.isCaptain ? (
           <span
             className="rounded-full border bg-[rgba(var(--primary),.30)] px-2.5 py-1 text-[10px] font-extrabold text-[rgb(var(--text))]"
-            style={{ borderColor: "rgba(var(--primary), .55)" }}
+            style={{ borderColor: "rgb(var(--primary) / .24)" }}
           >
             Captain
           </span>

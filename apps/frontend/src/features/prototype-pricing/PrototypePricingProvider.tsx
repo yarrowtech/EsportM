@@ -6,8 +6,8 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { useQueryClient } from "@tanstack/react-query";
-import { Check } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Check, CheckCircle2, Sparkles } from "lucide-react";
 import { Badge } from "../../components/ui/badge";
 import {
   Dialog,
@@ -33,6 +33,11 @@ import {
 type PendingRequest = {
   featureKey: PricingFeatureKey;
   onContinue?: () => void;
+};
+
+type UnlockCelebration = {
+  title: string;
+  plan: BillingPlanCheckoutKey;
 };
 
 type RazorpaySuccessResponse = {
@@ -159,20 +164,42 @@ export function PrototypePricingProvider({ children }: { children: ReactNode }) 
   const meQuery = useMe({ enabled: hasToken });
   const meData = meQuery.data as any;
   const membership = useMemo(() => getActiveMembership(meData), [meData]);
+  const activeClubId = String(membership?.clubId || "");
+  const billingSummaryQuery = useQuery({
+    queryKey: ["billing-summary", activeClubId],
+    queryFn: () => billingApi.summary(activeClubId),
+    enabled: hasToken && !!activeClubId,
+    staleTime: 15_000,
+  });
   const activeClubName = useMemo(() => getClubName(membership?.club), [membership]);
-  const currentPlan = normalizeBillingPlan(membership?.club?.billingPlan);
+  const currentPlan = normalizeBillingPlan(
+    (billingSummaryQuery.data as any)?.club?.effectiveBillingPlan ||
+      (billingSummaryQuery.data as any)?.club?.billingPlan ||
+      membership?.club?.billingPlan
+  );
+  const featureAccess = useMemo(() => {
+    const rows = Array.isArray((billingSummaryQuery.data as any)?.enabledFeatures)
+      ? (billingSummaryQuery.data as any).enabledFeatures
+      : [];
+    return new Map(rows.map((row: any) => [String(row.feature), !!row.enabled]));
+  }, [billingSummaryQuery.data]);
   const [pendingRequest, setPendingRequest] = useState<PendingRequest | null>(null);
   const [checkoutPlan, setCheckoutPlan] = useState<BillingPlanCheckoutKey | null>(null);
   const [checkoutMessage, setCheckoutMessage] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
-  const isPricingLoading = hasToken && meQuery.isLoading;
+  const [unlockCelebration, setUnlockCelebration] = useState<UnlockCelebration | null>(null);
+  const isPricingLoading =
+    hasToken && (meQuery.isLoading || (!!activeClubId && billingSummaryQuery.isLoading));
 
   const hasFeatureAccess = useCallback(
     (featureKey: PricingFeatureKey) => {
+      if (featureAccess.has(featureKey)) {
+        return featureAccess.get(featureKey) === true;
+      }
       const feature = FEATURE_PRICING[featureKey];
       return planMeetsRequirement(currentPlan, feature.requiredPlan);
     },
-    [currentPlan]
+    [currentPlan, featureAccess]
   );
 
   const dismissUpgradePrompt = useCallback(() => {
@@ -181,8 +208,7 @@ export function PrototypePricingProvider({ children }: { children: ReactNode }) 
 
   const requestFeatureAccess = useCallback(
     (featureKey: PricingFeatureKey, onContinue?: () => void) => {
-      const feature = FEATURE_PRICING[featureKey];
-      if (planMeetsRequirement(currentPlan, feature.requiredPlan)) {
+      if (hasFeatureAccess(featureKey)) {
         onContinue?.();
         return true;
       }
@@ -190,7 +216,7 @@ export function PrototypePricingProvider({ children }: { children: ReactNode }) 
       setPendingRequest({ featureKey, onContinue });
       return false;
     },
-    [currentPlan]
+    [hasFeatureAccess]
   );
 
   const runWithPricingLayer = useCallback(
@@ -221,7 +247,6 @@ export function PrototypePricingProvider({ children }: { children: ReactNode }) 
 
   const feature = pendingRequest ? FEATURE_PRICING[pendingRequest.featureKey] : null;
   const isIndividual = !membership?.clubId;
-  const activeClubId = String(membership?.clubId || "");
   const isClubAdmin = String(membership?.primary || "").toUpperCase() === "ADMIN";
   const modalPlans = CLUB_PRICING_PLANS.map((plan) => ({
     ...plan,
@@ -268,11 +293,24 @@ export function PrototypePricingProvider({ children }: { children: ReactNode }) 
                 billingCycle: "annual",
                 ...response,
               });
-              await queryClient.invalidateQueries({ queryKey: ["me"] });
+              await Promise.all([
+                queryClient.refetchQueries({ queryKey: ["me"] }),
+                queryClient.refetchQueries({ queryKey: ["billing-summary", activeClubId] }),
+              ]);
+              const unlockedFeature = pendingRequest
+                ? FEATURE_PRICING[pendingRequest.featureKey]
+                : null;
               setCheckoutMessage(`${planLabel(plan)} plan activated.`);
               const continuation = pendingRequest?.onContinue;
               setPendingRequest(null);
-              continuation?.();
+              setUnlockCelebration({
+                title: unlockedFeature?.title || `${planLabel(plan)} plan`,
+                plan,
+              });
+              window.setTimeout(() => {
+                setUnlockCelebration(null);
+                continuation?.();
+              }, 1800);
             } catch (error: any) {
               setCheckoutError(
                 error?.response?.data?.message ||
@@ -301,6 +339,29 @@ export function PrototypePricingProvider({ children }: { children: ReactNode }) 
   return (
     <PricingContext.Provider value={value}>
       {children}
+      {unlockCelebration ? (
+        <div className="pricing-unlocked-overlay" role="status" aria-live="polite">
+          <div className="pricing-unlocked-card">
+            <div className="pricing-unlocked-burst" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+              <span />
+              <span />
+              <span />
+            </div>
+            <div className="pricing-unlocked-icon">
+              <CheckCircle2 size={34} />
+            </div>
+            <p className="pricing-unlocked-kicker">
+              <Sparkles size={14} />
+              Feature unlocked
+            </p>
+            <h2>{unlockCelebration.title}</h2>
+            <p>{planLabel(unlockCelebration.plan)} is active for this club.</p>
+          </div>
+        </div>
+      ) : null}
       <Dialog open={Boolean(feature)} onOpenChange={(open) => !open && dismissUpgradePrompt()}>
         <DialogContent className="pricing-neu-modal w-[calc(100vw-1rem)] max-w-[960px] overflow-hidden rounded-[24px] p-0 sm:w-[calc(100vw-2rem)]">
           {feature ? (

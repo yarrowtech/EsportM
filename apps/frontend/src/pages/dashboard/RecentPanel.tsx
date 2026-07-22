@@ -4,7 +4,7 @@ export default function RecentPanel({ title, items, render }: any) {
     <div
       className="rounded-2xl border p-4"
       style={{
-        borderColor: "rgba(var(--primary-2), .14)",
+        borderColor: "rgb(var(--border) / .14)",
         background:
           "linear-gradient(145deg, rgba(255,255,255,.72), rgba(255,255,255,.44) 62%, rgba(var(--primary), .10))",
       }}

@@ -834,6 +834,7 @@ type ScheduleNotificationProps = {
   events?: ScheduleEvent[];
   isLoading: boolean;
   onViewCalendar: () => void;
+  referenceTimeMs: number | null;
 };
 
 type NotificationOverviewProps = {
@@ -942,15 +943,17 @@ function ScheduleNotification({
   events,
   isLoading,
   onViewCalendar,
+  referenceTimeMs,
 }: ScheduleNotificationProps) {
   const upcoming = useMemo(() => {
     if (!events?.length) return [];
+    const cutoff = (referenceTimeMs ?? 0) - 1_000;
     return events
       .slice()
-      .filter((event) => new Date(event.eventAt).getTime() >= Date.now() - 1_000)
+      .filter((event) => new Date(event.eventAt).getTime() >= cutoff)
       .sort((a, b) => new Date(a.eventAt).getTime() - new Date(b.eventAt).getTime())
       .slice(0, 2);
-  }, [events]);
+  }, [events, referenceTimeMs]);
 
   const nextEvent = upcoming[0];
 
@@ -1063,6 +1066,7 @@ export default function AppShell() {
   const [active, setActive] = useState<NavKey>("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
+  const [scheduleReferenceTimeMs, setScheduleReferenceTimeMs] = useState<number | null>(null);
 
   const user = useMemo<SidebarUser>(() => {
     if (!meData) return FALLBACK_USER;
@@ -1075,6 +1079,10 @@ export default function AppShell() {
       navigate("/login", { replace: true });
     }
   }, [navigate]);
+
+  useEffect(() => {
+    setScheduleReferenceTimeMs(Date.now());
+  }, []);
 
   useEffect(() => {
     if (!meError) return;
@@ -1134,6 +1142,7 @@ export default function AppShell() {
       (typeof rawClub === "string" ? rawClub : rawClub?.name) ||
       (user.clubName && user.clubName !== "-" ? user.clubName : "");
     const clubSlug = typeof rawClub === "object" && rawClub?.slug ? String(rawClub.slug) : "";
+    const clubLogoUrl = typeof rawClub === "object" && rawClub?.logoUrl ? String(rawClub.logoUrl) : "";
     const clubId = String(activeMembership?.clubId || activeClubId || "").trim();
     const role = String(activeMembership?.primary || "").trim().toUpperCase();
     const hasClub = Boolean(clubName || clubId);
@@ -1142,6 +1151,7 @@ export default function AppShell() {
       hasClub,
       clubName: clubName || "No Club Assigned",
       clubSlug,
+      clubLogoUrl,
       clubId,
       role: role ? formatDashboardRole(role as DashboardRole) : "",
     };
@@ -1339,11 +1349,7 @@ export default function AppShell() {
 
                       {/* top pills */}
                       <nav
-                        className="hide-scrollbar hidden min-w-0 flex-1 items-center gap-1 overflow-x-auto rounded-full p-1 sm:flex"
-                        style={{
-                          background: "rgb(var(--bg))",
-                          boxShadow: "var(--neu-inset)",
-                        }}
+                        className="app-top-nav hidden min-w-0 flex-1 items-center gap-1 overflow-visible sm:flex"
                       >
                         {topNav.map((item) => {
                           const on = item.key === active;
@@ -1354,7 +1360,12 @@ export default function AppShell() {
                                 setActive(item.key);
                                 navigate(topNavTargets[item.key]);
                               }}
-                              className="inline-flex shrink-0 items-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-bold xl:px-3 xl:text-sm"
+                              className={cx(
+                                "app-top-nav-button inline-flex shrink-0 items-center justify-center rounded-full text-xs font-bold",
+                                on && "app-top-nav-button-active"
+                              )}
+                              aria-label={item.label}
+                              data-label={item.label}
                               style={{
                                 background: on
                                   ? "linear-gradient(145deg, #3157ff, #7c5cff)"
@@ -1368,7 +1379,6 @@ export default function AppShell() {
                               }}
                             >
                               {topNavIcon(item.key)}
-                              {item.label}
                             </button>
                           );
                         })}
@@ -1392,7 +1402,17 @@ export default function AppShell() {
                               color: "rgb(var(--text))",
                             }}
                           >
-                            {activeClubDisplay.hasClub ? <BadgeCheck size={16} /> : <Building2 size={16} />}
+                            {activeClubDisplay.clubLogoUrl ? (
+                              <img
+                                src={activeClubDisplay.clubLogoUrl}
+                                alt=""
+                                className="h-full w-full rounded-xl object-cover"
+                              />
+                            ) : activeClubDisplay.hasClub ? (
+                              <BadgeCheck size={16} />
+                            ) : (
+                              <Building2 size={16} />
+                            )}
                           </div>
                           <div className="min-w-0 max-w-[170px]">
                             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[rgb(var(--muted))]">
@@ -1458,7 +1478,15 @@ export default function AppShell() {
                         }}
                         title={user.fullName}
                       >
-                        {user.fullName?.trim()?.[0]?.toUpperCase() ?? "P"}
+                        {user.avatarUrl ? (
+                          <img
+                            src={user.avatarUrl}
+                            alt=""
+                            className="h-full w-full rounded-full object-cover"
+                          />
+                        ) : (
+                          user.fullName?.trim()?.[0]?.toUpperCase() ?? "P"
+                        )}
                       </div>
                     </div>
                   </div>
@@ -1507,7 +1535,17 @@ export default function AppShell() {
                           boxShadow: NEU_INSET,
                         }}
                       >
-                        {activeClubDisplay.hasClub ? <BadgeCheck size={16} /> : <Building2 size={16} />}
+                        {activeClubDisplay.clubLogoUrl ? (
+                          <img
+                            src={activeClubDisplay.clubLogoUrl}
+                            alt=""
+                            className="h-full w-full rounded-xl object-cover"
+                          />
+                        ) : activeClubDisplay.hasClub ? (
+                          <BadgeCheck size={16} />
+                        ) : (
+                          <Building2 size={16} />
+                        )}
                       </div>
                       <div className="min-w-0">
                         <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[rgb(var(--muted))]">
@@ -1569,6 +1607,7 @@ export default function AppShell() {
                         events={scheduleQuery.data}
                         isLoading={scheduleQuery.isLoading}
                         onViewCalendar={openScheduleCalendar}
+                        referenceTimeMs={scheduleReferenceTimeMs}
                       />
                     </div>
                   )}

@@ -8,6 +8,7 @@ export type BillingPlanKey =
 export type PaidFeatureKey =
   | 'ai_assistant'
   | 'advanced_analytics'
+  | 'advanced_analytics_write'
   | 'medical_management'
   | 'social_publishing'
   | 'marketplace_recruiting';
@@ -22,7 +23,8 @@ export const PLAN_RANK: Record<BillingPlanKey, number> = {
 
 export const PAID_FEATURE_REQUIRED_PLAN: Record<PaidFeatureKey, BillingPlanKey> = {
   ai_assistant: 'PROFESSIONAL',
-  advanced_analytics: 'PROFESSIONAL',
+  advanced_analytics: 'STARTER',
+  advanced_analytics_write: 'PROFESSIONAL',
   medical_management: 'PROFESSIONAL',
   social_publishing: 'PROFESSIONAL',
   marketplace_recruiting: 'PROFESSIONAL',

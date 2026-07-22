@@ -63,9 +63,9 @@ export const FEATURE_PRICING: Record<PricingFeatureKey, PricingFeature> = {
     key: "advanced_analytics",
     title: "Advanced Analytics",
     shortTitle: "Analytics",
-    requiredPlan: "PROFESSIONAL",
+    requiredPlan: "STARTER",
     description: "Performance trends, readiness, risk signals, and club-wide analytics records.",
-    bullets: ["Trend analytics", "Readiness and risk scoring", "Admin analytics workspace"],
+    bullets: ["Read-only analytics stream", "Trend analytics", "Readiness and risk scoring"],
   },
   medical_management: {
     key: "medical_management",

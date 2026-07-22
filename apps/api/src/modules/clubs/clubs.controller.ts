@@ -17,6 +17,7 @@ import {
   CreateClubDto,
   InviteMemberDto,
   PendingSignupsQueryDto,
+  UpdateClubLogoDto,
   UpdateClubThemeDto,
   UpdateMemberRoleDto,
 } from './dto';
@@ -70,6 +71,27 @@ export class ClubsController {
     const userId = req.user?.sub;
     const theme = await this.clubs.updateClubTheme(userId, clubId, dto);
     return { theme };
+  }
+
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('members.update.primary')
+  @Post(':clubId/logo/signature')
+  async logoSignature(@Req() req: any, @Param('clubId') clubId: string) {
+    const userId = req.user?.sub;
+    return this.clubs.createClubLogoUploadSignature(userId, clubId);
+  }
+
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('members.update.primary')
+  @Patch(':clubId/logo')
+  async updateLogo(
+    @Req() req: any,
+    @Param('clubId') clubId: string,
+    @Body() dto: UpdateClubLogoDto,
+  ) {
+    const userId = req.user?.sub;
+    const club = await this.clubs.updateClubLogo(userId, clubId, dto);
+    return { club };
   }
 
   // Invite (permission-scoped)

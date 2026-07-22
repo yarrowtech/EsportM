@@ -60,7 +60,7 @@ export class DashboardsController {
   @Post('analytics')
   @UseGuards(JwtAuthGuard, PermissionsGuard, PaidFeatureGuard)
   @Permissions('analytics.write')
-  @RequiresPaidFeature('advanced_analytics')
+  @RequiresPaidFeature('advanced_analytics_write')
   createAnalytics(
     @Req() req: any,
     @Body() dto: CreateDashboardAnalyticsEntryDto,

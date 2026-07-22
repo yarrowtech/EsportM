@@ -52,8 +52,8 @@ function cx(...s: Array<string | false | undefined>) {
   return s.filter(Boolean).join(" ");
 }
 
-const GLASS_BORDER = "transparent";
-const GLASS_BORDER_STRONG = "transparent";
+const GLASS_BORDER = "rgb(var(--border) / .1)";
+const GLASS_BORDER_STRONG = "rgb(var(--border) / .14)";
 const GLASS_SHADOW = "var(--neu-raised)";
 const GLASS_BG = "rgb(var(--bg))";
 

@@ -59,6 +59,22 @@ export class BillingService {
       : pricing.annualAmountInr;
   }
 
+  private effectivePlanForAccess(club: {
+    billingPlan?: string | null;
+    subscriptionStatus?: unknown;
+    subscriptionNextBillingAt?: Date | string | null;
+  }) {
+    const plan = normalizeBillingPlan(club.billingPlan);
+    const status = String(club.subscriptionStatus || 'TRIAL').toUpperCase();
+    const nextBillingAt = club.subscriptionNextBillingAt
+      ? new Date(club.subscriptionNextBillingAt).getTime()
+      : null;
+    const isExpired = nextBillingAt !== null && nextBillingAt < Date.now();
+
+    if (status !== 'ACTIVE' || isExpired) return 'FREE' as BillingPlanKey;
+    return plan;
+  }
+
   private async getMembership(userId: string, clubId: string) {
     const membership = await this.prisma.membership.findUnique({
       where: { userId_clubId: { userId, clubId } },
@@ -111,6 +127,7 @@ export class BillingService {
     if (!clubId) throw new BadRequestException('clubId is required');
     const membership = await this.getMembership(userId, clubId);
     const currentPlan = normalizeBillingPlan(membership.club.billingPlan);
+    const effectivePlan = this.effectivePlanForAccess(membership.club);
     const isAdmin = membership.primary === PrimaryRole.ADMIN;
 
     const payments = await (this.prisma as any).clubPayment.findMany({
@@ -136,7 +153,7 @@ export class BillingService {
       ([feature, requiredPlan]) => ({
         feature,
         requiredPlan,
-        enabled: planMeetsRequirement(currentPlan, requiredPlan),
+        enabled: planMeetsRequirement(effectivePlan, requiredPlan),
       }),
     );
 
@@ -147,6 +164,7 @@ export class BillingService {
         id: membership.club.id,
         name: membership.club.name,
         billingPlan: currentPlan,
+        effectiveBillingPlan: effectivePlan,
         subscriptionStatus: membership.club.subscriptionStatus,
         subscriptionMonthlyPrice: membership.club.subscriptionMonthlyPrice,
         subscriptionStartAt: membership.club.subscriptionStartAt,

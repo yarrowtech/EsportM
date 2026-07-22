@@ -32,9 +32,9 @@
 
 
 
-import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto, RegisterDto } from './dto';
+import { LoginDto, RegisterDto, UpdateMyAvatarDto } from './dto';
 import { JwtAuthGuard } from './jwt.guard';
 
 @Controller('auth')
@@ -57,5 +57,17 @@ export class AuthController {
   me(@Req() req: any, @Query('clubId') clubId?: string) {
     const clubIdFromHeader = req.headers['x-club-id'] as string | undefined;
     return this.auth.me(req.user.sub, clubIdFromHeader || clubId);
+  }
+
+  @Post('me/avatar/signature')
+  @UseGuards(JwtAuthGuard)
+  avatarSignature(@Req() req: any) {
+    return this.auth.createAvatarUploadSignature(req.user.sub);
+  }
+
+  @Patch('me/avatar')
+  @UseGuards(JwtAuthGuard)
+  updateAvatar(@Req() req: any, @Body() dto: UpdateMyAvatarDto) {
+    return this.auth.updateMyAvatar(req.user.sub, dto);
   }
 }
