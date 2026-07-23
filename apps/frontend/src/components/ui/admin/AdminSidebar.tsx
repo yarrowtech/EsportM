@@ -193,29 +193,23 @@ export default function AdminSidebar({
             }
             style={({ isActive }) => ({
                 borderColor: isActive ? "rgb(var(--primary) / .34)" : cardBorder,
-                background: isActive ? "#96b2f2" : "rgb(var(--bg))",
-                boxShadow: "var(--neu-raised-sm)",
+                background: isActive
+                    ? "rgb(var(--primary))"
+                    : "rgb(var(--bg))",
+                boxShadow: isActive
+                    ? "inset 7px 7px 14px rgb(var(--primary-2) / .14), inset -7px -7px 14px rgba(255,255,255,.34), -4px -4px 14px rgba(255,255,255,.88), 5px 6px 16px rgb(var(--shadow) / .22)"
+                    : "var(--neu-raised-sm)",
             })}
         >
             {({ isActive }) => (
                 <>
-                    <span
-                        className={cx(
-                            "absolute left-2 top-1/2 -translate-y-1/2 rounded-full transition-all",
-                            isActive ? "h-7 w-1" : "h-0 w-1"
-                        )}
-                        style={{
-                            background: isActive ? "rgb(var(--primary-2))" : "rgb(var(--primary))",
-                        }}
-                    />
-
                     <div className="relative flex items-center gap-3">
                         <span
                             className="grid h-8 w-8 place-items-center rounded-lg border transition"
                             style={{
                                 borderColor: isActive ? "rgb(var(--primary-2) / .16)" : cardBorder,
                                 background: isActive ? "rgba(255,255,255,.38)" : "rgb(var(--bg))",
-                                color: isActive ? "rgb(var(--primary-2))" : "rgb(var(--text))",
+                                color: "rgb(var(--text))",
                                 boxShadow: isActive ? "var(--neu-inset)" : "var(--neu-raised-sm)",
                             }}
                         >
@@ -224,7 +218,7 @@ export default function AdminSidebar({
 
                         <span
                             className="relative"
-                            style={{ color: isActive ? "rgb(var(--primary-2))" : "rgb(var(--text))" }}
+                            style={{ color: "rgb(var(--text))" }}
                         >
                             {label}
                         </span>

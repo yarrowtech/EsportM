@@ -35,11 +35,16 @@ import axios from "axios";
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
   import.meta.env.VITE_API_URL ||
-  "http://localhost:4000";
+  "http://127.0.0.1:4000";
 
 function isPublicAuthRoute(url?: string) {
   if (!url) return false;
   return /^\/auth\/(login|register)$/.test(url);
+}
+
+function isAuthMeRoute(url?: string) {
+  if (!url) return false;
+  return /^\/auth\/me(?:[?#]|$)/.test(url);
 }
 
 export const http = axios.create({
@@ -52,7 +57,9 @@ http.interceptors.request.use((config) => {
 
   if (!isPublicAuthRoute(config.url)) {
     if (token) config.headers.Authorization = `Bearer ${token}`;
-    if (activeClubId) config.headers["x-club-id"] = activeClubId;
+    if (activeClubId && !isAuthMeRoute(config.url)) {
+      config.headers["x-club-id"] = activeClubId;
+    }
   }
 
   return config;

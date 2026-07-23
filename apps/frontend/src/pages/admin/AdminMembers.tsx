@@ -50,8 +50,18 @@ function sanitizeSubRolesForPrimary(primary: PrimaryRole, subRoles: SubRole[]) {
 }
 
 function messageOf(e: unknown, fallback: string) {
-  const err = e as { response?: { data?: { message?: string } }; message?: string };
-  return err?.response?.data?.message || err?.message || fallback;
+  const err = e as {
+    code?: string;
+    response?: { data?: { message?: string | string[]; error?: string } };
+    message?: string;
+  };
+  const responseMessage = err?.response?.data?.message;
+  if (Array.isArray(responseMessage)) return responseMessage.join(" ");
+  if (typeof responseMessage === "string" && responseMessage.trim()) return responseMessage;
+  if (err?.code === "ERR_NETWORK" || err?.message === "Network Error") {
+    return "API server is unreachable. Check that the backend is running on port 4000, then try again.";
+  }
+  return err?.response?.data?.error || err?.message || fallback;
 }
 
 export default function AdminMembers() {

@@ -308,8 +308,8 @@ export default function BillingPage() {
                   onClick={() => setCycle(item)}
                   className="rounded-full px-4 py-2 text-xs font-extrabold capitalize transition"
                   style={{
-                    background: cycle === item ? "#5F5EA6" : "transparent",
-                    color: cycle === item ? "#ffffff" : "rgb(var(--text))",
+                    background: cycle === item ? "rgb(var(--primary))" : "transparent",
+                    color: cycle === item ? "rgb(var(--primary-2))" : "rgb(var(--text))",
                     boxShadow: cycle === item ? "var(--neu-raised-sm)" : "none",
                   }}
                 >
@@ -329,20 +329,20 @@ export default function BillingPage() {
                 <article
                   key={plan.key}
                   className={`relative rounded-2xl border p-4 transition ${
-                    isCurrent ? "ring-2 ring-[#9b8cff]/45" : ""
+                    isCurrent ? "ring-0" : ""
                   }`}
                   style={{
-                    borderColor: isCurrent ? "rgba(124, 92, 255, .22)" : adminCardBorder,
+                    borderColor: isCurrent ? "rgba(var(--primary), .30)" : adminCardBorder,
                     background: isCurrent
-                      ? "linear-gradient(145deg, rgba(230,225,255,.82), rgba(218,246,228,.54))"
+                      ? "linear-gradient(145deg, rgba(var(--primary), .22), rgba(255,255,255,.58))"
                       : "rgba(255,255,255,.70)",
                     boxShadow: isCurrent
-                      ? "var(--neu-raised), inset 0 0 0 1px rgba(255,255,255,.58)"
+                      ? "0 0 0 2px rgba(var(--primary), .38), var(--neu-raised), inset 0 0 0 1px rgba(255,255,255,.58)"
                       : undefined,
                   }}
                 >
                   {isCurrent ? (
-                    <span className="absolute right-3 top-3 rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#5b4bd6]" style={{ background: "rgba(255,255,255,.56)", boxShadow: "var(--neu-inset)" }}>
+                    <span className="absolute right-3 top-3 rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em]" style={{ background: "rgba(255,255,255,.56)", color: "rgb(var(--primary-2))", boxShadow: "var(--neu-inset)" }}>
                       Current
                     </span>
                   ) : null}
@@ -361,11 +361,11 @@ export default function BillingPage() {
                     className="mt-4 w-full rounded-full px-4 py-2 text-xs font-extrabold transition hover:brightness-105 disabled:cursor-not-allowed"
                     style={{
                       background: isCurrent
-                        ? "rgba(95, 94, 166, 0.18)"
+                        ? "rgba(var(--primary), .18)"
                         : !isAdmin
                           ? "rgba(15, 23, 42, 0.08)"
-                          : "linear-gradient(145deg, #8fb2ff, #5F5EA6)",
-                      color: isCurrent || !isAdmin ? "#24264f" : "#ffffff",
+                          : "linear-gradient(145deg, rgb(var(--primary)), rgb(var(--primary-2)))",
+                      color: isCurrent || !isAdmin ? "rgb(var(--primary-2))" : "#ffffff",
                       boxShadow: isCurrent || !isAdmin ? "var(--neu-inset)" : "var(--neu-raised-sm)",
                     }}
                   >

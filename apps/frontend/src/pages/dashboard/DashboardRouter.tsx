@@ -4,7 +4,7 @@ import { useMe } from "../../hooks/useMe";
 import { resolveDashboardLanding } from "../../utils/dashboardRouting";
 
 export default function DashboardRouter() {
-  const { data, isLoading, isError } = useMe();
+  const { data, isLoading, isError, error } = useMe();
 
   useEffect(() => {
     const activeClubId = data?.activeClubId;
@@ -28,6 +28,12 @@ export default function DashboardRouter() {
     );
   }
   if (isError) {
+    const status = (error as { response?: { status?: number } })?.response?.status;
+    const message =
+      status === 401
+        ? "Session expired. Please log in again."
+        : "Unable to load your dashboard profile. Please refresh.";
+
     return (
       <div className="p-4 sm:p-6">
         <div
@@ -37,7 +43,7 @@ export default function DashboardRouter() {
             background: "rgba(255,255,255,.70)",
           }}
         >
-          Session error. Please login again.
+          {message}
         </div>
       </div>
     );

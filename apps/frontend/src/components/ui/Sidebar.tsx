@@ -193,23 +193,16 @@ export default function Sidebar({
       }
       style={({ isActive }) => ({
         background: isActive
-          ? "#96b2f2"
+          ? "rgb(var(--primary))"
           : "rgb(var(--bg))",
-        boxShadow: "var(--neu-raised-sm)",
+        border: isActive ? "1px solid rgb(var(--primary) / .58)" : "1px solid transparent",
+        boxShadow: isActive
+          ? "inset 7px 7px 14px rgb(var(--primary-2) / .14), inset -7px -7px 14px rgba(255,255,255,.34), -4px -4px 14px rgba(255,255,255,.88), 5px 6px 16px rgb(var(--shadow) / .22)"
+          : "var(--neu-raised-sm)",
       })}
     >
       {({ isActive }) => (
         <>
-          <span
-            className={cx(
-              "absolute left-0 top-1/2 -translate-y-1/2 rounded-full transition-all",
-              isActive ? "h-8 w-1" : "h-0 w-1"
-            )}
-            style={{
-              background: isActive ? "rgba(255,255,255,.82)" : "transparent",
-            }}
-          />
-
           <div className="relative flex min-w-0 items-center gap-3">
             <span
               className="grid h-8 w-8 shrink-0 place-items-center rounded-xl transition"

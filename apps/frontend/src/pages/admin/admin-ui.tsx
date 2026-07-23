@@ -180,8 +180,8 @@ export function Stat({
 function statVisual(label: string) {
   const text = label.toLowerCase();
   const lavender = {
-    color: "#7c5cff",
-    tileBg: "linear-gradient(145deg, rgba(230,225,255,.76), rgba(211,204,246,.58))",
+    color: "rgb(var(--primary-2))",
+    tileBg: "linear-gradient(145deg, rgba(var(--primary), .26), rgba(var(--primary), .12))",
   };
   const red = {
     color: "#ef4444",

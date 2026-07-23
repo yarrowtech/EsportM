@@ -861,8 +861,12 @@ function NotificationOverview({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           <div
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#eef2ff] text-[#3157ff]"
-            style={{ boxShadow: NEU_INSET }}
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full"
+            style={{
+              background: "rgba(var(--primary), .14)",
+              color: "rgb(var(--primary-2))",
+              boxShadow: NEU_INSET,
+            }}
           >
             <Bell size={18} />
           </div>
@@ -901,7 +905,7 @@ function NotificationOverview({
                   : "border-[rgba(var(--primary),.2)] bg-[rgba(var(--primary),.08)]"
               )}
               style={{
-                boxShadow: notification.isRead ? NEU_INSET : "inset 5px 5px 12px rgba(49,87,255,.08), inset -5px -5px 12px rgba(255,255,255,.84)",
+                boxShadow: notification.isRead ? NEU_INSET : "inset 5px 5px 12px rgba(var(--primary), .12), inset -5px -5px 12px rgba(255,255,255,.84)",
               }}
             >
               <div className="flex items-center justify-between gap-3">
@@ -924,7 +928,7 @@ function NotificationOverview({
                   style={{
                     background: notification.isRead ? "rgb(var(--bg))" : "rgb(var(--primary))",
                     color: notification.isRead ? "rgb(var(--text))" : "rgb(var(--primary-2))",
-                    boxShadow: notification.isRead ? NEU_INSET : "5px 5px 12px rgba(49,87,255,.18), -5px -5px 12px rgba(255,255,255,.72)",
+                    boxShadow: notification.isRead ? NEU_INSET : "5px 5px 12px rgba(var(--primary), .22), -5px -5px 12px rgba(255,255,255,.72)",
                   }}
                 >
                   {notification.isRead ? "Read" : "Mark read"}
@@ -968,8 +972,12 @@ function ScheduleNotification({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           <div
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#f3e8ff] text-[#8b5cf6]"
-            style={{ boxShadow: NEU_INSET }}
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full"
+            style={{
+              background: "rgba(var(--primary), .14)",
+              color: "rgb(var(--primary-2))",
+              boxShadow: NEU_INSET,
+            }}
           >
             <CalendarCheck size={18} />
           </div>
@@ -1087,7 +1095,7 @@ export default function AppShell() {
   useEffect(() => {
     if (!meError) return;
     const status = (meError as any)?.response?.status;
-    if (status === 401 || status === 403) {
+    if (status === 401) {
       clearAuth();
       navigate("/login", { replace: true });
       return;
@@ -1368,13 +1376,13 @@ export default function AppShell() {
                               data-label={item.label}
                               style={{
                                 background: on
-                                  ? "linear-gradient(145deg, #3157ff, #7c5cff)"
+                                  ? "rgb(var(--primary-2))"
                                   : "transparent",
                                 color: on
                                   ? "rgb(255 255 255)"
                                   : "rgb(var(--text))",
                                 boxShadow: on
-                                  ? "0 14px 28px rgba(49,87,255,.28), inset 3px 3px 8px rgba(255,255,255,.18), inset -4px -4px 10px rgba(18,29,120,.24)"
+                                  ? "inset 6px 6px 12px rgb(var(--shadow) / .24), inset -6px -6px 12px rgba(255,255,255,.18), -4px -4px 14px rgba(255,255,255,.9), 5px 6px 16px rgb(var(--shadow) / .2)"
                                   : undefined,
                               }}
                             >
