@@ -4,6 +4,8 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { ClubsModule } from './modules/clubs/clubs.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 import { DebugController } from './debug.controller';
 import { InvitationsModule } from './modules/invitations/invitations.module';
 import { SquadsModule } from './modules/squads/squads.module';
@@ -57,6 +59,7 @@ import { PricingModule } from './common/pricing/pricing.module';
     NotificationModule,
     BillingModule,
   ],
-  controllers: [DebugController],
+  controllers: [AppController, DebugController],
+  providers: [AppService],
 })
 export class AppModule {}
