@@ -924,3 +924,79 @@ html::-webkit-scrollbar-button {
     transform: none !important;
   }
 }
+
+/* ==========================================================================
+   Mobile responsiveness foundation (demo app)
+   - Prevents accidental horizontal overflow app-wide
+   - Small-screen paddings for the dashboard canvas
+   - Recharts touch/size safety
+   Desktop (md+) rules are untouched.
+   ========================================================================== */
+
+html,
+body {
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+}
+
+:where(img, svg, video, canvas) {
+  max-width: 100%;
+}
+
+/* Phones */
+@media (max-width: 640px) {
+  .dashboard-readable .dashboard-scroll {
+    padding: 12px 10px 28px;
+  }
+
+  .dashboard-readable .neu-compact-grid,
+  .dashboard-readable .dashboard-page :where(.grid[class~="gap-4"], .grid[class~="gap-5"], .grid[class~="gap-6"]),
+  .dashboard-readable .dashboard-page > .grid,
+  .dashboard-readable .dashboard-page :where(.grid):has(> .neu-surface) {
+    padding: 10px;
+    margin: -10px;
+  }
+
+  /* Hide decorative chart shadows that overflow on small screens */
+  .dashboard-readable :where(.recharts-wrapper) {
+    filter: none;
+  }
+}
+
+/* Very small phones (iPhone SE class) */
+@media (max-width: 360px) {
+  .dashboard-readable .dashboard-scroll {
+    padding: 10px 8px 24px;
+  }
+
+  .dashboard-readable :where(.dashboard-scroll, .dashboard-sidebar, .dashboard-page)::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+}
+
+/* Recharts: keep touch scrolling natural and labels readable on small screens */
+@media (hover: none) {
+  .dashboard-readable :where(.recharts-wrapper, .recharts-surface) {
+    touch-action: pan-y;
+  }
+}
+
+/* ==========================================================================
+   Stat-tile grids on phones
+   Stat grids ship as 1-col below sm. Tiles are compact, so 2-up on phones
+   avoids long scrolls. Desktop breakpoints are unchanged.
+   ========================================================================== */
+@media (max-width: 639px) {
+  .dashboard-page > .grid:has(> .neu-stat-tile) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+}
+
+/* Keep long words/IDs from blowing out narrow tiles and cards */
+.dashboard-page :where(article, section, p, dd, dt) {
+  overflow-wrap: anywhere;
+}
+
+

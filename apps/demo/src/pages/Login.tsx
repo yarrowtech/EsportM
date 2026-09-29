@@ -393,7 +393,7 @@ export default function Login() {
     >
       <div className="glass-card w-full max-w-[1100px] bg-[#a4a5eb]/20 backdrop-blur-xl border border-black/20 rounded-[2rem] font-black shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] flex flex-col lg:flex-row overflow-hidden">
         {/* LEFT IMAGE */}
-        <div className="relative w-full lg:w-1/2 min-h-[250px] sm:min-h-[350px] lg:min-h-full p-4 lg:p-6 hidden sm:block">
+        <div className="relative w-full lg:w-1/2 min-h-[200px] sm:min-h-[280px] lg:min-h-full p-4 lg:p-6 hidden sm:block">
           <div className="w-full h-full flex items-center justify-center rounded-[1.5rem] overflow-hidden bg-black/5">
             <img
               src="/images/login-image.jpg"
@@ -414,9 +414,9 @@ export default function Login() {
             </svg>
           </Link>
 
-          <div className="max-w-md mx-auto w-full mt-8 lg:mt-0">
+          <div className="max-w-md mx-auto w-full mt-10 lg:mt-0">
             <div className="anim-item mb-8">
-              <h1 className="text-3xl lg:text-4xl font-semibold text-black mb-2">Log in</h1>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-black mb-2">Log in</h1>
               <p className="text-black/70 text-sm">
                 Don&apos;t have an account?{" "}
                 <Link to="/register" className="text-black font-medium hover:underline">

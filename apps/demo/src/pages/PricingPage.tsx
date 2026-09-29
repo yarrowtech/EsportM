@@ -167,7 +167,7 @@ function PlanCard({
 
   return (
     <article
-      className={`relative flex min-h-[430px] flex-col overflow-hidden rounded-[22px] border p-6 shadow-[0_25px_80px_rgba(15,23,42,0.10)] backdrop-blur-xl ${
+      className={`relative flex min-h-[430px] flex-col overflow-hidden rounded-[22px] border p-4 shadow-[0_25px_80px_rgba(15,23,42,0.10)] backdrop-blur-xl sm:p-6 ${
         accent.card
       } ${isHighlighted ? "lg:mt-12" : ""}`}
     >
@@ -383,6 +383,9 @@ export default function PricingPage() {
                 </div>
 
                 <div className="overflow-x-auto">
+                  <p className="px-4 py-2 text-[11px] font-medium text-slate-400 md:hidden">
+                    Swipe horizontally to see all plans
+                  </p>
                   <table className="w-full min-w-[920px] border-collapse text-left text-sm">
                     <thead className="bg-white text-xs uppercase text-slate-500">
                       <tr>

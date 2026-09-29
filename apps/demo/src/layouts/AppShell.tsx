@@ -1304,7 +1304,7 @@ export default function AppShell() {
       <div className="relative">
         <GlassBackdrop />
 
-        <div className="mx-auto max-w-[1440px] px-7 py-7 sm:px-8 sm:py-8">
+        <div className="mx-auto max-w-[1440px] px-3 py-3 sm:px-6 sm:py-6 md:px-7 md:py-7 lg:px-8 lg:py-8">
           {/* CANVAS (no black border) */}
           <div
             className={cx(
@@ -1316,7 +1316,7 @@ export default function AppShell() {
             }}
           >
             {/* Layout */}
-            <div className="relative z-10 flex h-[calc(100vh-3.5rem)] min-h-0 flex-col sm:h-[calc(100vh-4rem)]">
+            <div className="relative z-10 flex h-[calc(100dvh-1.5rem)] min-h-0 flex-col sm:h-[calc(100dvh-3rem)] md:h-[calc(100dvh-3.5rem)] lg:h-[calc(100dvh-4rem)]">
               {/* HEADER (glass, no dark divider) */}
               <header
                 className="sticky top-0 z-20 shrink-0 rounded-t-[24px]"
@@ -1326,7 +1326,7 @@ export default function AppShell() {
                   boxShadow: "var(--neu-raised-sm)",
                 }}
               >
-                <div className="px-3 py-2 sm:px-4 lg:px-5">
+                <div className="px-2 py-2 sm:px-3 sm:py-2 lg:px-4">
                   <div className="flex min-h-[52px] flex-wrap items-center justify-between gap-2 lg:flex-nowrap">
                     <div className="flex min-w-0 flex-1 items-center gap-2">
                       {/* mobile menu */}
