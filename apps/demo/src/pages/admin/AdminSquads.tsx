@@ -451,7 +451,7 @@ export default function AdminSquads() {
                 return (
                   <article
                     key={member.id}
-                    className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border bg-white/75 px-3 py-3"
+                    className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 rounded-2xl border bg-white/75 px-3 py-3"
                     style={{ borderColor: adminCardBorder }}
                   >
                     <div className="min-w-0">

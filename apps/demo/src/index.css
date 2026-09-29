@@ -949,17 +949,31 @@ body {
     padding: 12px 10px 28px;
   }
 
+  /* Hide decorative chart shadows that overflow on small screens */
+  .dashboard-readable :where(.recharts-wrapper) {
+    filter: none;
+  }
+}
+
+/* ==========================================================================
+   Phones + tablets: no sideways panning inside the main scroll area
+   The neumorphic "shadow room" trick (padding + negative margin on grids)
+   makes the main scroll container wider than the viewport, so a stray
+   horizontal swipe leaves content stuck off-screen. Neutralize the negative
+   margins and lock overflow-x on touch-scale screens. Wide tables inside
+   keep their own internal horizontal scroll.
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .dashboard-readable .dashboard-scroll {
+    overflow-x: hidden;
+  }
+
   .dashboard-readable .neu-compact-grid,
   .dashboard-readable .dashboard-page :where(.grid[class~="gap-4"], .grid[class~="gap-5"], .grid[class~="gap-6"]),
   .dashboard-readable .dashboard-page > .grid,
   .dashboard-readable .dashboard-page :where(.grid):has(> .neu-surface) {
-    padding: 10px;
-    margin: -10px;
-  }
-
-  /* Hide decorative chart shadows that overflow on small screens */
-  .dashboard-readable :where(.recharts-wrapper) {
-    filter: none;
+    padding: 0;
+    margin: 0;
   }
 }
 
@@ -997,6 +1011,22 @@ body {
 /* Keep long words/IDs from blowing out narrow tiles and cards */
 .dashboard-page :where(article, section, p, dd, dt) {
   overflow-wrap: anywhere;
+}
+
+/* ==========================================================================
+   Grid/flex min-width fix (phones + tablets)
+   Grid items default to min-width:auto, so nowrap/truncate text (e.g. long
+   emails) forces the column wider than the viewport and cards get clipped.
+   Allowing grid children to shrink fixes it without touching layout. Desktop
+   is unaffected because columns there already had enough room.
+   ========================================================================== */
+.dashboard-page :where(.grid) > * {
+  min-width: 0;
+}
+
+/* Truncate helpers only work when the element itself is allowed to shrink. */
+.dashboard-page :where(p, div, small, h1, h2, h3, h4)[class*="truncate"] {
+  min-width: 0;
 }
 
 

@@ -54,7 +54,7 @@ export function formatCountdown(input?: string | null) {
 
 export function PageWrap({ children }: { children: ReactNode }) {
   return (
-    <div className="dashboard-page mx-auto w-full max-w-[1180px] space-y-3 p-2 sm:p-3">
+    <div className="dashboard-page mx-auto w-full max-w-[1180px] min-w-0 space-y-3 p-2 sm:p-3">
       {children}
     </div>
   );
@@ -71,7 +71,7 @@ export function Hero({
 }) {
   return (
     <div
-      className="neu-surface relative mb-1 overflow-hidden rounded-[20px] px-4 py-3 sm:flex sm:items-start sm:justify-between sm:px-5 sm:py-4"
+      className="neu-surface relative mb-1 overflow-hidden rounded-[20px] px-4 py-3 sm:flex sm:flex-wrap sm:items-start sm:justify-between sm:px-5 sm:py-4"
       style={{
         background: adminCardBg,
         boxShadow: adminGlassShadow,
