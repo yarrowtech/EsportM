@@ -334,10 +334,10 @@ export default function AdminShell() {
       <div className="relative">
         <GlassBackdrop />
 
-        <div className="mx-auto max-w-[1440px] px-3 py-3 sm:px-6 sm:py-6 md:px-7 md:py-7 lg:px-8 lg:py-8">
+        <div className="mx-auto max-w-[1440px] md:px-7 md:py-7 lg:px-8 lg:py-8">
           <div
             className={cx(
-              "relative rounded-[24px] bg-[rgb(var(--bg))]"
+              "app-canvas relative bg-[rgb(var(--bg))] md:rounded-[24px]"
             )}
             style={{
               background: GLASS_BG,
@@ -345,10 +345,10 @@ export default function AdminShell() {
               boxShadow: GLASS_SHADOW,
             }}
           >
-            <div className="relative z-10 flex h-[calc(100dvh-1.5rem)] min-h-0 flex-col sm:h-[calc(100dvh-3rem)] md:h-[calc(100dvh-3.5rem)] lg:h-[calc(100dvh-4rem)]">
+            <div className="relative z-10 flex h-[100dvh] min-h-0 flex-col md:h-[calc(100dvh-3.5rem)] lg:h-[calc(100dvh-4rem)]">
               {/* HEADER */}
               <header
-                className="sticky top-0 z-20 shrink-0 rounded-t-[24px]"
+                className="app-canvas-header sticky top-0 z-20 shrink-0 md:rounded-t-[24px]"
                 style={{
                   minHeight: HEADER_H,
                   background: "rgb(var(--bg))",
@@ -475,7 +475,7 @@ export default function AdminShell() {
               </header>
 
               {/* BODY */}
-              <div className="flex min-h-0 flex-1 gap-3 px-3 py-3 sm:gap-4 sm:px-4 sm:py-4">
+              <div className="flex min-h-0 flex-1 md:gap-4 md:px-4 md:py-4">
                 {/* Desktop sidebar */}
                 <div className="hidden shrink-0 p-2 md:block" style={{ width: 232 }}>
                   <div className="sticky top-[96px]">

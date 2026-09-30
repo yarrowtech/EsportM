@@ -1,4 +1,5 @@
 import { CLUB_ID } from "../api/mock/fixtures";
+import { dashboardRoleForPersona, getDemoPersona } from "./persona";
 
 // Auto-signs the visitor into the seeded demo club so the login screen is
 // skipped. Only fills in keys that are missing, so switching roles or
@@ -11,6 +12,6 @@ export function bootstrapDemoSession() {
     localStorage.setItem("activeClubId", CLUB_ID);
   }
   if (!localStorage.getItem("activeDashboardRole")) {
-    localStorage.setItem("activeDashboardRole", "ADMIN");
+    localStorage.setItem("activeDashboardRole", dashboardRoleForPersona(getDemoPersona()));
   }
 }

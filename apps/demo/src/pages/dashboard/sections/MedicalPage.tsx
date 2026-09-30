@@ -665,7 +665,7 @@ export default function MedicalPage() {
               />
             </label>
 
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
               <p className="text-xs text-[rgb(var(--muted))]">
                 Last saved: {formatDateTime(profileQuery.data?.healthUpdatedAt)}
               </p>
@@ -675,7 +675,7 @@ export default function MedicalPage() {
               <button
                 type="submit"
                 disabled={saveHealthMutation.isPending}
-                className="rounded-full bg-[rgb(var(--primary))] px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-[rgb(var(--primary-2))] disabled:opacity-60"
+                className="w-full rounded-full bg-[rgb(var(--primary))] px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.18em] text-[rgb(var(--primary-2))] disabled:opacity-60 sm:w-auto sm:py-2 sm:tracking-[0.3em]"
               >
                 {saveHealthMutation.isPending ? "Saving..." : "Save check-in"}
               </button>

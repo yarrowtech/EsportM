@@ -386,10 +386,10 @@ export default function PricingPage() {
                   <p className="px-4 py-2 text-[11px] font-medium text-slate-400 md:hidden">
                     Swipe horizontally to see all plans
                   </p>
-                  <table className="w-full min-w-[920px] border-collapse text-left text-sm">
+                  <table className="w-full min-w-[920px] border-collapse text-left text-sm [--sticky-col-bg:#fff]">
                     <thead className="bg-white text-xs uppercase text-slate-500">
                       <tr>
-                        <th className="w-[260px] px-4 py-3 font-semibold">Feature</th>
+                        <th className="w-[150px] px-4 py-3 font-semibold md:w-[260px]">Feature</th>
                         <th className="px-4 py-3 font-semibold">Free</th>
                         <th className="px-4 py-3 font-semibold">Starter</th>
                         <th className="px-4 py-3 font-semibold text-indigo-700">

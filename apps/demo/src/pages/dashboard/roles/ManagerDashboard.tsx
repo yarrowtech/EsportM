@@ -156,7 +156,7 @@ export default function ManagerDashboard() {
           subtitle="Matches, goals, assists trend in selected range."
           className="xl:col-span-8"
           right={
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {(["7d", "30d", "90d"] as Range[]).map((option) => (
                 <button
                   key={option}

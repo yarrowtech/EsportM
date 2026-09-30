@@ -1029,4 +1029,77 @@ body {
   min-width: 0;
 }
 
+/* ==========================================================================
+   Phones: edge-to-edge dashboard canvas (below md)
+   The floating rounded canvas costs ~60px of width on a phone. Below md the
+   shells drop their outer padding (see AppShell/AdminShell); here the frame
+   chrome is removed and notch/home-indicator insets are respected.
+   ========================================================================== */
+@media (max-width: 767px) {
+  .dashboard-readable .app-canvas {
+    border: 0 !important;
+    box-shadow: none !important;
+  }
 
+  .dashboard-readable .app-canvas-header {
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  /* Bottom room so the last card clears the fixed demo badge. */
+  .dashboard-readable .dashboard-scroll {
+    padding: 12px 12px calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* Shell-level grids (notification/schedule strip) sit outside .dashboard-page,
+   so they need the same shrink rule or nowrap text widens the column. */
+.dashboard-scroll :where(.grid) > * {
+  min-width: 0;
+}
+
+/* Stat labels are short uppercase words: wrap between words, never mid-word. */
+.dashboard-page .neu-stat-tile > p:first-of-type {
+  overflow-wrap: normal;
+}
+
+@media (max-width: 639px) {
+  .dashboard-page .neu-stat-tile > p:first-of-type {
+    letter-spacing: 0.1em;
+  }
+}
+
+/* Wide tables swipe inside their own container; keep the first column pinned
+   so rows stay identifiable while scrolling sideways. */
+@media (max-width: 767px) {
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+
+  .overflow-x-auto > table :where(th, td):first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--sticky-col-bg, rgb(var(--bg)));
+  }
+}
+
+/* iOS zooms the page when a focused field has text under 16px. */
+@media (hover: none) and (max-width: 767px) {
+  :where(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+    font-size: 16px !important;
+  }
+}
+
+/* Wrapping action rows: let an oversized control (e.g. a select with a long
+   option) take its own line and shrink instead of widening the card. */
+.dashboard-page :where(.flex-wrap) > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.dashboard-page :where(select, input, textarea) {
+  max-width: 100%;
+}

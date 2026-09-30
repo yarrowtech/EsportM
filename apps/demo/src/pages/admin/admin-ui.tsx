@@ -86,7 +86,7 @@ export function Hero({
         </h1>
         <p className="mt-2 max-w-2xl text-sm font-medium text-[rgb(var(--muted))] sm:text-base">{subtitle}</p>
       </div>
-      {right ? <div className="relative mt-4 flex shrink-0 flex-wrap gap-2 sm:mt-0 sm:justify-end">{right}</div> : null}
+      {right ? <div className="relative mt-4 flex min-w-0 max-w-full flex-wrap gap-2 sm:mt-0 sm:justify-end">{right}</div> : null}
     </div>
   );
 }
@@ -169,7 +169,7 @@ export function Stat({
         {visual.icon}
       </div>
       <p className="relative pr-12 text-[10px] font-extrabold uppercase tracking-[0.24em] text-[rgb(var(--muted))]">{label}</p>
-      <p className="relative mt-2.5 text-2xl font-extrabold leading-none tracking-normal text-[rgb(var(--text))] [overflow-wrap:anywhere] break-words">
+      <p className="relative mt-2.5 pr-11 text-xl font-extrabold sm:pr-0 sm:text-2xl leading-none tracking-normal text-[rgb(var(--text))] [overflow-wrap:anywhere] break-words">
         {value}
       </p>
       {hint ? <p className="relative mt-1 text-xs font-medium text-[rgb(var(--muted))]">{hint}</p> : null}

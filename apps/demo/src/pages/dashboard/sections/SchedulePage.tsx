@@ -249,7 +249,7 @@ export default function SchedulePage() {
         title="Scheduling Control"
         subtitle="Plan matches, training sessions, and key club events with clear visibility."
         right={
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <DotTag tone="ok">Calendar</DotTag>
             <DotTag tone="default">Live</DotTag>
           </div>

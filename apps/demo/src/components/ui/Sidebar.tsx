@@ -468,7 +468,7 @@ export default function Sidebar({
       <aside
         ref={mobileRef}
         className={cx(
-          "dashboard-sidebar fixed left-0 top-0 z-[90] h-full w-[260px] p-3.5 md:hidden",
+          "dashboard-sidebar fixed left-0 top-0 z-[90] h-full w-[260px] max-w-[86vw] p-3.5 pb-16 md:hidden",
           open ? "block" : "hidden"
         )}
         style={{

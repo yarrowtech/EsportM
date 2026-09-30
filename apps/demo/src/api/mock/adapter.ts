@@ -4,6 +4,7 @@
 import type { AxiosAdapter } from "axios";
 import * as fx from "./fixtures";
 import { state, nextId } from "./store";
+import { getDemoPersona } from "../../demo/persona";
 
 type Handler = (ctx: { params: string[]; query: Record<string, string>; body: any }) => {
   data: unknown;
@@ -26,7 +27,23 @@ function on(method: string, path: string, handler: Handler) {
   routes.push({ method: method.toUpperCase(), regex, handler });
 }
 
+const isPlayerPersona = () => getDemoPersona() === "player";
+const personaPlayer = () => state.players.find((p) => p.user.id === fx.PLAYER_PERSONA_ID) || state.players[0];
+
+function playerMeResponse() {
+  const player = personaPlayer();
+  const membership = { clubId: fx.CLUB_ID, primary: "PLAYER", subRoles: player.isCaptain ? ["CAPTAIN"] : [], club: fx.club };
+  return {
+    user: { ...player.user, memberships: [{ id: player.membershipId, ...membership }] },
+    memberships: [membership],
+    activeClubId: fx.CLUB_ID,
+    activeMembership: membership,
+    isPlatformAdmin: false,
+  };
+}
+
 function meResponse() {
+  if (isPlayerPersona()) return playerMeResponse();
   return {
     user: { ...fx.demoUser, memberships: [{ id: fx.MEMBERSHIP_ID, primary: fx.membership.primary, subRoles: [...fx.membership.subRoles], club: fx.club }] },
     memberships: [{ clubId: fx.CLUB_ID, primary: fx.membership.primary, subRoles: [...fx.membership.subRoles], club: fx.club }],
@@ -37,6 +54,9 @@ function meResponse() {
 }
 
 on("GET", "/auth/me", () => ({ data: meResponse() }));
+// Any credentials sign in to the demo; nothing typed here leaves the browser.
+on("POST", "/auth/login", () => ({ data: { user: meResponse().user, accessToken: "demo-session-token" } }));
+on("POST", "/auth/register", () => ({ data: { user: meResponse().user, accessToken: "demo-session-token" }, status: 201 }));
 
 on("GET", "/clubs/my", () => ({ data: [fx.club] }));
 
@@ -212,21 +232,30 @@ on("PATCH", "/notifications/:id/read", ({ params }) => {
   return { data: { ok: true } };
 });
 
-on("GET", "/dashboard/overview", () => ({
-  data: {
-    kpis: [
-      { key: "squads", label: "Squads", value: state.squads.length },
-      { key: "players", label: "Players", value: state.players.length },
-      { key: "upcoming", label: "Upcoming (7d)", value: state.matches.filter((m) => m.status === "SCHEDULED").length },
-      { key: "injuries", label: "Active Injuries", value: state.injuries.filter((i) => i.isActive).length },
-    ],
-  },
+on("GET", "/dashboard/overview", () => {
+  const upcoming = state.matches.filter((m) => m.status === "SCHEDULED").length;
+  const kpis = [
+    { key: "squads", label: "Squads", value: state.squads.length },
+    { key: "players", label: "Players", value: state.players.length },
+    { key: "upcoming", label: "Upcoming (7d)", value: upcoming },
+    { key: "injuries", label: "Active Injuries", value: state.injuries.filter((i) => i.isActive).length },
+  ];
+  if (!isPlayerPersona()) return { data: { kpis } };
+  const player = personaPlayer();
+  return {
+    data: {
+      kpis: [...kpis, { key: "upcomingMatches", label: "Upcoming Matches (7d)", value: upcoming }],
+      player: { totals: fx.playerTotals(player.user.id), activeInjury: player.activeInjury },
+    },
+  };
+});
+on("GET", "/dashboard/charts", ({ query }) => ({
+  data: isPlayerPersona() ? fx.buildPlayerDashboardCharts(query.range) : fx.buildDashboardCharts(),
 }));
-on("GET", "/dashboard/charts", () => ({ data: fx.buildDashboardCharts() }));
 on("GET", "/dashboard/recent", () => ({
   data: {
     matches: [...state.matches].sort((a, b) => new Date(b.kickoffAt).getTime() - new Date(a.kickoffAt).getTime()),
-    injuries: state.injuries,
+    injuries: isPlayerPersona() ? state.injuries.filter((i) => i.userId === personaPlayer().user.id) : state.injuries,
   },
 }));
 on("GET", "/dashboard/analytics", () => ({ data: { ...fx.buildAnalyticsPayload(), latest: state.analyticsLatest } }));
@@ -307,9 +336,20 @@ on("PATCH", "/clubs/:id/operations/messages/:messageId", ({ params, body }) => {
   return { data: message };
 });
 
-on("GET", "/players/me", () => ({ data: { profile: null } }));
-on("GET", "/players/me/history", () => ({ data: { clubId: fx.CLUB_ID, wellnessEntries: [], trainingLoads: [] } }));
-on("PATCH", "/players/me", ({ body }) => ({ data: { profile: body } }));
+on("GET", "/players/me", () => ({ data: { profile: isPlayerPersona() ? personaPlayer().profile : null } }));
+on("GET", "/players/me/history", () => ({
+  data: {
+    clubId: fx.CLUB_ID,
+    wellnessEntries: [],
+    trainingLoads: isPlayerPersona() ? fx.operationsTraining.filter((entry) => entry.userId === personaPlayer().user.id) : [],
+  },
+}));
+on("PATCH", "/players/me", ({ body }) => {
+  if (!isPlayerPersona()) return { data: { profile: body } };
+  const player = personaPlayer();
+  Object.assign(player.profile, body);
+  return { data: { profile: player.profile } };
+});
 
 on("GET", "/social/feed", () => ({ data: { count: 0, posts: [] } }));
 

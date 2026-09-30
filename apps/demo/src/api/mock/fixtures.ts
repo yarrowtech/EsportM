@@ -485,3 +485,41 @@ export const billingSummary = {
     { feature: "social_publishing", enabled: false },
   ],
 };
+
+// The "View as Player" persona signs in as the club captain so the player
+// dashboard has real numbers behind it.
+export const PLAYER_PERSONA_ID = "demo-player-1";
+
+export function playerTotals(userId: string) {
+  const seed = PLAYER_SEEDS.find((s) => s.id === userId);
+  if (!seed) return { matches: 0, goals: 0, assists: 0, minutes: 0 };
+  return {
+    matches: Math.round(seed.minutes / 90),
+    goals: seed.goals,
+    assists: seed.assists,
+    minutes: seed.minutes,
+  };
+}
+
+export function buildPlayerDashboardCharts(range = "30d") {
+  const days = range === "7d" ? 7 : range === "90d" ? 30 : 14;
+  const dayAt = (i: number) => isoDaysFromNow(-days + i + 1).slice(0, 10);
+  const matchDays = new Set(
+    matches.filter((m) => m.status === "FINISHED").map((m) => m.kickoffAt.slice(0, 10))
+  );
+  const series = (fn: (i: number, day: string) => number) =>
+    Array.from({ length: days }).map((_, i) => ({ x: dayAt(i), y: fn(i, dayAt(i)) }));
+
+  return {
+    series: [
+      { name: "Minutes", axis: "volume", kind: "bar", points: series((i, day) => (matchDays.has(day) ? 90 - (i % 3) * 8 : 0)) },
+      { name: "Training Load", axis: "volume", kind: "bar", points: series((i, day) => (matchDays.has(day) || i % 4 === 3 ? 0 : 38 + (i % 5) * 9)) },
+      { name: "Contribution", axis: "score", kind: "line", points: series((i) => Math.round(62 + Math.sin(i / 2) * 14 + (i % 3) * 3)) },
+      { name: "Readiness", axis: "score", kind: "line", points: series((i) => Math.round(88 + Math.cos(i / 3) * 6)) },
+    ],
+    markers: Array.from({ length: days })
+      .map((_, i) => dayAt(i))
+      .filter((day) => matchDays.has(day))
+      .map((day) => ({ day, items: [{ label: "Match day", tone: "ok" }] })),
+  };
+}

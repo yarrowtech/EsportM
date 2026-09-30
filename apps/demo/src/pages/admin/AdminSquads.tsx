@@ -352,7 +352,7 @@ export default function AdminSquads() {
         title="Roster Operations"
         subtitle="Assign and remove squad members."
         right={
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <select
               value={selectedSquadId}
               onChange={(event) => setSelectedSquadId(event.target.value)}

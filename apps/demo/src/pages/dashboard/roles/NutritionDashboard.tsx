@@ -127,7 +127,7 @@ export default function NutritionDashboard() {
           subtitle="Match-load rhythm used for recovery planning."
           className="xl:col-span-7"
           right={
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {(["7d", "30d", "90d"] as Range[]).map((option) => (
                 <button
                   key={option}

@@ -1,4 +1,9 @@
+import { getDemoPersona, switchDemoPersona } from "./persona";
+
 export default function DemoBanner() {
+  const persona = getDemoPersona();
+  const next = persona === "player" ? "admin" : "player";
+
   return (
     <div
       style={{
@@ -9,7 +14,7 @@ export default function DemoBanner() {
         display: "flex",
         alignItems: "center",
         gap: 8,
-        padding: "8px 14px",
+        padding: "6px 6px 6px 14px",
         borderRadius: 999,
         fontSize: 12,
         fontWeight: 700,
@@ -22,7 +27,27 @@ export default function DemoBanner() {
       }}
     >
       <span style={{ width: 8, height: 8, borderRadius: 999, background: "#34d399", display: "inline-block" }} />
-      Live demo — sample data only
+      <span>
+        Live demo<span className="hidden sm:inline"> — sample data only</span>
+      </span>
+      <button
+        type="button"
+        onClick={() => switchDemoPersona(next)}
+        title={`You are viewing the demo as ${persona === "player" ? "a player" : "the club admin"}`}
+        style={{
+          pointerEvents: "auto",
+          cursor: "pointer",
+          border: 0,
+          borderRadius: 999,
+          padding: "6px 12px",
+          fontSize: 12,
+          fontWeight: 700,
+          color: "#0f172a",
+          background: "#fff",
+        }}
+      >
+        View as {next === "player" ? "Player" : "Admin"}
+      </button>
     </div>
   );
 }
