@@ -395,7 +395,7 @@ export default function AdminSidebar({
             <aside
                 ref={mobileRef}
                 className={cx(
-                    "dashboard-sidebar fixed left-0 top-0 z-[90] h-full w-[280px] border-r bg-[rgb(var(--bg))] p-4 md:hidden",
+                    "dashboard-sidebar fixed left-0 top-0 z-[90] h-full w-[min(280px,calc(100vw-24px))] border-r bg-[rgb(var(--bg))] p-4 md:hidden",
                     open ? "block" : "hidden"
                 )}
                 style={{ borderColor: cardBorder, boxShadow: "var(--neu-raised)" }}

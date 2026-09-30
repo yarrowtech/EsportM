@@ -57,7 +57,7 @@ export default function ConfirmModal({
           aria-modal="true"
           aria-labelledby={titleId}
           aria-describedby={messageId}
-          className="pointer-events-auto w-full max-w-md rounded-3xl border bg-white/80 p-5 backdrop-blur-xl shadow-[0_24px_65px_rgba(0,0,0,0.32)]"
+          className="pointer-events-auto max-h-[calc(100dvh-32px)] w-[min(28rem,calc(100vw-32px))] overflow-y-auto rounded-3xl border bg-white/80 p-5 backdrop-blur-xl shadow-[0_24px_65px_rgba(0,0,0,0.32)]"
           style={{ borderColor: "rgb(var(--border) / .14)" }}
           onClick={(event) => event.stopPropagation()}
         >

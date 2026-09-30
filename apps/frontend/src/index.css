@@ -908,6 +908,101 @@ html::-webkit-scrollbar-button {
   overflow: visible;
 }
 
+/* Responsive retrofit: scoped below desktop so approved >=1024px layouts stay unchanged. */
+.dashboard-readable :where(.dashboard-page, .dashboard-scroll, .neu-surface, section, article) {
+  min-width: 0;
+}
+
+.dashboard-readable :where(img, video, canvas, svg) {
+  max-width: 100%;
+}
+
+.dashboard-readable :where(.recharts-responsive-container, .recharts-wrapper) {
+  max-width: 100%;
+}
+
+.dashboard-readable .dashboard-page :where(table) {
+  max-width: 100%;
+}
+
+.dashboard-readable .dashboard-page :where(table) :where(th, td) {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1023px) {
+  .dashboard-readable .dashboard-scroll {
+    padding: 14px 16px 24px;
+    scroll-padding: 14px;
+  }
+
+  .dashboard-readable .dashboard-page {
+    max-width: 100%;
+    padding-inline: 0;
+  }
+
+  .dashboard-readable .dashboard-page :where(.neu-surface) {
+    max-width: 100%;
+  }
+
+  .dashboard-readable .dashboard-page :where([class*="overflow-x-auto"]) {
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 767px) {
+  .dashboard-readable .dashboard-scroll {
+    padding: 12px 10px 20px;
+    scroll-padding: 12px;
+  }
+
+  .dashboard-readable .dashboard-page :where(
+    .sm\:grid-cols-2,
+    .sm\:grid-cols-3,
+    .sm\:grid-cols-4,
+    .sm\:grid-cols-\[1fr_1fr_auto\],
+    .md\:grid-cols-2,
+    .md\:grid-cols-3,
+    .md\:grid-cols-4,
+    .md\:grid-cols-\[1fr_1fr_auto\],
+    .md\:grid-cols-\[1\.3fr_\.7fr_\.7fr_auto\],
+    .md\:grid-cols-\[1\.15fr_\.9fr_1\.25fr_auto\]
+  ) {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .dashboard-readable .dashboard-page :where(.neu-surface, section, article) {
+    overflow-wrap: anywhere;
+  }
+
+  .dashboard-readable :where(button, [role="button"], a, input, select, textarea) {
+    min-height: 44px;
+  }
+
+  .dashboard-readable .app-top-nav-button {
+    width: 44px;
+    height: 44px;
+  }
+
+  .dashboard-readable .dashboard-page :where(h1) {
+    font-size: clamp(1.35rem, 8vw, 1.875rem);
+    line-height: 1.12;
+  }
+}
+
+@media (max-width: 479px) {
+  .dashboard-readable .dashboard-scroll {
+    padding-inline: 8px;
+  }
+
+  .dashboard-readable .dashboard-page :where(.grid[class~="gap-4"], .grid[class~="gap-5"], .grid[class~="gap-6"]),
+  .dashboard-readable .dashboard-page > .grid,
+  .dashboard-readable .dashboard-page :where(.grid):has(> .neu-surface) {
+    padding: 8px;
+    margin: -8px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .dashboard-readable :where(button:not([disabled]), a.neu-press),
   .dashboard-readable .dashboard-sidebar a,

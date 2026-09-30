@@ -334,10 +334,10 @@ export default function AdminShell() {
       <div className="relative">
         <GlassBackdrop />
 
-        <div className="mx-auto max-w-[1440px] px-7 py-7 sm:px-8 sm:py-8">
+        <div className="mx-auto max-w-[1440px] px-3 py-3 sm:px-4 sm:py-4 lg:px-8 lg:py-8">
           <div
             className={cx(
-              "relative rounded-[24px] bg-[rgb(var(--bg))]"
+              "relative rounded-[18px] bg-[rgb(var(--bg))] lg:rounded-[24px]"
             )}
             style={{
               background: GLASS_BG,
@@ -345,10 +345,10 @@ export default function AdminShell() {
               boxShadow: GLASS_SHADOW,
             }}
           >
-            <div className="relative z-10 flex h-[calc(100vh-3.5rem)] min-h-0 flex-col sm:h-[calc(100vh-4rem)]">
+            <div className="relative z-10 flex h-[calc(100dvh-1.5rem)] min-h-0 flex-col sm:h-[calc(100dvh-2rem)] lg:h-[calc(100vh-4rem)]">
               {/* HEADER */}
               <header
-                className="sticky top-0 z-20 shrink-0 rounded-t-[24px]"
+                className="sticky top-0 z-20 shrink-0 rounded-t-[18px] lg:rounded-t-[24px]"
                 style={{
                   minHeight: HEADER_H,
                   background: "rgb(var(--bg))",
