@@ -455,6 +455,9 @@ export default function BillingPage() {
       <section className="rounded-3xl border bg-white/60 p-5" style={{ borderColor: adminCardBorder }}>
         <h2 className="text-xl font-bold tracking-normal">Plan feature matrix</h2>
         <div className="mt-4 overflow-x-auto">
+          <p className="pb-2 text-[11px] font-medium text-[rgb(var(--muted))] md:hidden">
+            Swipe horizontally to see all plans
+          </p>
           <table className="w-full min-w-[980px] text-left text-sm">
             <thead className="text-xs uppercase text-[rgb(var(--muted))]">
               <tr>
@@ -487,6 +490,9 @@ export default function BillingPage() {
       <section className="rounded-3xl border bg-white/60 p-5" style={{ borderColor: adminCardBorder }}>
         <h2 className="text-xl font-bold tracking-normal">Recent payments</h2>
         <div className="mt-4 overflow-x-auto">
+          <p className="pb-2 text-[11px] font-medium text-[rgb(var(--muted))] md:hidden">
+            Swipe horizontally to see all columns
+          </p>
           <table className="w-full min-w-[760px] text-left text-sm">
             <thead className="text-xs uppercase text-[rgb(var(--muted))]">
               <tr>

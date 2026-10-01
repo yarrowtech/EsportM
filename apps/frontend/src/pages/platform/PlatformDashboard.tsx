@@ -237,9 +237,9 @@ export default function PlatformDashboard() {
   const isSubscriptionSaving = selectedClub ? clubBusyKey === `${selectedClub.id}:subscription` : false;
 
   return (
-    <div className="space-y-5 pb-6">
-      <section className="rounded-3xl border bg-white/65 p-5 backdrop-blur-md">
-        <div className="flex items-center justify-between gap-3">
+    <div className="space-y-5 p-3 pb-6 sm:p-4 lg:p-0 lg:pb-6">
+      <section className="rounded-3xl border bg-white/65 p-4 backdrop-blur-md sm:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3 lg:flex-nowrap">
           <div>
             <h1 className="text-2xl font-black text-[rgb(var(--text))]">Superadmin Control Center</h1>
             <p className="text-sm text-[rgb(var(--muted))]">

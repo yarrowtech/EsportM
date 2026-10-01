@@ -710,6 +710,11 @@
     grid-template-columns: 1fr;
   }
 
+  /* Stacked lanes: the side-by-side min-height only leaves empty space. */
+  .mpx-lane {
+    min-height: 0;
+  }
+
   .mpx-inline-fields {
     grid-template-columns: 1fr;
   }

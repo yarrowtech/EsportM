@@ -613,7 +613,7 @@ export default function AdminMembers() {
         title="Membership Matrix"
         subtitle="Search and manage members in the active club."
         right={
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 lg:flex-nowrap">
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}

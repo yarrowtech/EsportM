@@ -334,10 +334,10 @@ export default function AdminShell() {
       <div className="relative">
         <GlassBackdrop />
 
-        <div className="mx-auto max-w-[1440px] px-3 py-3 sm:px-4 sm:py-4 lg:px-8 lg:py-8">
+        <div className="mx-auto max-w-[1440px] md:px-4 md:py-4 lg:px-8 lg:py-8">
           <div
             className={cx(
-              "relative rounded-[18px] bg-[rgb(var(--bg))] lg:rounded-[24px]"
+              "app-canvas relative bg-[rgb(var(--bg))] md:rounded-[18px] lg:rounded-[24px]"
             )}
             style={{
               background: GLASS_BG,
@@ -345,10 +345,10 @@ export default function AdminShell() {
               boxShadow: GLASS_SHADOW,
             }}
           >
-            <div className="relative z-10 flex h-[calc(100dvh-1.5rem)] min-h-0 flex-col sm:h-[calc(100dvh-2rem)] lg:h-[calc(100vh-4rem)]">
+            <div className="relative z-10 flex h-[100dvh] min-h-0 flex-col md:h-[calc(100dvh-2rem)] lg:h-[calc(100vh-4rem)]">
               {/* HEADER */}
               <header
-                className="sticky top-0 z-20 shrink-0 rounded-t-[18px] lg:rounded-t-[24px]"
+                className="app-canvas-header sticky top-0 z-20 shrink-0 md:rounded-t-[18px] lg:rounded-t-[24px]"
                 style={{
                   minHeight: HEADER_H,
                   background: "rgb(var(--bg))",
@@ -356,12 +356,12 @@ export default function AdminShell() {
                   boxShadow: "var(--neu-raised-sm)",
                 }}
               >
-                <div className="px-3 py-2 sm:px-4 lg:px-5">
+                <div className="px-2 py-2 sm:px-3 lg:px-5">
                   <div className="flex min-h-[52px] flex-wrap items-center justify-between gap-2 lg:flex-nowrap">
                     <div className="flex min-w-0 flex-1 items-center gap-2">
                       <button
                         onClick={() => setSidebarOpen(true)}
-                        className="shrink-0 rounded-full px-3 py-2 text-xs font-semibold shadow-sm transition hover:bg-white/70 md:hidden"
+                        className="shrink-0 rounded-full px-3 py-2 text-xs font-semibold shadow-sm transition hover:bg-white/70 lg:hidden"
                         style={{
                           background: "rgb(var(--bg))",
                           border: `1px solid ${GLASS_BORDER}`,
@@ -475,9 +475,9 @@ export default function AdminShell() {
               </header>
 
               {/* BODY */}
-              <div className="flex min-h-0 flex-1 gap-3 px-3 py-3 sm:gap-4 sm:px-4 sm:py-4">
+              <div className="flex min-h-0 flex-1 lg:gap-4 lg:px-4 lg:py-4">
                 {/* Desktop sidebar */}
-                <div className="hidden shrink-0 p-2 md:block" style={{ width: 232 }}>
+                <div className="hidden shrink-0 p-2 lg:block" style={{ width: 232 }}>
                   <div className="sticky top-[96px]">
                     <AdminSidebar
                       open={sidebarOpen}
@@ -494,7 +494,7 @@ export default function AdminShell() {
                 </div>
 
                 {/* Mobile drawer */}
-                <div className="md:hidden">
+                <div className="lg:hidden">
                   <AdminSidebar
                     open={sidebarOpen}
                     onClose={() => setSidebarOpen(false)}

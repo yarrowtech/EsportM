@@ -665,7 +665,7 @@ export default function MedicalPage() {
               />
             </label>
 
-            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 lg:flex-nowrap">
               <p className="text-xs text-[rgb(var(--muted))]">
                 Last saved: {formatDateTime(profileQuery.data?.healthUpdatedAt)}
               </p>

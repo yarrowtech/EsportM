@@ -432,7 +432,7 @@ export default function Sidebar({
       {/* ===================== DESKTOP (inside canvas) ===================== */}
       <aside
         className={cx(
-          "dashboard-sidebar relative hidden md:flex flex-col shrink-0",
+          "dashboard-sidebar relative hidden lg:flex flex-col shrink-0",
           "w-[218px] min-w-[218px] max-w-[218px]",
           "max-h-[calc(100vh-11.5rem)]",
           "rounded-[24px] p-3.5"
@@ -461,14 +461,14 @@ export default function Sidebar({
       <div
         ref={overlayRef}
         onClick={onClose}
-        className="fixed inset-0 z-[80] bg-black/20 opacity-0 pointer-events-none md:hidden"
+        className="fixed inset-0 z-[80] bg-black/20 opacity-0 pointer-events-none lg:hidden"
       />
 
       {/* ===================== MOBILE drawer (GSAP) ===================== */}
       <aside
         ref={mobileRef}
         className={cx(
-          "dashboard-sidebar fixed left-0 top-0 z-[90] h-full w-[260px] max-w-[86vw] p-3.5 pb-16 md:hidden",
+          "dashboard-sidebar fixed left-0 top-0 z-[90] h-full w-[260px] max-w-[86vw] p-3.5 pb-16 lg:hidden",
           open ? "block" : "hidden"
         )}
         style={{

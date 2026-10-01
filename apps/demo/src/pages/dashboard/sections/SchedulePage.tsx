@@ -249,7 +249,7 @@ export default function SchedulePage() {
         title="Scheduling Control"
         subtitle="Plan matches, training sessions, and key club events with clear visibility."
         right={
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 lg:flex-nowrap">
             <DotTag tone="ok">Calendar</DotTag>
             <DotTag tone="default">Live</DotTag>
           </div>
@@ -347,7 +347,7 @@ export default function SchedulePage() {
                     <div className="flex w-full items-center justify-between text-xs">
                       <span className="font-semibold">{cell.date.getDate()}</span>
                       {isToday && (
-                        <span className="hidden rounded-full bg-[rgba(var(--primary),.18)] px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.2em] sm:inline-flex">
+                        <span className="hidden rounded-full bg-[rgba(var(--primary),.18)] px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.2em] sm:inline">
                           Today
                         </span>
                       )}

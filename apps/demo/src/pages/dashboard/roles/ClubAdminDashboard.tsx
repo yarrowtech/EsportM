@@ -131,7 +131,7 @@ export default function ClubAdminDashboard() {
             : "Executive club pulse from live metrics. Open full admin workspace for management actions."
         }
         right={
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 lg:flex-nowrap">
             <DotTag>{isPlatformAdmin ? "SUPERADMIN" : "ADMIN"}</DotTag>
             <button
               type="button"
@@ -185,7 +185,7 @@ export default function ClubAdminDashboard() {
           subtitle="Matches, goals, and assists over selected range."
           className="xl:col-span-8"
           right={
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 lg:flex-nowrap">
               {(["7d", "30d", "90d"] as Range[]).map((option) => (
                 <button
                   key={option}

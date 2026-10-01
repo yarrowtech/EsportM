@@ -396,7 +396,7 @@
 //                 </div>
 
 //                 {/* Mobile drawer */}
-//                 <div className="md:hidden">
+//                 <div className="lg:hidden">
 //                   <Sidebar
 //                     open={sidebarOpen}
 //                     onClose={() => setSidebarOpen(false)}
@@ -515,6 +515,7 @@ import {
   Building2,
   CalendarCheck,
   CalendarDays,
+  ChevronDown,
   CreditCard,
   Dumbbell,
   HeartPulse,
@@ -850,6 +851,8 @@ function NotificationOverview({
   onMarkAsRead,
 }: NotificationOverviewProps) {
   const notifications = data?.notifications ?? [];
+  // Phones: list starts collapsed so page content is not pushed below the fold.
+  const [expanded, setExpanded] = useState(false);
 
   return (
     <div
@@ -887,7 +890,19 @@ function NotificationOverview({
             ) : null}
           </div>
         </div>
-        <div className="text-[11px] text-[rgb(var(--muted))]">{notifications.length} recent</div>
+        <div className="hidden text-[11px] text-[rgb(var(--muted))] sm:block">{notifications.length} recent</div>
+        {notifications.length > 0 ? (
+          <button
+            type="button"
+            onClick={() => setExpanded((value) => !value)}
+            aria-expanded={expanded}
+            className="inline-flex shrink-0 items-center gap-1 rounded-full px-3 py-2 text-[11px] font-bold sm:hidden"
+            style={{ background: "rgb(var(--bg))" }}
+          >
+            {expanded ? "Hide" : `View ${notifications.length}`}
+            <ChevronDown size={13} className={cx("transition-transform", expanded && "rotate-180")} />
+          </button>
+        ) : null}
       </div>
 
       {isLoading && (
@@ -895,7 +910,7 @@ function NotificationOverview({
       )}
 
       {!isLoading && notifications.length > 0 ? (
-        <div className="mt-3 space-y-2">
+        <div className={cx("mt-3 space-y-2", !expanded && "hidden sm:block")}>
           {notifications.slice(0, 3).map((notification: Notification) => (
             <article
               key={notification.id}
@@ -911,7 +926,7 @@ function NotificationOverview({
             >
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-[rgb(var(--text))]">
+                  <p className="text-sm font-semibold text-[rgb(var(--text))] max-lg:truncate">
                     {notification.title}
                   </p>
                   <p className="text-[11px] text-[rgb(var(--muted))] truncate">
@@ -925,7 +940,7 @@ function NotificationOverview({
                   type="button"
                   onClick={() => onMarkAsRead(notification.id)}
                   disabled={notification.isRead}
-                  className="rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] transition"
+                  className="rounded-full px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] transition max-lg:shrink-0 sm:tracking-[0.3em] lg:py-1"
                   style={{
                     background: notification.isRead ? "rgb(var(--bg))" : "rgb(var(--primary))",
                     color: notification.isRead ? "rgb(var(--text))" : "rgb(var(--primary-2))",
@@ -970,7 +985,7 @@ function ScheduleNotification({
         boxShadow: GLASS_SHADOW,
       }}
     >
-      <div className="flex flex-wrap items-start justify-between gap-3">
+      <div className="flex items-start justify-between gap-3 sm:flex-wrap">
         <div className="flex min-w-0 items-center gap-3">
           <div
             className="grid h-10 w-10 shrink-0 place-items-center rounded-full"
@@ -986,7 +1001,7 @@ function ScheduleNotification({
             <p className="text-[10px] font-extrabold uppercase tracking-[0.28em] text-[rgb(var(--muted))]">
               Scheduling
             </p>
-            <p className="text-sm font-extrabold text-[rgb(var(--text))]">
+            <p className="text-sm font-extrabold text-[rgb(var(--text))] max-lg:truncate">
               {isLoading
                 ? "Refreshing schedule..."
                 : nextEvent
@@ -1005,19 +1020,21 @@ function ScheduleNotification({
         <button
           type="button"
           onClick={onViewCalendar}
-          className="inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-xs font-bold"
+          aria-label="View calendar"
+          className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-bold max-lg:shrink-0 sm:px-3.5"
           style={{
             background: "rgb(var(--bg))",
             boxShadow: "var(--neu-raised-sm)",
           }}
         >
           <CalendarDays size={14} />
-          View calendar
+          <span className="hidden sm:inline">View calendar</span>
+          <span className="sm:hidden">Calendar</span>
         </button>
       </div>
 
       {!isLoading && upcoming.length > 0 && (
-        <div className="mt-3 space-y-2">
+        <div className="mt-3 hidden space-y-2 sm:block">
           {upcoming.map((event) => (
             <article
               key={event.id}
@@ -1027,8 +1044,8 @@ function ScheduleNotification({
                 boxShadow: NEU_INSET,
               }}
             >
-              <div>
-                <p className="text-sm font-semibold text-[rgb(var(--text))]">{event.title}</p>
+              <div className="max-lg:min-w-0">
+                <p className="text-sm font-semibold text-[rgb(var(--text))] max-lg:truncate">{event.title}</p>
                 <p className="text-[11px] text-[rgb(var(--muted))]">
                   {formatDateTime(event.eventAt)}
                 </p>
@@ -1304,11 +1321,11 @@ export default function AppShell() {
       <div className="relative">
         <GlassBackdrop />
 
-        <div className="mx-auto max-w-[1440px] px-3 py-3 sm:px-4 sm:py-4 lg:px-8 lg:py-8">
+        <div className="mx-auto max-w-[1440px] md:px-4 md:py-4 lg:px-8 lg:py-8">
           {/* CANVAS (no black border) */}
           <div
             className={cx(
-              "relative rounded-[18px] bg-[rgb(var(--bg))] lg:rounded-[24px]"
+              "app-canvas relative bg-[rgb(var(--bg))] md:rounded-[18px] lg:rounded-[24px]"
             )}
             style={{
               background: GLASS_BG,
@@ -1316,23 +1333,23 @@ export default function AppShell() {
             }}
           >
             {/* Layout */}
-            <div className="relative z-10 flex h-[calc(100dvh-1.5rem)] min-h-0 flex-col sm:h-[calc(100dvh-2rem)] lg:h-[calc(100vh-4rem)]">
+            <div className="relative z-10 flex h-[100dvh] min-h-0 flex-col md:h-[calc(100dvh-2rem)] lg:h-[calc(100vh-4rem)]">
               {/* HEADER (glass, no dark divider) */}
               <header
-                className="sticky top-0 z-20 shrink-0 rounded-t-[18px] lg:rounded-t-[24px]"
+                className="app-canvas-header sticky top-0 z-20 shrink-0 md:rounded-t-[18px] lg:rounded-t-[24px]"
                 style={{
                   minHeight: HEADER_H,
                   background: "rgb(var(--bg))",
                   boxShadow: "var(--neu-raised-sm)",
                 }}
               >
-                <div className="px-3 py-2 sm:px-4 lg:px-5">
+                <div className="px-2 py-2 sm:px-3 lg:px-5">
                   <div className="flex min-h-[52px] flex-wrap items-center justify-between gap-2 lg:flex-nowrap">
                     <div className="flex min-w-0 flex-1 items-center gap-2">
                       {/* mobile menu */}
                       <button
                         onClick={() => setSidebarOpen(true)}
-                        className="shrink-0 rounded-full px-3 py-2 text-xs font-semibold shadow-sm transition hover:bg-white/70 md:hidden"
+                        className="shrink-0 rounded-full px-3 py-2 text-xs font-semibold shadow-sm transition hover:bg-white/70 lg:hidden"
                         style={{
                           background: "rgb(var(--bg))",
                           boxShadow: "var(--neu-raised-sm)",
@@ -1503,9 +1520,9 @@ export default function AppShell() {
               </header>
 
               {/* BODY */}
-              <div className="flex min-h-0 flex-1 gap-3 px-3 py-3 sm:gap-4 sm:px-4 sm:py-4">
+              <div className="flex min-h-0 flex-1 lg:gap-4 lg:px-4 lg:py-4">
                 {/* Desktop sticky sidebar (glass) */}
-                <div className="hidden shrink-0 p-2 md:block" style={{ width: 226 }}>
+                <div className="hidden shrink-0 p-2 lg:block" style={{ width: 226 }}>
                   <div className="sticky top-[96px]">
                     <Sidebar
                       open={sidebarOpen}
@@ -1517,7 +1534,7 @@ export default function AppShell() {
                 </div>
 
                 {/* Mobile drawer */}
-                <div className="md:hidden">
+                <div className="lg:hidden">
                   <Sidebar
                     open={sidebarOpen}
                     onClose={() => setSidebarOpen(false)}
@@ -1606,7 +1623,7 @@ export default function AppShell() {
                   )}
 
                   {activeClubDisplay.hasClub && (
-                    <div className="neu-compact-grid mb-3 grid xl:grid-cols-2">
+                    <div className="neu-compact-grid mb-3 grid md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
                       <NotificationOverview
                         data={notificationsQuery.data}
                         isLoading={notificationsQuery.isLoading}

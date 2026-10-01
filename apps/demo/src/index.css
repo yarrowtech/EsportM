@@ -926,48 +926,42 @@ html::-webkit-scrollbar-button {
 }
 
 /* ==========================================================================
-   Mobile responsiveness foundation (demo app)
-   - Prevents accidental horizontal overflow app-wide
-   - Small-screen paddings for the dashboard canvas
-   - Recharts touch/size safety
-   Desktop (md+) rules are untouched.
+   Mobile + tablet responsiveness (shared by apps/frontend and apps/demo)
+   Every rule in this section is scoped to max-width: 1023px, so the approved
+   desktop layout (Tailwind lg, >= 1024px) renders exactly as before.
+   Breakpoints: tablet 768-1023, phone <= 767, small phone <= 360.
    ========================================================================== */
 
-html,
-body {
-  overflow-x: clip;
-  -webkit-text-size-adjust: 100%;
-}
-
-:where(img, svg, video, canvas) {
-  max-width: 100%;
-}
-
-/* Phones */
-@media (max-width: 640px) {
-  .dashboard-readable .dashboard-scroll {
-    padding: 12px 10px 28px;
+/* Phones + tablets */
+@media (max-width: 1023px) {
+  html,
+  body {
+    overflow-x: clip;
+    -webkit-text-size-adjust: 100%;
   }
 
-  /* Hide decorative chart shadows that overflow on small screens */
-  .dashboard-readable :where(.recharts-wrapper) {
-    filter: none;
+  :where(img, svg, video, canvas),
+  .dashboard-readable :where(.recharts-responsive-container, .recharts-wrapper) {
+    max-width: 100%;
   }
-}
 
-/* ==========================================================================
-   Phones + tablets: no sideways panning inside the main scroll area
-   The neumorphic "shadow room" trick (padding + negative margin on grids)
-   makes the main scroll container wider than the viewport, so a stray
-   horizontal swipe leaves content stuck off-screen. Neutralize the negative
-   margins and lock overflow-x on touch-scale screens. Wide tables inside
-   keep their own internal horizontal scroll.
-   ========================================================================== */
-@media (max-width: 1024px) {
+  .dashboard-readable :where(.dashboard-page, .dashboard-scroll, .neu-surface, section, article) {
+    min-width: 0;
+  }
+
   .dashboard-readable .dashboard-scroll {
     overflow-x: hidden;
+    padding: 14px 16px 24px;
+    scroll-padding: 14px;
   }
 
+  .dashboard-readable .dashboard-page {
+    max-width: 100%;
+  }
+
+  /* The neumorphic "shadow room" trick (padding + negative margin on grids)
+     makes the scroller wider than the viewport on touch screens, so a stray
+     sideways swipe strands content off-screen. Neutralize it here. */
   .dashboard-readable .neu-compact-grid,
   .dashboard-readable .dashboard-page :where(.grid[class~="gap-4"], .grid[class~="gap-5"], .grid[class~="gap-6"]),
   .dashboard-readable .dashboard-page > .grid,
@@ -975,66 +969,54 @@ body {
     padding: 0;
     margin: 0;
   }
-}
 
-/* Very small phones (iPhone SE class) */
-@media (max-width: 360px) {
-  .dashboard-readable .dashboard-scroll {
-    padding: 10px 8px 24px;
+  /* Grid items default to min-width:auto, so nowrap/truncate text (long
+     emails, IDs) forces a column wider than the viewport. */
+  .dashboard-readable :where(.dashboard-page, .dashboard-scroll) :where(.grid) > * {
+    min-width: 0;
   }
 
-  .dashboard-readable :where(.dashboard-scroll, .dashboard-sidebar, .dashboard-page)::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
+  .dashboard-page :where(p, div, small, h1, h2, h3, h4)[class*="truncate"] {
+    min-width: 0;
+  }
+
+  /* Keep long words/IDs from blowing out narrow tiles and cards */
+  .dashboard-page :where(article, section, p, dd, dt) {
+    overflow-wrap: anywhere;
+  }
+
+  /* Stat labels are short uppercase words: wrap between words, never mid-word. */
+  .dashboard-page .neu-stat-tile > p:first-of-type {
+    overflow-wrap: normal;
+  }
+
+  /* Wrapping action rows: an oversized control takes its own line and shrinks
+     instead of widening the card. */
+  .dashboard-page :where(.flex-wrap) > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .dashboard-page :where(select, input, textarea) {
+    max-width: 100%;
+  }
+
+  /* Wide tables/rows swipe inside their own container. */
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
   }
 }
 
-/* Recharts: keep touch scrolling natural and labels readable on small screens */
-@media (hover: none) {
+/* Touch screens: charts must not swallow vertical page scrolling. */
+@media (hover: none) and (max-width: 1023px) {
   .dashboard-readable :where(.recharts-wrapper, .recharts-surface) {
     touch-action: pan-y;
   }
 }
 
-/* ==========================================================================
-   Stat-tile grids on phones
-   Stat grids ship as 1-col below sm. Tiles are compact, so 2-up on phones
-   avoids long scrolls. Desktop breakpoints are unchanged.
-   ========================================================================== */
-@media (max-width: 639px) {
-  .dashboard-page > .grid:has(> .neu-stat-tile) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-}
-
-/* Keep long words/IDs from blowing out narrow tiles and cards */
-.dashboard-page :where(article, section, p, dd, dt) {
-  overflow-wrap: anywhere;
-}
-
-/* ==========================================================================
-   Grid/flex min-width fix (phones + tablets)
-   Grid items default to min-width:auto, so nowrap/truncate text (e.g. long
-   emails) forces the column wider than the viewport and cards get clipped.
-   Allowing grid children to shrink fixes it without touching layout. Desktop
-   is unaffected because columns there already had enough room.
-   ========================================================================== */
-.dashboard-page :where(.grid) > * {
-  min-width: 0;
-}
-
-/* Truncate helpers only work when the element itself is allowed to shrink. */
-.dashboard-page :where(p, div, small, h1, h2, h3, h4)[class*="truncate"] {
-  min-width: 0;
-}
-
-/* ==========================================================================
-   Phones: edge-to-edge dashboard canvas (below md)
-   The floating rounded canvas costs ~60px of width on a phone. Below md the
-   shells drop their outer padding (see AppShell/AdminShell); here the frame
-   chrome is removed and notch/home-indicator insets are respected.
-   ========================================================================== */
+/* Phones (below md): edge-to-edge canvas. The shells drop their outer padding
+   below md; the frame chrome goes and notch/home-indicator insets apply. */
 @media (max-width: 767px) {
   .dashboard-readable .app-canvas {
     border: 0 !important;
@@ -1047,37 +1029,27 @@ body {
     padding-right: env(safe-area-inset-right, 0px);
   }
 
-  /* Bottom room so the last card clears the fixed demo badge. */
   .dashboard-readable .dashboard-scroll {
-    padding: 12px 12px calc(72px + env(safe-area-inset-bottom, 0px));
-  }
-}
-
-/* Shell-level grids (notification/schedule strip) sit outside .dashboard-page,
-   so they need the same shrink rule or nowrap text widens the column. */
-.dashboard-scroll :where(.grid) > * {
-  min-width: 0;
-}
-
-/* Stat labels are short uppercase words: wrap between words, never mid-word. */
-.dashboard-page .neu-stat-tile > p:first-of-type {
-  overflow-wrap: normal;
-}
-
-@media (max-width: 639px) {
-  .dashboard-page .neu-stat-tile > p:first-of-type {
-    letter-spacing: 0.1em;
-  }
-}
-
-/* Wide tables swipe inside their own container; keep the first column pinned
-   so rows stay identifiable while scrolling sideways. */
-@media (max-width: 767px) {
-  .overflow-x-auto {
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-x: contain;
+    padding: 12px 12px calc(var(--dashboard-bottom-gap, 28px) + env(safe-area-inset-bottom, 0px));
+    scroll-padding: 12px;
   }
 
+  /* Large phones in landscape (640-767): sm multi-column grids collapse. */
+  .dashboard-readable .dashboard-page :where(
+    .sm\:grid-cols-2,
+    .sm\:grid-cols-3,
+    .sm\:grid-cols-4,
+    .sm\:grid-cols-\[1fr_1fr_auto\]
+  ):not(.grid-cols-2):not(:has(> .neu-stat-tile)) {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .dashboard-readable .dashboard-page :where(h1) {
+    font-size: clamp(1.35rem, 7vw, 1.875rem);
+    line-height: 1.12;
+  }
+
+  /* Pin the first table column so rows stay identifiable while swiping. */
   .overflow-x-auto > table :where(th, td):first-child {
     position: sticky;
     left: 0;
@@ -1093,13 +1065,39 @@ body {
   }
 }
 
-/* Wrapping action rows: let an oversized control (e.g. a select with a long
-   option) take its own line and shrink instead of widening the card. */
-.dashboard-page :where(.flex-wrap) > * {
-  min-width: 0;
-  max-width: 100%;
+/* Phones (below sm) */
+@media (max-width: 639px) {
+  /* Stat tiles are compact: 2-up avoids long scrolls. */
+  .dashboard-page > .grid:has(> .neu-stat-tile) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .dashboard-page .neu-stat-tile > p:first-of-type {
+    letter-spacing: 0.1em;
+  }
+
+  /* Decorative chart shadows overflow on small screens. */
+  .dashboard-readable :where(.recharts-wrapper) {
+    filter: none;
+  }
 }
 
-.dashboard-page :where(select, input, textarea) {
-  max-width: 100%;
+/* Very small phones (iPhone SE class) */
+@media (max-width: 360px) {
+  .dashboard-readable .dashboard-scroll {
+    padding-inline: 8px;
+  }
+
+  .dashboard-readable :where(.dashboard-scroll, .dashboard-sidebar, .dashboard-page)::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+}
+
+/* Demo only: bottom room so the last card clears the fixed demo badge. */
+@media (max-width: 767px) {
+  .dashboard-readable {
+    --dashboard-bottom-gap: 72px;
+  }
 }

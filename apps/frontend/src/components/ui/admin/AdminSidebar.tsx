@@ -369,7 +369,7 @@ export default function AdminSidebar({
         <>
             <aside
                 className={cx(
-                    "dashboard-sidebar relative hidden max-h-[calc(100vh-11rem)] flex-col shrink-0 md:flex",
+                    "dashboard-sidebar relative hidden max-h-[calc(100vh-11rem)] flex-col shrink-0 lg:flex",
                     "w-[216px] min-w-[216px] max-w-[216px]",
                     "rounded-2xl border bg-[rgb(var(--bg))] p-3"
                 )}
@@ -389,13 +389,13 @@ export default function AdminSidebar({
             <div
                 ref={overlayRef}
                 onClick={onClose}
-                className="fixed inset-0 z-[80] bg-black/20 opacity-0 pointer-events-none md:hidden"
+                className="fixed inset-0 z-[80] bg-black/20 opacity-0 pointer-events-none lg:hidden"
             />
 
             <aside
                 ref={mobileRef}
                 className={cx(
-                    "dashboard-sidebar fixed left-0 top-0 z-[90] h-full w-[min(280px,calc(100vw-24px))] border-r bg-[rgb(var(--bg))] p-4 md:hidden",
+                    "dashboard-sidebar fixed left-0 top-0 z-[90] h-full w-[280px] max-w-[86vw] border-r bg-[rgb(var(--bg))] p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] lg:hidden",
                     open ? "block" : "hidden"
                 )}
                 style={{ borderColor: cardBorder, boxShadow: "var(--neu-raised)" }}

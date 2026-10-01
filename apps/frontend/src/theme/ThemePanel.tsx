@@ -60,7 +60,7 @@ export function ThemePanel({
       />
       <div
         ref={panelRef}
-        className="fixed right-3 top-[72px] z-[70] w-[92vw] max-w-[360px] rounded-2xl border bg-[rgb(var(--surface))]/90 backdrop-blur-xl shadow-xl opacity-0 pointer-events-none"
+        className="fixed right-3 top-[72px] z-[70] w-[calc(100vw-1.5rem)] max-w-[360px] max-h-[calc(100dvh-84px)] overflow-y-auto rounded-2xl border bg-[rgb(var(--surface))]/90 backdrop-blur-xl shadow-xl opacity-0 pointer-events-none"
         style={{ borderColor: "rgb(var(--border))" }}
       >
         <div className="p-4">

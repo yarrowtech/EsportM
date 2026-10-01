@@ -470,7 +470,7 @@ export default function DashboardAnalyticsLab({
                       <DotTag tone={categoryTone(entry.category)}>{entry.category}</DotTag>
                     </div>
 
-                    <div className="mt-3 grid gap-2 sm:grid-cols-4">
+                    <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
                       <MiniIndexCard label="Performance" value={entry.performanceIndex} />
                       <MiniIndexCard label="Readiness" value={entry.readinessIndex} />
                       <MiniIndexCard label="Momentum" value={entry.momentumIndex} />

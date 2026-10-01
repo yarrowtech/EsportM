@@ -265,7 +265,7 @@ export default function StatsPage() {
           subtitle="Match volume and attacking output over selected range."
           className="xl:col-span-8"
           right={
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 lg:flex-nowrap">
               {(["7d", "30d", "90d"] as Range[]).map((option) => (
                 <button
                   key={option}

@@ -396,7 +396,7 @@
 //                 </div>
 
 //                 {/* Mobile drawer */}
-//                 <div className="md:hidden">
+//                 <div className="lg:hidden">
 //                   <Sidebar
 //                     open={sidebarOpen}
 //                     onClose={() => setSidebarOpen(false)}
@@ -926,7 +926,7 @@ function NotificationOverview({
             >
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-[rgb(var(--text))]">
+                  <p className="text-sm font-semibold text-[rgb(var(--text))] max-lg:truncate">
                     {notification.title}
                   </p>
                   <p className="text-[11px] text-[rgb(var(--muted))] truncate">
@@ -940,7 +940,7 @@ function NotificationOverview({
                   type="button"
                   onClick={() => onMarkAsRead(notification.id)}
                   disabled={notification.isRead}
-                  className="shrink-0 rounded-full px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] transition sm:tracking-[0.3em]"
+                  className="rounded-full px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] transition max-lg:shrink-0 sm:tracking-[0.3em] lg:py-1"
                   style={{
                     background: notification.isRead ? "rgb(var(--bg))" : "rgb(var(--primary))",
                     color: notification.isRead ? "rgb(var(--text))" : "rgb(var(--primary-2))",
@@ -1001,7 +1001,7 @@ function ScheduleNotification({
             <p className="text-[10px] font-extrabold uppercase tracking-[0.28em] text-[rgb(var(--muted))]">
               Scheduling
             </p>
-            <p className="truncate text-sm font-extrabold text-[rgb(var(--text))]">
+            <p className="text-sm font-extrabold text-[rgb(var(--text))] max-lg:truncate">
               {isLoading
                 ? "Refreshing schedule..."
                 : nextEvent
@@ -1021,7 +1021,7 @@ function ScheduleNotification({
           type="button"
           onClick={onViewCalendar}
           aria-label="View calendar"
-          className="inline-flex shrink-0 items-center gap-2 rounded-full px-3 py-2 text-xs font-bold sm:px-3.5"
+          className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-bold max-lg:shrink-0 sm:px-3.5"
           style={{
             background: "rgb(var(--bg))",
             boxShadow: "var(--neu-raised-sm)",
@@ -1044,8 +1044,8 @@ function ScheduleNotification({
                 boxShadow: NEU_INSET,
               }}
             >
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-[rgb(var(--text))]">{event.title}</p>
+              <div className="max-lg:min-w-0">
+                <p className="text-sm font-semibold text-[rgb(var(--text))] max-lg:truncate">{event.title}</p>
                 <p className="text-[11px] text-[rgb(var(--muted))]">
                   {formatDateTime(event.eventAt)}
                 </p>
@@ -1321,11 +1321,11 @@ export default function AppShell() {
       <div className="relative">
         <GlassBackdrop />
 
-        <div className="mx-auto max-w-[1440px] md:px-7 md:py-7 lg:px-8 lg:py-8">
+        <div className="mx-auto max-w-[1440px] md:px-4 md:py-4 lg:px-8 lg:py-8">
           {/* CANVAS (no black border) */}
           <div
             className={cx(
-              "app-canvas relative bg-[rgb(var(--bg))] md:rounded-[24px]"
+              "app-canvas relative bg-[rgb(var(--bg))] md:rounded-[18px] lg:rounded-[24px]"
             )}
             style={{
               background: GLASS_BG,
@@ -1333,23 +1333,23 @@ export default function AppShell() {
             }}
           >
             {/* Layout */}
-            <div className="relative z-10 flex h-[100dvh] min-h-0 flex-col md:h-[calc(100dvh-3.5rem)] lg:h-[calc(100dvh-4rem)]">
+            <div className="relative z-10 flex h-[100dvh] min-h-0 flex-col md:h-[calc(100dvh-2rem)] lg:h-[calc(100vh-4rem)]">
               {/* HEADER (glass, no dark divider) */}
               <header
-                className="app-canvas-header sticky top-0 z-20 shrink-0 md:rounded-t-[24px]"
+                className="app-canvas-header sticky top-0 z-20 shrink-0 md:rounded-t-[18px] lg:rounded-t-[24px]"
                 style={{
                   minHeight: HEADER_H,
                   background: "rgb(var(--bg))",
                   boxShadow: "var(--neu-raised-sm)",
                 }}
               >
-                <div className="px-2 py-2 sm:px-3 sm:py-2 lg:px-4">
+                <div className="px-2 py-2 sm:px-3 lg:px-5">
                   <div className="flex min-h-[52px] flex-wrap items-center justify-between gap-2 lg:flex-nowrap">
                     <div className="flex min-w-0 flex-1 items-center gap-2">
                       {/* mobile menu */}
                       <button
                         onClick={() => setSidebarOpen(true)}
-                        className="shrink-0 rounded-full px-3 py-2 text-xs font-semibold shadow-sm transition hover:bg-white/70 md:hidden"
+                        className="shrink-0 rounded-full px-3 py-2 text-xs font-semibold shadow-sm transition hover:bg-white/70 lg:hidden"
                         style={{
                           background: "rgb(var(--bg))",
                           boxShadow: "var(--neu-raised-sm)",
@@ -1520,9 +1520,9 @@ export default function AppShell() {
               </header>
 
               {/* BODY */}
-              <div className="flex min-h-0 flex-1 md:gap-4 md:px-4 md:py-4">
+              <div className="flex min-h-0 flex-1 lg:gap-4 lg:px-4 lg:py-4">
                 {/* Desktop sticky sidebar (glass) */}
-                <div className="hidden shrink-0 p-2 md:block" style={{ width: 226 }}>
+                <div className="hidden shrink-0 p-2 lg:block" style={{ width: 226 }}>
                   <div className="sticky top-[96px]">
                     <Sidebar
                       open={sidebarOpen}
@@ -1534,7 +1534,7 @@ export default function AppShell() {
                 </div>
 
                 {/* Mobile drawer */}
-                <div className="md:hidden">
+                <div className="lg:hidden">
                   <Sidebar
                     open={sidebarOpen}
                     onClose={() => setSidebarOpen(false)}
@@ -1623,7 +1623,7 @@ export default function AppShell() {
                   )}
 
                   {activeClubDisplay.hasClub && (
-                    <div className="neu-compact-grid mb-3 grid xl:grid-cols-2">
+                    <div className="neu-compact-grid mb-3 grid md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
                       <NotificationOverview
                         data={notificationsQuery.data}
                         isLoading={notificationsQuery.isLoading}

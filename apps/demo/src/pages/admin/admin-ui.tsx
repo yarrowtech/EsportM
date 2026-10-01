@@ -54,7 +54,7 @@ export function formatCountdown(input?: string | null) {
 
 export function PageWrap({ children }: { children: ReactNode }) {
   return (
-    <div className="dashboard-page mx-auto w-full max-w-[1180px] min-w-0 space-y-3 p-2 sm:p-3">
+    <div className="dashboard-page mx-auto w-full max-w-[1180px] space-y-3 p-2 max-lg:min-w-0 sm:p-3">
       {children}
     </div>
   );
@@ -71,7 +71,7 @@ export function Hero({
 }) {
   return (
     <div
-      className="neu-surface relative mb-1 overflow-hidden rounded-[20px] px-4 py-3 sm:flex sm:flex-wrap sm:items-start sm:justify-between sm:px-5 sm:py-4"
+      className="neu-surface relative mb-1 overflow-hidden rounded-[20px] px-4 py-3 sm:flex sm:flex-wrap sm:items-start sm:justify-between sm:px-5 sm:py-4 lg:flex-nowrap"
       style={{
         background: adminCardBg,
         boxShadow: adminGlassShadow,
@@ -86,7 +86,7 @@ export function Hero({
         </h1>
         <p className="mt-2 max-w-2xl text-sm font-medium text-[rgb(var(--muted))] sm:text-base">{subtitle}</p>
       </div>
-      {right ? <div className="relative mt-4 flex min-w-0 max-w-full flex-wrap gap-2 sm:mt-0 sm:justify-end">{right}</div> : null}
+      {right ? <div className="relative mt-4 flex flex-wrap gap-2 max-lg:min-w-0 max-lg:max-w-full sm:mt-0 sm:justify-end lg:shrink-0">{right}</div> : null}
     </div>
   );
 }
@@ -169,7 +169,7 @@ export function Stat({
         {visual.icon}
       </div>
       <p className="relative pr-12 text-[10px] font-extrabold uppercase tracking-[0.24em] text-[rgb(var(--muted))]">{label}</p>
-      <p className="relative mt-2.5 pr-11 text-xl font-extrabold sm:pr-0 sm:text-2xl leading-none tracking-normal text-[rgb(var(--text))] [overflow-wrap:anywhere] break-words">
+      <p className="relative mt-2.5 pr-11 text-xl font-extrabold sm:pr-0 sm:text-2xl leading-none sm:leading-none tracking-normal text-[rgb(var(--text))] [overflow-wrap:anywhere] break-words">
         {value}
       </p>
       {hint ? <p className="relative mt-1 text-xs font-medium text-[rgb(var(--muted))]">{hint}</p> : null}
@@ -260,14 +260,14 @@ export function DotTag({
 
   return (
     <span
-      className="inline-flex max-w-full flex-wrap items-center gap-2 rounded-full border px-3 py-1 text-xs font-bold"
+      className="inline-flex max-w-full flex-wrap items-center gap-2 rounded-full border px-3 py-1 text-xs font-bold max-lg:flex-nowrap"
       style={{
         background: style.bg,
         borderColor: style.border,
         color: style.text,
       }}
     >
-      <span className="h-1.5 w-1.5 rounded-full" style={{ background: style.dot }} />
+      <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: style.dot }} />
       <span className="max-w-full break-words">{children}</span>
     </span>
   );

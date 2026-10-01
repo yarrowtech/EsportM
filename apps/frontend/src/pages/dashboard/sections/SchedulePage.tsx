@@ -249,7 +249,7 @@ export default function SchedulePage() {
         title="Scheduling Control"
         subtitle="Plan matches, training sessions, and key club events with clear visibility."
         right={
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 lg:flex-nowrap">
             <DotTag tone="ok">Calendar</DotTag>
             <DotTag tone="default">Live</DotTag>
           </div>
@@ -334,7 +334,7 @@ export default function SchedulePage() {
                     onClick={() => handleSelectDay(cell.date)}
                     aria-pressed={isSelected}
                     className={cx(
-                      "flex h-20 flex-col items-center justify-between rounded-2xl border px-1 py-2 text-[12px] transition",
+                      "flex h-14 flex-col items-center justify-between rounded-2xl border px-1 py-1.5 text-[12px] transition sm:h-16 sm:py-2 lg:h-20 lg:py-2",
                       cell.isCurrentMonth
                         ? "bg-white/80 text-[rgb(var(--text))]"
                         : "bg-white/5 text-white/50",
@@ -347,7 +347,7 @@ export default function SchedulePage() {
                     <div className="flex w-full items-center justify-between text-xs">
                       <span className="font-semibold">{cell.date.getDate()}</span>
                       {isToday && (
-                        <span className="rounded-full bg-[rgba(var(--primary),.18)] px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.2em]">
+                        <span className="hidden rounded-full bg-[rgba(var(--primary),.18)] px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.2em] sm:inline">
                           Today
                         </span>
                       )}
